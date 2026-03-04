@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto PSIRT Cloud | Tier N向け自動PSIRTプラットフォーム</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0a0f1c',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        brand: {
+                            light: '#60a5fa',
+                            DEFAULT: '#3b82f6',
+                            dark: '#2563eb',
+                        },
+                        accent: {
+                            DEFAULT: '#06b6d4',
+                        }
+                    },
+                    backgroundImage: {
+                        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+                        'hero-glow': 'conic-gradient(from 180deg at 50% 50%, #2a8af655 0deg, #a855f755 180deg, #06b6d455 360deg)',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #60a5fa, #06b6d4);
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glow-effect {
+            box-shadow: 0 0 40px -10px rgba(59, 130, 246, 0.5);
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-brand selection:text-white">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 top-0 transition-all duration-300 glass-card border-b-0 border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="#" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-accent flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="hidden md:flex items-center space-x-6 lg:space-x-8">
+                    <a href="#problem" class="text-sm font-medium text-slate-300 hover:text-white transition-colors">課題</a>
+                    <a href="#solution" class="text-sm font-medium text-slate-300 hover:text-white transition-colors">解決策</a>
+                    <a href="#features" class="text-sm font-medium text-slate-300 hover:text-white transition-colors">機能</a>
+                    <a href="#pricing" class="text-sm font-medium text-slate-300 hover:text-white transition-colors">料金</a>
+                    <a href="#company" class="text-sm font-medium text-slate-300 hover:text-white transition-colors">会社概要</a>
+                    <!-- noteへのリンク -->
+                    <a href="https://note.com/your_account_name" target="_blank" rel="noopener noreferrer" class="text-sm font-medium text-slate-300 hover:text-white transition-colors flex items-center gap-1.5 group">
+                        <i data-lucide="external-link" class="w-3.5 h-3.5 text-slate-500 group-hover:text-brand-light transition-colors"></i>
+                        ニュース・インサイト
+                    </a>
+                    
+                    <a href="demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap">
+                        デモを予約する
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 1. Hero Section -->
+    <section class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
+        <!-- Background decorative elements -->
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-brand/20 rounded-full blur-[120px] opacity-50 pointer-events-none"></div>
+        <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-accent/10 rounded-full blur-[100px] pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center max-w-4xl mx-auto">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-brand/30 bg-brand/10 text-brand-light text-xs font-semibold tracking-wide mb-8">
+                    <span class="flex h-2 w-2 rounded-full bg-brand-light animate-pulse"></span>
+                    JASICガイドライン準拠 / 堅牢なAWSインフラ採用
+                </div>
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight leading-tight mb-6">
+                    専門知識ゼロで回せる、<br class="hidden md:block" />
+                    自動車部品メーカー専用の<br />
+                    <span class="text-gradient">「自動PSIRT」</span>
+                </h1>
+                <p class="text-lg md:text-xl text-slate-400 mb-10 leading-relaxed max-w-3xl mx-auto">
+                    UN-R155対応。SBOMをアップロードするだけで、日々の脆弱性チェックからOEM指定フォーマットでの報告書作成までを全自動化。月額5万円で、あなたの会社のコンプライアンスを守ります。
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <a href="demo_form.html" class="group relative px-8 py-4 rounded-full font-bold text-white bg-gradient-to-r from-brand to-accent hover:from-brand-dark hover:to-brand transition-all duration-300 glow-effect overflow-hidden">
+                        <div class="absolute inset-0 w-full h-full bg-white/20 group-hover:translate-x-full -translate-x-full transform transition-transform duration-500 ease-in-out"></div>
+                        <span class="relative flex items-center justify-center gap-2">
+                            【無料】オンライン相談 ＆ 実際の画面デモを予約する
+                            <i data-lucide="arrow-right" class="w-5 h-5 group-hover:translate-x-1 transition-transform"></i>
+                        </span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Dashboard Mockup -->
+            <div class="mt-20 relative mx-auto max-w-5xl">
+                <div class="rounded-xl border border-white/10 bg-navy-900/90 backdrop-blur-xl shadow-2xl overflow-hidden text-left flex flex-col ring-1 ring-white/5">
+                    <!-- Window Controls -->
+                    <div class="h-10 border-b border-white/10 bg-navy-900/80 flex items-center px-4 gap-2 shrink-0">
+                        <div class="w-3 h-3 rounded-full bg-red-500/80"></div>
+                        <div class="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+                        <div class="w-3 h-3 rounded-full bg-green-500/80"></div>
+                        <div class="ml-4 text-xs font-medium text-slate-500">Auto PSIRT Cloud - ダッシュボード</div>
+                    </div>
+                    <!-- App UI -->
+                    <div class="flex flex-1">
+                        <!-- Sidebar (Hidden on mobile) -->
+                        <div class="hidden md:flex flex-col w-64 border-r border-white/10 bg-navy-800/30 p-4 shrink-0">
+                            <div class="flex items-center gap-2 mb-8 px-2 pt-2">
+                                <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-brand to-accent flex items-center justify-center">
+                                    <i data-lucide="shield-check" class="w-4 h-4 text-white"></i>
+                                </div>
+                                <span class="font-bold text-sm text-slate-200 tracking-tight">Tier-N Shield</span>
+                            </div>
+                            <nav class="flex-1 space-y-1.5">
+                                <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-brand/10 text-brand-light text-sm font-medium border border-brand/20">
+                                    <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                                    ダッシュボード
+                                </a>
+                                <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-white/5 text-sm font-medium transition-colors">
+                                    <i data-lucide="alert-triangle" class="w-4 h-4"></i>
+                                    脆弱性一覧
+                                </a>
+                                <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-white/5 text-sm font-medium transition-colors">
+                                    <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
+                                    OEM報告タスク
+                                </a>
+                                <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-white/5 text-sm font-medium transition-colors">
+                                    <i data-lucide="mail" class="w-4 h-4"></i>
+                                    OEM確認事項入力
+                                </a>
+                                <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-white/5 text-sm font-medium transition-colors">
+                                    <i data-lucide="database" class="w-4 h-4"></i>
+                                    SBOM登録
+                                </a>
+                            </nav>
+                            <div class="mt-auto flex items-center gap-3 px-3 py-3 border-t border-white/10 pt-4">
+                                <div class="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-xs font-bold text-white border border-white/10">
+                                    品
+                                </div>
+                                <div>
+                                    <div class="text-sm font-bold text-slate-200">品質 担当者</div>
+                                    <div class="text-[10px] text-slate-500">品質保証部</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Main Content -->
+                        <div class="flex-1 p-6 md:p-10 bg-navy-900/40">
+                            <div class="mb-10">
+                                <h2 class="text-2xl font-bold text-white mb-2 flex items-center gap-2">
+                                    おはようございます、担当者さん <span class="text-2xl animate-bounce">👋</span>
+                                </h2>
+                                <p class="text-sm text-slate-400">2026年3月4日（水曜日） — 本日のセキュリティ業務をサポートします</p>
+                            </div>
+
+                            <!-- 要対応アクション -->
+                            <div class="mb-10 max-w-3xl">
+                                <div class="flex items-center gap-3 mb-5">
+                                    <div class="w-1 h-5 bg-red-500 rounded-full shadow-[0_0_10px_rgba(239,68,68,0.6)]"></div>
+                                    <h3 class="text-lg font-bold text-slate-200 flex items-center gap-3">
+                                        要対応アクション
+                                        <span class="bg-red-500 text-white text-xs font-bold px-2.5 py-0.5 rounded-full">2</span>
+                                    </h3>
+                                </div>
+                                
+                                <div class="space-y-4">
+                                    <!-- Task 1 -->
+                                    <div class="bg-navy-800/80 border border-white/10 hover:border-white/20 rounded-xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-colors">
+                                        <div class="flex items-start gap-4">
+                                            <i data-lucide="alert-circle" class="w-5 h-5 text-brand-light shrink-0 mt-0.5"></i>
+                                            <div>
+                                                <div class="font-bold text-slate-200 mb-1.5">OEM-A社向け OTA更新モジュール セキュリティ評価報告</div>
+                                                <div class="flex items-center gap-1.5 text-xs text-slate-400">
+                                                    <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+                                                    期限: 2026-03-05 17:00
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button class="shrink-0 bg-brand/20 hover:bg-brand text-brand-light hover:text-white border border-brand/30 hover:border-brand text-sm font-bold px-5 py-2.5 rounded-lg transition-all flex items-center justify-center gap-2">
+                                            報告書作成へ <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                                        </button>
+                                    </div>
+                                    <!-- Task 2 -->
+                                    <div class="bg-red-500/5 border border-red-500/30 hover:border-red-500/50 rounded-xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative overflow-hidden transition-colors">
+                                        <div class="absolute left-0 top-0 bottom-0 w-1 bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.8)]"></div>
+                                        <div class="flex items-start gap-4 pl-2">
+                                            <i data-lucide="alert-triangle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i>
+                                            <div>
+                                                <div class="font-bold text-slate-200 mb-1.5">OEM-B社向け Bluetooth脆弱性報告</div>
+                                                <div class="flex items-center gap-1.5 text-xs text-red-400 font-medium bg-red-500/10 inline-flex px-2 py-0.5 rounded">
+                                                    <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+                                                    期限: 2026-03-02 15:00
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button class="shrink-0 bg-brand hover:bg-brand-dark text-white shadow-lg shadow-brand/20 text-sm font-bold px-5 py-2.5 rounded-lg transition-all flex items-center justify-center gap-2">
+                                            報告書作成へ <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 自動トリアージ -->
+                            <div class="max-w-3xl">
+                                <div class="flex items-center gap-3 mb-5">
+                                    <div class="w-1 h-5 bg-brand rounded-full shadow-[0_0_10px_rgba(59,130,246,0.6)]"></div>
+                                    <h3 class="text-lg font-bold text-slate-200">自動トリアージ</h3>
+                                </div>
+                                
+                                <div class="bg-navy-800/40 border border-white/10 rounded-2xl p-6">
+                                    <div class="flex items-start gap-4 mb-6 pb-6 border-b border-white/5">
+                                        <div class="p-2 bg-brand/10 rounded-lg shrink-0 mt-1">
+                                            <i data-lucide="bot" class="w-5 h-5 text-brand-light"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm text-slate-300 leading-relaxed mb-2 font-medium">CVEデータベースから毎日自動的に取得した脆弱性情報を、自社のSBOMと照合した結果です。</p>
+                                            <p class="text-xs text-slate-400 flex items-center gap-2">
+                                                新たに発見された脆弱性 <span class="text-white font-bold bg-white/10 px-1.5 py-0.5 rounded">7件</span> を自動スクリーニングしました
+                                            </p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                                        <!-- Triage Green -->
+                                        <div class="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-5 relative overflow-hidden group hover:bg-emerald-500/20 transition-colors">
+                                            <div class="absolute right-0 top-0 opacity-10 translate-x-1/4 -translate-y-1/4 group-hover:scale-110 transition-transform">
+                                                <i data-lucide="check-circle" class="w-24 h-24 text-emerald-400"></i>
+                                            </div>
+                                            <div class="flex items-center gap-2 mb-3 text-emerald-400 text-sm font-bold">
+                                                <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+                                                影響なし（自動スキップ済）
+                                            </div>
+                                            <div class="text-4xl font-black text-emerald-400 mb-3 drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]">
+                                                1 <span class="text-sm font-bold opacity-80">件</span>
+                                            </div>
+                                            <div class="text-xs text-emerald-300/80 font-medium">自社部品に該当なし。対応不要です ✓</div>
+                                        </div>
+                                        <!-- Triage Red -->
+                                        <div class="bg-red-500/10 border border-red-500/20 rounded-xl p-5 relative overflow-hidden group hover:bg-red-500/20 transition-colors cursor-pointer">
+                                            <div class="absolute right-0 top-0 opacity-10 translate-x-1/4 -translate-y-1/4 group-hover:scale-110 transition-transform">
+                                                <i data-lucide="alert-octagon" class="w-24 h-24 text-red-400"></i>
+                                            </div>
+                                            <div class="flex items-center gap-2 mb-3 text-red-400 text-sm font-bold">
+                                                <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                                要確認（自社部品に該当）
+                                            </div>
+                                            <div class="text-4xl font-black text-red-400 mb-3 drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]">
+                                                6 <span class="text-sm font-bold opacity-80">件</span>
+                                            </div>
+                                            <div class="text-xs text-red-400 flex items-center gap-1 font-medium group-hover:text-red-300">
+                                                クリックして詳細を見る <i data-lucide="chevron-right" class="w-3 h-3"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. Problem Section -->
+    <section id="problem" class="py-24 bg-navy-800/50 relative border-y border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold mb-6 leading-tight">
+                    品質保証・設計・情シスの皆様、<br />こんな<span class="text-red-400">「理不尽な要求」</span>に悩んでいませんか？
+                </h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                <div class="glass-card p-6 rounded-2xl flex items-start gap-4 border-l-4 border-l-red-500">
+                    <div class="p-3 bg-red-500/10 rounded-lg shrink-0">
+                        <i data-lucide="alert-triangle" class="w-6 h-6 text-red-400"></i>
+                    </div>
+                    <div>
+                        <p class="text-slate-300 leading-relaxed">突然OEMから「この脆弱性（CVE）の影響を報告しろ」と言われたが、何から手をつければいいか分からない。</p>
+                    </div>
+                </div>
+                <div class="glass-card p-6 rounded-2xl flex items-start gap-4 border-l-4 border-l-orange-500">
+                    <div class="p-3 bg-orange-500/10 rounded-lg shrink-0">
+                        <i data-lucide="mail-warning" class="w-6 h-6 text-orange-400"></i>
+                    </div>
+                    <div>
+                        <p class="text-slate-300 leading-relaxed">毎日届く英語のセキュリティアラート。どれが自社製品に影響するのか判断できない。</p>
+                    </div>
+                </div>
+                <div class="glass-card p-6 rounded-2xl flex items-start gap-4 border-l-4 border-l-yellow-500">
+                    <div class="p-3 bg-yellow-500/10 rounded-lg shrink-0">
+                        <i data-lucide="calculator" class="w-6 h-6 text-yellow-400"></i>
+                    </div>
+                    <div>
+                        <p class="text-slate-300 leading-relaxed">大手SIerやコンサルタントにVSOC/PSIRT運用を相談したら、年間数百万円の見積もりが出て絶望した。</p>
+                    </div>
+                </div>
+                <div class="glass-card p-6 rounded-2xl flex items-start gap-4 border-l-4 border-l-blue-500">
+                    <div class="p-3 bg-blue-500/10 rounded-lg shrink-0">
+                        <i data-lucide="file-spreadsheet" class="w-6 h-6 text-blue-400"></i>
+                    </div>
+                    <div>
+                        <p class="text-slate-300 leading-relaxed">SBOMを作れと言われたが、Excelでまとめた簡易的なものしかなく、ツールに読み込ませられない。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. Solution Section -->
+    <section id="solution" class="py-24 relative">
+        <div class="absolute right-0 top-1/4 w-[400px] h-[400px] bg-brand/10 rounded-full blur-[100px] pointer-events-none"></div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-20">
+                <h2 class="text-3xl md:text-4xl font-bold mb-6">
+                    そのお悩み、当社の<br class="md:hidden"/>「自動PSIRTプラットフォーム」が<br/>すべて解決します。
+                </h2>
+                <div class="w-20 h-1 bg-gradient-to-r from-brand to-accent mx-auto rounded-full"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Solution 1 -->
+                <div class="glass-card p-8 rounded-3xl relative overflow-hidden group hover:border-brand/50 transition-colors">
+                    <div class="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+                        <i data-lucide="filter" class="w-32 h-32"></i>
+                    </div>
+                    <div class="w-14 h-14 bg-gradient-to-br from-brand/20 to-brand/5 rounded-2xl flex items-center justify-center border border-brand/20 mb-6">
+                        <i data-lucide="filter" class="w-7 h-7 text-brand-light"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">ノイズを極限まで削減。<br/>対応すべき脆弱性だけをお知らせ</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        バラバラなExcelの部品表（SBOM）でもそのままアップロード可能。NVDデータベースと毎日自動で突合し、「自社製品に組み込まれていて、かつ悪用される可能性のある」本当に危険な脆弱性だけをピックアップします。
+                    </p>
+                </div>
+
+                <!-- Solution 2 -->
+                <div class="glass-card p-8 rounded-3xl relative overflow-hidden group hover:border-accent/50 transition-colors">
+                    <div class="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+                        <i data-lucide="bot" class="w-32 h-32"></i>
+                    </div>
+                    <div class="w-14 h-14 bg-gradient-to-br from-accent/20 to-accent/5 rounded-2xl flex items-center justify-center border border-accent/20 mb-6">
+                        <i data-lucide="bot" class="w-7 h-7 text-accent"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">難解な英語の技術文書を、<br/>AIが「3行の日本語」で要約</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        専門用語だらけの英語ドキュメントを読む必要はありません。生成AIが「つまり、自社のこの部品にどんな影響があるのか」を、非エンジニアにも分かる日本語で解説。AIの判定根拠も可視化されるため安心です。
+                    </p>
+                </div>
+
+                <!-- Solution 3 -->
+                <div class="glass-card p-8 rounded-3xl relative overflow-hidden group hover:border-brand/50 transition-colors">
+                    <div class="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+                        <i data-lucide="file-output" class="w-32 h-32"></i>
+                    </div>
+                    <div class="w-14 h-14 bg-gradient-to-br from-brand/20 to-accent/20 rounded-2xl flex items-center justify-center border border-white/10 mb-6">
+                        <i data-lucide="file-check" class="w-7 h-7 text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">OEMからの急な調査依頼も、<br/>ウィザード形式で完璧な報告書へ</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        JASICガイドラインに準拠したQ&A（ウィザード）に「はい/いいえ」で答えるだけ。トヨタ、ホンダ、日産など、各OEMの指定Excelフォーマットに自動マッピングし、ワンクリックで提出用レポートが完成します。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. Features Section -->
+    <section id="features" class="py-24 bg-navy-900 border-y border-white/5 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold mb-6">PSIRT運用に必要なすべてを、<br/>1つのプラットフォームに。</h2>
+                <p class="text-slate-400">専門ツールを複数組み合わせる必要はなく、これ一つで完結します。</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-12">
+                
+                <div class="flex gap-4">
+                    <div class="shrink-0 mt-1">
+                        <div class="w-10 h-10 rounded-full bg-navy-800 border border-white/10 flex items-center justify-center">
+                            <i data-lucide="table" class="w-5 h-5 text-slate-300"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-bold mb-2">SBOM（部品表）インポート管理</h4>
+                        <p class="text-slate-400 text-sm leading-relaxed">標準フォーマット（SPDX, CycloneDX）のほか、自由形式のExcelベース部品表も自動読み込み。エラー時は指定フォーマットへの誘導でスムーズに登録完了。</p>
+                    </div>
+                </div>
+
+                <div class="flex gap-4">
+                    <div class="shrink-0 mt-1">
+                        <div class="w-10 h-10 rounded-full bg-navy-800 border border-white/10 flex items-center justify-center">
+                            <i data-lucide="git-compare" class="w-5 h-5 text-brand-light"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-bold mb-2">脆弱性（CVE）自動マッチング＆トリアージ</h4>
+                        <p class="text-slate-400 text-sm leading-relaxed">最新の脆弱性データベース（NVD等）と日次で自動突合。「閉域網内か」「外部インターフェースはあるか」などの条件から悪用可能性を判定し、対応優先度（Critical/要確認/無視）を自動分類。</p>
+                    </div>
+                </div>
+
+                <div class="flex gap-4">
+                    <div class="shrink-0 mt-1">
+                        <div class="w-10 h-10 rounded-full bg-navy-800 border border-white/10 flex items-center justify-center">
+                            <i data-lucide="languages" class="w-5 h-5 text-accent"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-bold mb-2">AI（LLM）による自動翻訳・3行サマリ生成</h4>
+                        <p class="text-slate-400 text-sm leading-relaxed">英語の脆弱性情報を自動で日本語化し、さらに「自社製品への具体的な影響」をAIが非エンジニア向けに分かりやすく要約。AIの判定根拠も確認可能。</p>
+                    </div>
+                </div>
+
+                <div class="flex gap-4">
+                    <div class="shrink-0 mt-1">
+                        <div class="w-10 h-10 rounded-full bg-navy-800 border border-white/10 flex items-center justify-center">
+                            <i data-lucide="map" class="w-5 h-5 text-purple-400"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-bold mb-2">インシデント対応ナビゲーター（ウィザード）</h4>
+                        <p class="text-slate-400 text-sm leading-relaxed">OEMからの調査依頼発生時に起動。JASICガイドラインに沿ったQ&A形式で、担当者が迷わず正しい初動対応をとれるよう誘導。</p>
+                    </div>
+                </div>
+
+                <div class="flex gap-4">
+                    <div class="shrink-0 mt-1">
+                        <div class="w-10 h-10 rounded-full bg-navy-800 border border-white/10 flex items-center justify-center">
+                            <i data-lucide="file-spreadsheet" class="w-5 h-5 text-green-400"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-bold mb-2">OEM指定フォーマット レポート自動生成</h4>
+                        <p class="text-slate-400 text-sm leading-relaxed">トヨタ、ホンダ、日産など、主要OEMが指定するExcelフォーマットに合わせて、調査結果や対応方針をワンクリックで自動生成。（出力前の人間による承認フロー完備）</p>
+                    </div>
+                </div>
+
+                <div class="flex gap-4">
+                    <div class="shrink-0 mt-1">
+                        <div class="w-10 h-10 rounded-full bg-navy-800 border border-white/10 flex items-center justify-center">
+                            <i data-lucide="layout-dashboard" class="w-5 h-5 text-pink-400"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-bold mb-2">タスク・SLA管理ダッシュボード</h4>
+                        <p class="text-slate-400 text-sm leading-relaxed">現在対応が必要な脆弱性の数や、OEMへの回答期限（SLA）アラートを一覧表示。「今日やるべきこと」が一目でわかる直感的なUI。</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. Comparison Section -->
+    <section class="py-24 relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold mb-6">なぜ、多くのTier2・Tier3企業に<br class="md:hidden"/>選ばれるのか？</h2>
+                <p class="text-slate-400">大手ベンダーのサービスとは、戦う土俵が違います。</p>
+            </div>
+
+            <div class="overflow-x-auto pb-4">
+                <table class="w-full min-w-[800px] border-collapse">
+                    <thead>
+                        <tr>
+                            <th class="w-1/4 p-4 text-left border-b border-white/10 text-slate-400 font-medium">比較項目</th>
+                            <th class="w-1/4 p-6 text-center border-b-2 border-brand bg-brand/5 rounded-t-xl relative">
+                                <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-brand text-white text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap">当社サービス</div>
+                                <span class="font-bold text-lg text-white">Auto PSIRT Cloud</span>
+                            </th>
+                            <th class="w-1/4 p-4 text-center border-b border-white/10 text-slate-300 font-medium">大手セキュリティコンサル<br/><span class="text-sm text-slate-500">（VSOC）</span></th>
+                            <th class="w-1/4 p-4 text-center border-b border-white/10 text-slate-300 font-medium">海外製 高機能SaaS</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-sm">
+                        <tr>
+                            <td class="p-4 border-b border-white/5 text-slate-400">ターゲット</td>
+                            <td class="p-4 border-b border-white/5 text-center bg-brand/5 font-bold text-white">Tier 2〜Tier 4<br/><span class="text-xs font-normal text-brand-light">（中小企業）</span></td>
+                            <td class="p-4 border-b border-white/5 text-center text-slate-400">巨大OEM・大手Tier 1</td>
+                            <td class="p-4 border-b border-white/5 text-center text-slate-400">IT企業全般</td>
+                        </tr>
+                        <tr>
+                            <td class="p-4 border-b border-white/5 text-slate-400">月額費用</td>
+                            <td class="p-4 border-b border-white/5 text-center bg-brand/5 font-bold text-white text-lg">5万円<br/><span class="text-xs font-normal text-brand-light">（圧倒的低コスト）</span></td>
+                            <td class="p-4 border-b border-white/5 text-center text-slate-400">数十万〜数百万円</td>
+                            <td class="p-4 border-b border-white/5 text-center text-slate-400">10万円〜 + 導入費</td>
+                        </tr>
+                        <tr>
+                            <td class="p-4 border-b border-white/5 text-slate-400">専門知識</td>
+                            <td class="p-4 border-b border-white/5 text-center bg-brand/5 font-bold text-white">一切不要<br/><span class="text-xs font-normal text-brand-light">（兼務担当者向け）</span></td>
+                            <td class="p-4 border-b border-white/5 text-center text-slate-400">専門チームの組成が必要</td>
+                            <td class="p-4 border-b border-white/5 text-center text-slate-400">エンジニアによる設定が必要</td>
+                        </tr>
+                        <tr>
+                            <td class="p-4 border-b border-white/5 text-slate-400 rounded-bl-xl">OEM報告書</td>
+                            <td class="p-4 border-b-2 border-brand text-center bg-brand/5 font-bold text-white rounded-b-xl relative">
+                                <i data-lucide="check-circle-2" class="w-5 h-5 text-brand-light mx-auto mb-1"></i>
+                                ワンクリック自動生成
+                            </td>
+                            <td class="p-4 border-b border-white/5 text-center text-slate-400">コンサルが個別作成<br/><span class="text-xs">（都度見積）</span></td>
+                            <td class="p-4 border-b border-white/5 text-center text-slate-400 rounded-br-xl">汎用レポートのみ<br/><span class="text-xs">（手直し必須）</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. Security Section -->
+    <section class="py-24 bg-navy-800/30 border-y border-white/5 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <div class="w-16 h-16 bg-navy-800 rounded-full flex items-center justify-center mx-auto mb-6 border border-white/10">
+                    <i data-lucide="shield" class="w-8 h-8 text-white"></i>
+                </div>
+                <h2 class="text-3xl font-bold mb-4">お客様の機密情報（設計データ）を守る、最高水準のセキュリティ</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="glass-card p-6 rounded-2xl text-center">
+                    <i data-lucide="server" class="w-8 h-8 text-slate-400 mx-auto mb-4"></i>
+                    <h3 class="font-bold mb-2">堅牢なインフラ</h3>
+                    <p class="text-sm text-slate-400">金融機関や政府機関も利用するAWS（Amazon Web Services）環境で構築しています。</p>
+                </div>
+                <div class="glass-card p-6 rounded-2xl text-center">
+                    <i data-lucide="layers" class="w-8 h-8 text-slate-400 mx-auto mb-4"></i>
+                    <h3 class="font-bold mb-2">データの完全分離</h3>
+                    <p class="text-sm text-slate-400">企業（テナント）ごとの完全なデータ分離により、他社への情報漏洩を物理的・論理的に防止します。</p>
+                </div>
+                <div class="glass-card p-6 rounded-2xl text-center">
+                    <i data-lucide="lock" class="w-8 h-8 text-slate-400 mx-auto mb-4"></i>
+                    <h3 class="font-bold mb-2">通信と保存の暗号化</h3>
+                    <p class="text-sm text-slate-400">全ての通信経路（TLS）および保存データを強力に暗号化。多要素認証（MFA）にも標準対応。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. Pricing Section -->
+    <section id="pricing" class="py-24 relative">
+        <div class="absolute left-0 bottom-0 w-[500px] h-[500px] bg-brand/10 rounded-full blur-[120px] pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-3xl font-bold mb-6">予算に限りがある中小企業様のための、<br/>シンプルな料金体系</h2>
+            </div>
+
+            <div class="max-w-lg mx-auto">
+                <div class="glass-card rounded-3xl p-8 border-t-4 border-t-brand relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-4">
+                        <span class="bg-brand/20 text-brand-light text-xs font-bold px-3 py-1 rounded-full">スタンダード SaaSプラン</span>
+                    </div>
+                    
+                    <div class="mb-8 mt-4">
+                        <span class="text-slate-400 font-medium">月額</span>
+                        <div class="flex items-baseline gap-2">
+                            <span class="text-5xl font-black">50,000</span>
+                            <span class="text-xl text-slate-400">円</span>
+                            <span class="text-sm text-slate-500">（税抜）</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4 mb-8">
+                        <div class="flex items-start gap-3">
+                            <i data-lucide="check" class="w-5 h-5 text-brand-light shrink-0 mt-0.5"></i>
+                            <span class="text-slate-300">プラットフォームの<strong>全機能</strong>利用</span>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <i data-lucide="check" class="w-5 h-5 text-brand-light shrink-0 mt-0.5"></i>
+                            <span class="text-slate-300">システム内フォームからの問い合わせサポート</span>
+                        </div>
+                    </div>
+
+                    <div class="p-4 bg-navy-900/50 rounded-xl border border-white/5 mb-8">
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            <strong>オプション（要見積もり）：</strong><br/>
+                            個別PSIRT体制構築コンサルティング、運用代行（BPO）などの手厚いサポートが必要な場合は、専任体制をご用意いたします。
+                        </p>
+                    </div>
+
+                    <a href="demo_form.html" class="block w-full text-center py-4 rounded-xl font-bold text-white bg-brand hover:bg-brand-dark transition-colors">
+                        まずはデモを見てみる
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 8. Bottom CTA -->
+    <section id="cta" class="py-24 relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-b from-transparent to-brand/10 pointer-events-none"></div>
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="glass-card border border-brand/20 rounded-3xl p-8 md:p-16 text-center glow-effect bg-navy-800/80">
+                <h2 class="text-2xl md:text-4xl font-bold mb-6 leading-tight">
+                    「自社だけで対応できるだろうか…」<br/>
+                    「OEMの監査が迫っている…」
+                </h2>
+                <p class="text-slate-300 mb-10 text-lg max-w-2xl mx-auto">
+                    まずは、貴社の現状をお聞かせください。<br class="hidden md:block"/>実際の操作画面（デモ）をお見せしながら、最適な進め方をアドバイスいたします。
+                </p>
+                
+                <a href="demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-navy-900 bg-white hover:bg-slate-200 transition-colors shadow-xl text-lg w-full sm:w-auto">
+                    <i data-lucide="calendar" class="w-5 h-5"></i>
+                    【無料】オンライン相談 ＆ 実際の画面デモを予約する
+                </a>
+                <p class="mt-6 text-sm text-slate-400">
+                    （※無理な営業は一切いたしません。実際の画面を見てみたい、現状の課題整理だけしたい、という方もお気軽にご活用ください）
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 9. Company Profile -->
+    <section id="company" class="py-24 bg-navy-900 border-y border-white/5 relative">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold mb-4">会社概要</h2>
+            </div>
+            <div class="glass-card rounded-2xl overflow-hidden border border-white/10">
+                <table class="w-full text-left text-sm text-slate-300">
+                    <tbody class="divide-y divide-white/10">
+                        <tr>
+                            <th class="w-1/3 p-6 bg-white/5 font-medium text-slate-200">会社名</th>
+                            <td class="p-6 text-white font-medium">Unimobilities株式会社</td>
+                        </tr>
+                        <tr>
+                            <th class="p-6 bg-white/5 font-medium text-slate-200">本社</th>
+                            <td class="p-6">東京都世田谷区駒沢公園１丁目２４−１ トート駒沢公園 3F</td>
+                        </tr>
+                        <tr>
+                            <th class="p-6 bg-white/5 font-medium text-slate-200">本店</th>
+                            <td class="p-6">東京都世田谷区上馬4-17-8-402</td>
+                        </tr>
+                        <tr>
+                            <th class="p-6 bg-white/5 font-medium text-slate-200 align-top">事業内容</th>
+                            <td class="p-6 leading-relaxed">
+                                <ul class="list-disc list-inside space-y-1.5">
+                                    <li>自動車サプライヤー向けPSIRT対応クラウド開発</li>
+                                    <li>新車のオンライン販売プラットフォームの構築</li>
+                                    <li>新規事業立ち上げコンサルティング等</li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="p-6 bg-white/5 font-medium text-slate-200">電話番号</th>
+                            <td class="p-6">080-4254-3811</td>
+                        </tr>
+                        <tr>
+                            <th class="p-6 bg-white/5 font-medium text-slate-200">メールアドレス</th>
+                            <td class="p-6">
+                                <a href="mailto:info@unimobilities.jp" class="text-brand-light hover:text-brand transition-colors">info@unimobilities.jp</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/10 bg-navy-900 text-center text-sm text-slate-500">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span class="font-bold text-slate-400">Auto PSIRT Cloud</span>
+            </div>
+            <p>&copy; 2026 Unimobilities株式会社. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Simple smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
