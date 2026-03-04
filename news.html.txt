@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ニュース・インサイト | Auto PSIRT Cloud</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0a0f1c',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        brand: {
+                            light: '#60a5fa',
+                            DEFAULT: '#3b82f6',
+                            dark: '#2563eb',
+                        },
+                        accent: {
+                            DEFAULT: '#06b6d4',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #60a5fa, #06b6d4);
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .line-clamp-3 {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;  
+            overflow: hidden;
+        }
+        /* AI Chat & Summary Animations */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .ai-animate { animation: fadeIn 0.4s ease-out forwards; }
+        .typing-dot { animation: typing 1.4s infinite ease-in-out both; }
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes typing { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+    </style>
+</head>
+<body class="antialiased selection:bg-brand selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-brand/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-accent/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Minimal Navigation -->
+    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-accent flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="index.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        <span class="hidden sm:inline">トップページへ戻る</span>
+                    </a>
+                    <a href="demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                        デモを予約する
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <div class="max-w-5xl mx-auto">
+            
+            <div class="mb-12 text-center">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-brand/30 bg-brand/10 text-brand-light text-xs font-semibold tracking-wide mb-4">
+                    <i data-lucide="newspaper" class="w-3.5 h-3.5"></i>
+                    News & Insights
+                </div>
+                <h1 class="text-3xl md:text-4xl font-bold tracking-tight mb-4">ニュース・インサイト</h1>
+                <p class="text-slate-400 max-w-2xl mx-auto">
+                    Auto PSIRT Cloudに関する最新情報や、自動車業界のセキュリティ（UN-R155、SBOM、VSOC等）に関する専門的なインサイトをお届けします。
+                </p>
+            </div>
+
+            <!-- フィルタータブ (見た目のみのモックアップ) -->
+            <div class="flex flex-wrap justify-center gap-2 mb-10">
+                <button class="px-5 py-2 rounded-full text-sm font-medium bg-brand text-white shadow-lg shadow-brand/20 transition-colors">
+                    すべて
+                </button>
+                <button class="px-5 py-2 rounded-full text-sm font-medium bg-navy-800 border border-white/10 text-slate-300 hover:bg-white/5 transition-colors">
+                    お知らせ
+                </button>
+                <button class="px-5 py-2 rounded-full text-sm font-medium bg-navy-800 border border-white/10 text-slate-300 hover:bg-white/5 transition-colors">
+                    インサイト (note)
+                </button>
+                <button class="px-5 py-2 rounded-full text-sm font-medium bg-navy-800 border border-white/10 text-slate-300 hover:bg-white/5 transition-colors">
+                    プレスリリース
+                </button>
+            </div>
+
+            <!-- 記事一覧グリッド -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                
+                <!-- 記事カード 1 (note連携想定) -->
+                <!-- noteの記事URLをhrefに設定します -->
+                <a href="https://note.com/your_account_name/your_article_url" target="_blank" rel="noopener noreferrer" class="glass-card rounded-2xl overflow-hidden group hover:-translate-y-1 hover:border-brand/50 transition-all duration-300 flex flex-col h-full bg-navy-900/60">
+                    <div class="relative h-48 overflow-hidden bg-navy-800 border-b border-white/5">
+                        <div class="absolute inset-0 bg-gradient-to-br from-brand/20 to-accent/20 group-hover:scale-105 transition-transform duration-500"></div>
+                        <div class="absolute inset-0 flex items-center justify-center opacity-50 group-hover:opacity-80 transition-opacity">
+                            <i data-lucide="shield" class="w-16 h-16 text-white"></i>
+                        </div>
+                        <div class="absolute top-3 left-3 flex gap-2">
+                            <span class="bg-accent/80 backdrop-blur-md text-white text-xs font-bold px-2.5 py-1 rounded">インサイト</span>
+                            <span class="bg-white/10 backdrop-blur-md border border-white/20 text-white text-xs font-medium px-2.5 py-1 rounded flex items-center gap-1">
+                                <i data-lucide="external-link" class="w-3 h-3"></i> note
+                            </span>
+                        </div>
+                    </div>
+                    <div class="p-6 flex flex-col flex-grow">
+                        <time class="text-xs text-slate-400 font-medium mb-3 flex items-center gap-1.5">
+                            <i data-lucide="calendar" class="w-3.5 h-3.5"></i> 2026.03.04
+                        </time>
+                        <h2 class="text-lg font-bold text-slate-100 mb-3 group-hover:text-brand-light transition-colors line-clamp-2">
+                            中小サプライヤーが陥る「UN-R155対応」3つの罠と、その解決策
+                        </h2>
+                        <p class="text-sm text-slate-400 leading-relaxed line-clamp-3 mb-4 flex-grow">
+                            巨大OEMから突然降ってくる脆弱性対応の要求。専任のセキュリティ担当者がいないTier N企業が、いかにしてこの荒波を乗り越えるべきか、具体的なステップを解説します。
+                        </p>
+                        <div class="flex items-center justify-between w-full mt-auto pt-4">
+                            <div class="flex items-center text-brand-light text-sm font-bold group-hover:gap-2 transition-all">
+                                続きを読む <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i>
+                            </div>
+                            <button onclick="event.preventDefault(); summarizeArticle(this, '中小サプライヤーが陥る「UN-R155対応」3つの罠と、その解決策')" class="flex items-center gap-1.5 px-3 py-1.5 bg-brand/10 hover:bg-brand/20 text-brand-light border border-brand/30 rounded-lg transition-colors text-xs font-bold z-10 relative">
+                                ✨ AI要約
+                            </button>
+                        </div>
+                        <div class="ai-summary-container hidden mt-4 p-3 bg-navy-800/90 rounded-lg border border-white/10 text-sm text-slate-300 relative z-10 shadow-inner"></div>
+                    </div>
+                </a>
+
+                <!-- 記事カード 2 (自社お知らせ想定) -->
+                <a href="#" class="glass-card rounded-2xl overflow-hidden group hover:-translate-y-1 hover:border-brand/50 transition-all duration-300 flex flex-col h-full bg-navy-900/60">
+                    <div class="relative h-48 overflow-hidden bg-navy-800 border-b border-white/5 flex items-center justify-center">
+                        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-brand to-accent flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
+                            <i data-lucide="rocket" class="w-8 h-8 text-white"></i>
+                        </div>
+                        <div class="absolute top-3 left-3">
+                            <span class="bg-brand/80 backdrop-blur-md text-white text-xs font-bold px-2.5 py-1 rounded">お知らせ</span>
+                        </div>
+                    </div>
+                    <div class="p-6 flex flex-col flex-grow">
+                        <time class="text-xs text-slate-400 font-medium mb-3 flex items-center gap-1.5">
+                            <i data-lucide="calendar" class="w-3.5 h-3.5"></i> 2026.03.01
+                        </time>
+                        <h2 class="text-lg font-bold text-slate-100 mb-3 group-hover:text-brand-light transition-colors line-clamp-2">
+                            Auto PSIRT Cloud β版の提供を開始しました
+                        </h2>
+                        <p class="text-sm text-slate-400 leading-relaxed line-clamp-3 mb-4 flex-grow">
+                            Tier N向け自動PSIRTプラットフォーム「Auto PSIRT Cloud」のβ版をリリースいたしました。現在、無料のデモ予約を受付中です。
+                        </p>
+                        <div class="flex items-center justify-between w-full mt-auto pt-4">
+                            <div class="flex items-center text-brand-light text-sm font-bold group-hover:gap-2 transition-all">
+                                続きを読む <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i>
+                            </div>
+                            <button onclick="event.preventDefault(); summarizeArticle(this, 'Auto PSIRT Cloud β版の提供を開始しました')" class="flex items-center gap-1.5 px-3 py-1.5 bg-brand/10 hover:bg-brand/20 text-brand-light border border-brand/30 rounded-lg transition-colors text-xs font-bold z-10 relative">
+                                ✨ AI要約
+                            </button>
+                        </div>
+                        <div class="ai-summary-container hidden mt-4 p-3 bg-navy-800/90 rounded-lg border border-white/10 text-sm text-slate-300 relative z-10 shadow-inner"></div>
+                    </div>
+                </a>
+
+                <!-- 記事カード 3 (note連携想定) -->
+                <a href="#" class="glass-card rounded-2xl overflow-hidden group hover:-translate-y-1 hover:border-brand/50 transition-all duration-300 flex flex-col h-full bg-navy-900/60">
+                    <div class="relative h-48 overflow-hidden bg-navy-800 border-b border-white/5">
+                        <div class="absolute inset-0 bg-gradient-to-bl from-purple-500/20 to-brand/20 group-hover:scale-105 transition-transform duration-500"></div>
+                        <div class="absolute inset-0 flex items-center justify-center opacity-50 group-hover:opacity-80 transition-opacity">
+                            <i data-lucide="database" class="w-16 h-16 text-white"></i>
+                        </div>
+                        <div class="absolute top-3 left-3 flex gap-2">
+                            <span class="bg-accent/80 backdrop-blur-md text-white text-xs font-bold px-2.5 py-1 rounded">インサイト</span>
+                            <span class="bg-white/10 backdrop-blur-md border border-white/20 text-white text-xs font-medium px-2.5 py-1 rounded flex items-center gap-1">
+                                <i data-lucide="external-link" class="w-3 h-3"></i> note
+                            </span>
+                        </div>
+                    </div>
+                    <div class="p-6 flex flex-col flex-grow">
+                        <time class="text-xs text-slate-400 font-medium mb-3 flex items-center gap-1.5">
+                            <i data-lucide="calendar" class="w-3.5 h-3.5"></i> 2026.02.20
+                        </time>
+                        <h2 class="text-lg font-bold text-slate-100 mb-3 group-hover:text-brand-light transition-colors line-clamp-2">
+                            SBOM（ソフトウェア部品表）は、なぜExcel管理では破綻するのか？
+                        </h2>
+                        <p class="text-sm text-slate-400 leading-relaxed line-clamp-3 mb-4 flex-grow">
+                            多くの部品メーカーがとりあえずExcelで作成しているSBOM。しかし、日々の脆弱性チェックを人力で行うことの限界と、自動化ツール導入のメリットについて考察します。
+                        </p>
+                        <div class="flex items-center justify-between w-full mt-auto pt-4">
+                            <div class="flex items-center text-brand-light text-sm font-bold group-hover:gap-2 transition-all">
+                                続きを読む <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i>
+                            </div>
+                            <button onclick="event.preventDefault(); summarizeArticle(this, 'SBOM（ソフトウェア部品表）は、なぜExcel管理では破綻するのか？')" class="flex items-center gap-1.5 px-3 py-1.5 bg-brand/10 hover:bg-brand/20 text-brand-light border border-brand/30 rounded-lg transition-colors text-xs font-bold z-10 relative">
+                                ✨ AI要約
+                            </button>
+                        </div>
+                        <div class="ai-summary-container hidden mt-4 p-3 bg-navy-800/90 rounded-lg border border-white/10 text-sm text-slate-300 relative z-10 shadow-inner"></div>
+                    </div>
+                </a>
+
+            </div>
+
+            <!-- ページネーション (見た目のみのモックアップ) -->
+            <div class="mt-12 flex justify-center items-center gap-2">
+                <button class="w-10 h-10 rounded-lg border border-white/10 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/5 transition-colors cursor-not-allowed opacity-50">
+                    <i data-lucide="chevron-left" class="w-5 h-5"></i>
+                </button>
+                <button class="w-10 h-10 rounded-lg bg-brand border border-brand text-white font-bold flex items-center justify-center">
+                    1
+                </button>
+                <button class="w-10 h-10 rounded-lg border border-white/10 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/5 transition-colors font-medium">
+                    2
+                </button>
+                <span class="text-slate-500 mx-1">...</span>
+                <button class="w-10 h-10 rounded-lg border border-white/10 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/5 transition-colors">
+                    <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- AI Chat Widget -->
+    <div id="ai-chat-widget" class="fixed bottom-6 right-6 z-50 flex flex-col items-end pointer-events-none">
+        <!-- Chat Window -->
+        <div id="ai-chat-window" class="hidden mb-4 w-80 sm:w-96 glass-card bg-navy-900/95 border border-brand/30 rounded-2xl shadow-[0_0_30px_rgba(59,130,246,0.2)] overflow-hidden flex-col pointer-events-auto transform transition-all duration-300 origin-bottom-right scale-95 opacity-0">
+            <!-- Header -->
+            <div class="bg-gradient-to-r from-navy-800 to-navy-700 p-4 border-b border-white/10 flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-full bg-brand/20 flex items-center justify-center border border-brand/40">
+                        <i data-lucide="bot" class="w-5 h-5 text-brand-light"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-sm text-white">セキュリティ AIボット</h3>
+                        <p class="text-[10px] text-emerald-400 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> オンライン</p>
+                    </div>
+                </div>
+                <button onclick="toggleChat()" class="text-slate-400 hover:text-white transition-colors p-1">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            
+            <!-- Messages Area -->
+            <div id="ai-chat-messages" class="p-4 h-80 overflow-y-auto flex flex-col gap-4 text-sm scroll-smooth">
+                <!-- Initial Message -->
+                <div class="flex gap-3 w-5/6">
+                    <div class="w-6 h-6 rounded-full bg-brand/20 flex items-center justify-center shrink-0 border border-brand/40 mt-1">
+                        <i data-lucide="bot" class="w-3.5 h-3.5 text-brand-light"></i>
+                    </div>
+                    <div class="bg-navy-800 border border-white/5 p-3 rounded-2xl rounded-tl-sm text-slate-200">
+                        こんにちは！Auto PSIRT CloudのAIコンシェルジュです。自動車業界のセキュリティガイドラインや専門用語について、分からないことがあれば何でも聞いてください✨<br><br>
+                        <div class="flex flex-col gap-2 mt-3">
+                            <button onclick="sendSuggestedMessage('UN-R155とは何ですか？')" class="text-left text-xs bg-brand/10 hover:bg-brand/20 border border-brand/30 text-brand-light py-1.5 px-3 rounded-lg transition-colors">「UN-R155とは何ですか？」</button>
+                            <button onclick="sendSuggestedMessage('SBOMの作り方を教えて')" class="text-left text-xs bg-brand/10 hover:bg-brand/20 border border-brand/30 text-brand-light py-1.5 px-3 rounded-lg transition-colors">「SBOMの作り方を教えて」</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="p-3 border-t border-white/10 bg-navy-800/50">
+                <form id="ai-chat-form" onsubmit="handleChatSubmit(event)" class="flex gap-2 relative">
+                    <input type="text" id="ai-chat-input" placeholder="質問を入力してください..." class="w-full bg-navy-900 border border-white/10 rounded-full py-2.5 pl-4 pr-12 text-sm text-white focus:outline-none focus:border-brand/50 focus:ring-1 focus:ring-brand/50 transition-all">
+                    <button type="submit" class="absolute right-1.5 top-1.5 w-8 h-8 bg-brand hover:bg-brand-dark rounded-full flex items-center justify-center text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed" id="ai-chat-submit">
+                        <i data-lucide="send" class="w-4 h-4 ml-0.5"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Chat Trigger Button -->
+        <button onclick="toggleChat()" id="ai-chat-trigger" class="w-14 h-14 bg-gradient-to-r from-brand to-accent hover:from-brand-dark hover:to-brand rounded-full shadow-[0_0_20px_rgba(59,130,246,0.4)] flex items-center justify-center text-white transition-transform hover:scale-110 pointer-events-auto relative">
+            <i data-lucide="message-circle-question" class="w-6 h-6"></i>
+            <span class="absolute -top-1 -right-1 flex h-4 w-4">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-4 w-4 bg-red-500 border-2 border-navy-900"></span>
+            </span>
+        </button>
+    </div>
+
+    <!-- Footer -->
+    <footer class="py-6 border-t border-white/5 text-center text-sm text-slate-500 mt-auto bg-navy-900/50">
+        <div class="max-w-7xl mx-auto px-4">
+            <p>&copy; 2026 Unimobilities株式会社. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Gemini API Configuration
+        const apiKey = "";
+        
+        async function fetchGeminiResponse(prompt, systemInstruction) {
+            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }],
+                systemInstruction: { parts: [{ text: systemInstruction }] }
+            };
+
+            let retries = 5;
+            let delay = 1000;
+            
+            while (retries > 0) {
+                try {
+                    const response = await fetch(endpoint, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (!response.ok) throw new Error(`API Error: ${response.status}`);
+                    const result = await response.json();
+                    return result.candidates[0].content.parts[0].text;
+                } catch (e) {
+                    retries--;
+                    if (retries === 0) throw e;
+                    await new Promise(r => setTimeout(r, delay));
+                    delay *= 2;
+                }
+            }
+        }
+
+        // --- Feature 1: AI Article Summary ---
+        async function summarizeArticle(button, title) {
+            const container = button.parentElement.nextElementSibling;
+            
+            // UI Update: Show loading state
+            if (container.classList.contains('hidden')) {
+                container.classList.remove('hidden');
+            }
+            container.classList.add('ai-animate');
+            container.innerHTML = `
+                <div class="flex items-center gap-2 mb-2 text-brand-light font-bold text-xs">
+                    <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> AIが要約を作成中...
+                </div>
+                <div class="flex gap-1 items-center py-2">
+                    <div class="w-2 h-2 bg-brand/60 rounded-full typing-dot"></div>
+                    <div class="w-2 h-2 bg-brand/60 rounded-full typing-dot"></div>
+                    <div class="w-2 h-2 bg-brand/60 rounded-full typing-dot"></div>
+                </div>
+            `;
+            lucide.createIcons();
+            button.disabled = true;
+            button.classList.add('opacity-50');
+
+            try {
+                // Call Gemini API
+                const prompt = `自動車業界のセキュリティに関する以下の記事タイトルから内容を推測し、忙しい部品メーカーの担当者向けに、重要なポイントを3行で分かりやすく要約してください。\nタイトル：「${title}」\n条件：各行は「・」で始め、専門用語はできるだけ避けるか補足してください。`;
+                const systemInstruction = "あなたはB2B SaaS企業の有能なコンテンツ要約アシスタントです。";
+                
+                const text = await fetchGeminiResponse(prompt, systemInstruction);
+                
+                // Format and display result
+                const formattedText = text.replace(/\n/g, '<br>');
+                container.innerHTML = `
+                    <div class="flex justify-between items-start mb-2 border-b border-white/10 pb-2">
+                        <div class="text-brand-light font-bold text-xs flex items-center gap-1.5">
+                            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> AI要約（推測）
+                        </div>
+                    </div>
+                    <div class="leading-relaxed text-slate-200">${formattedText}</div>
+                `;
+            } catch (error) {
+                container.innerHTML = '<div class="text-red-400 text-xs flex items-center gap-1"><i data-lucide="alert-circle" class="w-3.5 h-3.5"></i> 要約の生成に失敗しました。後でもう一度お試しください。</div>';
+            } finally {
+                lucide.createIcons();
+                button.disabled = false;
+                button.classList.remove('opacity-50');
+            }
+        }
+
+        // --- Feature 2: AI Security Chatbot ---
+        const chatWindow = document.getElementById('ai-chat-window');
+        const chatMessages = document.getElementById('ai-chat-messages');
+        const chatInput = document.getElementById('ai-chat-input');
+        const chatSubmit = document.getElementById('ai-chat-submit');
+        const notificationDot = document.querySelector('#ai-chat-trigger span');
+
+        function toggleChat() {
+            if (chatWindow.classList.contains('hidden')) {
+                // Open
+                chatWindow.classList.remove('hidden');
+                // Small delay for transition
+                setTimeout(() => {
+                    chatWindow.classList.remove('scale-95', 'opacity-0');
+                    chatWindow.classList.add('scale-100', 'opacity-100');
+                }, 10);
+                if(notificationDot) notificationDot.remove(); // Hide unread notification
+                chatInput.focus();
+            } else {
+                // Close
+                chatWindow.classList.remove('scale-100', 'opacity-100');
+                chatWindow.classList.add('scale-95', 'opacity-0');
+                setTimeout(() => {
+                    chatWindow.classList.add('hidden');
+                }, 300);
+            }
+        }
+
+        function addMessageToChat(message, isUser = false) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `flex gap-3 ${isUser ? 'w-full justify-end' : 'w-5/6'} ai-animate`;
+            
+            if (isUser) {
+                msgDiv.innerHTML = `
+                    <div class="bg-brand text-white p-3 rounded-2xl rounded-tr-sm text-sm border border-brand-dark shadow-md break-words max-w-[85%]">
+                        ${message}
+                    </div>
+                `;
+            } else {
+                msgDiv.innerHTML = `
+                    <div class="w-6 h-6 rounded-full bg-brand/20 flex items-center justify-center shrink-0 border border-brand/40 mt-1">
+                        <i data-lucide="bot" class="w-3.5 h-3.5 text-brand-light"></i>
+                    </div>
+                    <div class="bg-navy-800 border border-white/5 p-3 rounded-2xl rounded-tl-sm text-slate-200 text-sm break-words leading-relaxed">
+                        ${message.replace(/\n/g, '<br>')}
+                    </div>
+                `;
+            }
+            
+            chatMessages.appendChild(msgDiv);
+            lucide.createIcons();
+            chatMessages.scrollTop = chatMessages.scrollHeight; // Scroll to bottom
+        }
+
+        function showTypingIndicator() {
+            const id = 'typing-' + Date.now();
+            const msgDiv = document.createElement('div');
+            msgDiv.id = id;
+            msgDiv.className = `flex gap-3 w-5/6 ai-animate`;
+            msgDiv.innerHTML = `
+                <div class="w-6 h-6 rounded-full bg-brand/20 flex items-center justify-center shrink-0 border border-brand/40 mt-1">
+                    <i data-lucide="bot" class="w-3.5 h-3.5 text-brand-light"></i>
+                </div>
+                <div class="bg-navy-800 border border-white/5 py-3 px-4 rounded-2xl rounded-tl-sm flex gap-1 items-center h-[46px]">
+                    <div class="w-1.5 h-1.5 bg-brand/60 rounded-full typing-dot"></div>
+                    <div class="w-1.5 h-1.5 bg-brand/60 rounded-full typing-dot"></div>
+                    <div class="w-1.5 h-1.5 bg-brand/60 rounded-full typing-dot"></div>
+                </div>
+            `;
+            chatMessages.appendChild(msgDiv);
+            lucide.createIcons();
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            return id;
+        }
+
+        async function processChatRequest(userMessage) {
+            addMessageToChat(userMessage, true);
+            const typingId = showTypingIndicator();
+            
+            chatInput.disabled = true;
+            chatSubmit.disabled = true;
+
+            try {
+                const prompt = `ユーザーからの質問: "${userMessage}"\n\n自動車サプライヤー向けPSIRTツールのAIアシスタントとして、この質問に回答してください。簡潔で分かりやすく、親しみやすいトーンで答えてください。`;
+                const systemInstruction = "あなたは自動車業界のサイバーセキュリティ規格（UN-R155など）やSBOMに詳しい、Auto PSIRT Cloudの公式AIアシスタントです。回答はマークダウンを使わず、プレーンテキストと改行だけで読みやすく構成してください。";
+                
+                const responseText = await fetchGeminiResponse(prompt, systemInstruction);
+                
+                document.getElementById(typingId).remove();
+                addMessageToChat(responseText, false);
+            } catch (error) {
+                document.getElementById(typingId).remove();
+                addMessageToChat("申し訳ありません、サーバーとの通信エラーが発生しました。しばらく経ってから再度お試しください🙏", false);
+            } finally {
+                chatInput.disabled = false;
+                chatSubmit.disabled = false;
+                chatInput.focus();
+            }
+        }
+
+        function handleChatSubmit(e) {
+            e.preventDefault();
+            const message = chatInput.value.trim();
+            if (!message) return;
+            chatInput.value = '';
+            processChatRequest(message);
+        }
+
+        function sendSuggestedMessage(message) {
+            processChatRequest(message);
+        }
+
+    </script>
+</body>
+</html>
