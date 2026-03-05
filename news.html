@@ -135,6 +135,35 @@
             <!-- 記事一覧グリッド -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
+                <!-- 新しい記事カード (SBOM完全ガイド) -->
+                <a href="/psirt/sbom-complete-guide/" class="glass-card rounded-2xl overflow-hidden group hover:-translate-y-1 hover:border-brand/50 transition-all duration-300 flex flex-col h-full bg-navy-900/60">
+                    <div class="relative h-48 overflow-hidden bg-navy-800 border-b border-white/5">
+                        <div class="absolute inset-0 bg-gradient-to-br from-brand/20 to-accent/20 group-hover:scale-105 transition-transform duration-500"></div>
+                        <div class="absolute inset-0 flex items-center justify-center opacity-50 group-hover:opacity-80 transition-opacity">
+                            <i data-lucide="table" class="w-16 h-16 text-white"></i>
+                        </div>
+                        <div class="absolute top-3 left-3 flex gap-2">
+                            <span class="bg-accent/80 backdrop-blur-md text-white text-xs font-bold px-2.5 py-1 rounded">インサイト</span>
+                        </div>
+                    </div>
+                    <div class="p-6 flex flex-col flex-grow">
+                        <time class="text-xs text-slate-400 font-medium mb-3 flex items-center gap-1.5">
+                            <i data-lucide="calendar" class="w-3.5 h-3.5"></i> 2026.03.05
+                        </time>
+                        <h2 class="text-lg font-bold text-slate-100 mb-3 group-hover:text-brand-light transition-colors line-clamp-2">
+                            SBOM完全ガイド（SPDX/CycloneDX/Excel運用・提出と機密の現実解）
+                        </h2>
+                        <p class="text-sm text-slate-400 leading-relaxed line-clamp-3 mb-4 flex-grow">
+                            「SPDXじゃないとダメ？」いいえ、最初はExcelで構いません。中小サプライヤー向けのSBOM作成からOEM提出時の機密対策まで徹底解説します。
+                        </p>
+                        <div class="flex items-center justify-between w-full mt-auto pt-4">
+                            <div class="flex items-center text-brand-light text-sm font-bold group-hover:gap-2 transition-all">
+                                続きを読む <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+                
                 <!-- 新しい記事カード (PSIRTとは) -->
                 <a href="/psirt/what-is-psirt/" class="glass-card rounded-2xl overflow-hidden group hover:-translate-y-1 hover:border-brand/50 transition-all duration-300 flex flex-col h-full bg-navy-900/60">
                     <div class="relative h-48 overflow-hidden bg-navy-800 border-b border-white/5">
@@ -583,5 +612,6 @@
     </script>
 </body>
 </html>
+
 
 
