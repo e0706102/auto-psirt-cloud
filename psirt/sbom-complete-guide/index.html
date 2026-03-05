@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEOメタタグ -->
+    <title>SBOM完全ガイド：SPDX/CycloneDX/Excel運用・提出と機密の現実解 | Auto PSIRT Cloud</title>
+    <meta name="description" content="自動車サプライヤー向けSBOMの現実的な運用方法。SPDXとCycloneDXの違い、Excelからの始め方、OEM提出時の機密対策などを実務目線で徹底解説します。">
+    <meta name="keywords" content="SBOM, 自動車セキュリティ, SPDX, CycloneDX, Excel, VEX, 脆弱性管理, 提出">
+    <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/psirt/sbom-complete-guide/">
+    
+    <!-- OGPタグ (SNSシェア用) -->
+    <meta property="og:title" content="SBOM完全ガイド：SPDX/CycloneDX/Excel運用・提出と機密の現実解">
+    <meta property="og:description" content="自動車サプライヤー向けSBOMの現実的な運用方法。Excelからの始め方、OEM提出時の機密対策などを徹底解説。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/psirt/sbom-complete-guide/">
+    <meta property="og:site_name" content="Auto PSIRT Cloud">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0a0f1c',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        brand: {
+                            light: '#60a5fa',
+                            DEFAULT: '#3b82f6',
+                            dark: '#2563eb',
+                        },
+                        accent: {
+                            DEFAULT: '#06b6d4',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #60a5fa, #06b6d4);
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* 記事用カスタムスタイル */
+        .prose h2 {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-top: 3rem;
+            color: #f8fafc;
+        }
+        .prose h3 {
+            color: #e2e8f0;
+            margin-top: 2rem;
+        }
+        .prose a {
+            color: #60a5fa;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .prose a:hover {
+            border-bottom-color: #60a5fa;
+        }
+        .prose strong {
+            color: #f8fafc;
+            background: linear-gradient(transparent 60%, rgba(59, 130, 246, 0.3) 40%);
+        }
+        .related-box {
+            background: rgba(30, 41, 59, 0.6);
+            border-left: 4px solid #3b82f6;
+            padding: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-brand selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-brand/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-accent/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-accent flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="/news.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        ニュース一覧へ戻る
+                    </a>
+                    <a href="/demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                        相談 or デモ予約
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <article class="max-w-4xl mx-auto">
+            
+            <!-- パンくずリスト -->
+            <nav class="flex text-sm text-slate-400 mb-8" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/index.html" class="hover:text-white transition-colors">ホーム</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <a href="/news.html" class="hover:text-white transition-colors">ニュース・インサイト</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <span class="text-slate-500 truncate max-w-[200px] sm:max-w-none">SBOM完全ガイド</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- 記事ヘッダー -->
+            <header class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-accent/20 border border-accent/30 text-accent text-xs font-bold px-3 py-1 rounded-full">インサイト</span>
+                    <time class="text-slate-400 text-sm flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> 2026.03.05
+                    </time>
+                </div>
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
+                    SBOM完全ガイド（SPDX/CycloneDX/Excel運用・提出と機密の現実解）
+                </h1>
+                
+                <!-- 導入文 -->
+                <div class="text-lg text-slate-300 leading-relaxed p-6 bg-navy-800/50 rounded-2xl border border-white/5">
+                    <p>SBOMという言葉を、いま自動車サプライヤーが避けて通るのは難しくなっています。OEMや取引先から「SBOMを出してほしい」「OSSの構成を示してほしい」「脆弱性照会に答えられる形にしてほしい」と言われる場面が増えているからです。</p>
+                    <p class="mt-4">背景には、車両メーカー側がUN-R155のもとで開発・生産・出荷後までサイバーセキュリティを継続管理し、新たな脅威や脆弱性に対応する必要があること、そしてISO/SAE 21434がE/Eシステムをライフサイクル全体で扱う枠組みを示していることがあります。日本でもJAMA/JAPIAがサプライチェーン全体のセキュリティレベル向上を前提にガイドラインとチェックシートを整備しており、部品メーカー側にも説明可能な管理が求められやすい状況です。</p>
+                </div>
+            </header>
+
+            <!-- 記事本文 -->
+            <div class="glass-card p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl bg-navy-900/80 mb-16">
+                <div class="prose prose-invert prose-slate prose-lg max-w-none">
+                    
+                    <h2>SBOMとは何か</h2>
+                    <p>では、SBOMとは何か。CISAはSBOMを、<strong>ソフトウェアを構成するコンポーネントの入れ子状のインベントリ、つまり“材料表”</strong>と説明しています。重要なのは、SBOMが単なる提出書類ではなく、ソフトウェア部品の透明性を確保し、サプライチェーンリスクや脆弱性管理を前に進めるための土台だという点です。</p>
+                    <p>SBOMがあると、ある脆弱性が公開されたときに「その部品は自社製品のどこに入っているか」を追いやすくなります。逆にSBOMがないと、毎回ゼロから調査が始まり、OEM照会にも監査にも時間がかかります。</p>
+
+                    <h2>脆弱性管理とつながって初めて価値を持つ</h2>
+                    <p>自動車サプライヤーの現場では、SBOMはしばしば「標準フォーマットの提出物」としてだけ語られます。しかし本質はそこではありません。SBOMが本当に価値を持つのは、脆弱性管理とつながったときです。</p>
+                    <p>CISAはVEXを、ある製品が既知の脆弱性の影響を受けるかどうかを示すための仕組みとして位置づけています。つまり<strong>SBOMが「何が入っているか」を示し、VEXが「実際に影響を受けるか」を示す。</strong>自動車サプライヤー実務では、この2つがそろって初めて、OEMに対して「影響あり／なし」を根拠付きで説明しやすくなります。</p>
+
+                    <div class="related-box">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="link" class="w-4 h-4"></i> 関連記事</div>
+                        <ul class="text-base m-0 list-none pl-0 space-y-2">
+                            <li><a href="/psirt/what-is-psirt/">PSIRTとは（自動車サプライヤー版）：OEM要求にどう答えるか</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>SPDXとCycloneDXの選び方</h2>
+                    <p>SBOMのフォーマットとして、まず押さえるべきなのがSPDXとCycloneDXです。SPDXはLinux Foundation配下のオープン標準で、SPDXサイトはこれをISO/IEC 5962:2021の国際オープン標準として位置づけています。一方、CycloneDXはOWASP発のBOM仕様で、CycloneDX v1.6はEcma International標準となっており、ソフトウェアだけでなくサービス、ハードウェア、ファームウェア、AI/ML、暗号など幅広いxBOMをサポートすると説明されています。</p>
+                    
+                    <p>実務上のざっくりした見分け方をすると、</p>
+                    <ul>
+                        <li><strong>SPDX：</strong>標準文書・ライセンス・ソフトウェア部品表の整備に強い</li>
+                        <li><strong>CycloneDX：</strong>セキュリティ運用や自動連携に寄せやすい</li>
+                    </ul>
+                    <p>と考えると分かりやすいです。これは、CycloneDX公式がSBOMの能力として、依存関係や脆弱性管理、ライフサイクル全体の透明性、運用システムとの統合を前面に出しているためです。</p>
+                    <p>ただし、どちらが絶対に正しいという話ではありません。契約先が指定しているならそれに合わせる、指定がないなら自社の運用とツール連携で選ぶ、が現実的です。前者の厳密性や相互運用を重視するならSPDX、脆弱性管理やセキュリティ運用への接続を早く回したいならCycloneDX、という考え方は十分実務的です。</p>
+
+                    <h2>最初はExcelで始めて構わない</h2>
+                    <p>ここで、多くの中小サプライヤーが止まります。<br>「標準フォーマットじゃないと意味がないのでは？」</p>
+                    <p class="text-xl border-l-4 border-brand pl-4 font-bold text-white bg-brand/5 py-4 my-6">
+                        結論から言うと、最初はExcelで始めて構いません。
+                    </p>
+                    <p>CISAが強調しているのは、SBOMをサプライチェーン透明性とリスク管理の基盤として運用することです。最初から完璧な自動生成にこだわって着手が遅れるより、まずは主要製品について、部品名・バージョン・入手元・製品バージョンとの対応関係を整理する方が価値があります。</p>
+                    <p>自動車サプライヤーの現場で重要なのは、“SPDXファイルを持っていること”よりも、<strong>“CVEが出たときに自社製品への影響をたどれること”</strong>です。</p>
+
+                    <h2>Excelから始める場合の最低限の項目</h2>
+                    <p>Excelから始めるなら、最低限そろえるべき項目は次の通りです。</p>
+                    <ul>
+                        <li>製品名</li>
+                        <li>製品バージョン</li>
+                        <li>コンポーネント名</li>
+                        <li>コンポーネントのバージョン</li>
+                        <li>OSSか商用か</li>
+                        <li>供給元または取得元</li>
+                        <li>利用箇所（どのモジュール・ECU・機能で使うか）</li>
+                        <li>備考（ビルド条件、機能無効化、代替実装など）</li>
+                    </ul>
+                    <p>この一覧があるだけでも、OEMからの照会に対して「その部品は使っている」「ただしこの機能では呼び出していない」などの初動判断がかなりしやすくなります。SBOMの理想形は機械可読ですが、最初の目的は社内で説明可能になることです。</p>
+
+                    <h2>SBOMを更新するタイミング</h2>
+                    <p>次に重要なのが、SBOMをいつ更新するかです。ここが曖昧だと、作った瞬間に陳腐化します。最低限、更新タイミングは以下の4つで揃えるのがよいです。</p>
+                    <ol>
+                        <li>新製品リリース時</li>
+                        <li>マイナーバージョン更新時</li>
+                        <li>外部ライブラリ更新時</li>
+                        <li>セキュリティパッチ適用時</li>
+                    </ol>
+                    <p>ISO/SAE 21434がライフサイクル全体を対象にしていることを踏まえると、SBOMも“開発時だけの資料”ではなく、運用・保守フェーズまで追いかける前提で持つべきです。出荷時点のSBOMと、保守後のSBOMが混ざると、脆弱性照会で事故が起きやすくなります。</p>
+
+                    <h2>提出時の機密対策の現実解</h2>
+                    <p>提出時の機密対策も、自動車サプライヤーにとって大きな論点です。SBOMは便利ですが、開示範囲を誤ると設計情報に近い情報まで見えてしまいます。CISAもSBOMの共有や配布は役割や状況に応じて考えるべきだとしており、誰に、どの粒度で、どの形式で共有するかは運用設計の問題です。</p>
+                    <p>したがって、現実的には</p>
+                    <ul>
+                        <li>フルSBOMを社内保管</li>
+                        <li>OEMには必要範囲のサブセットのみ提出</li>
+                        <li>機密性が高い備考は別管理</li>
+                        <li>契約・NDAに合わせて開示粒度を切る</li>
+                    </ul>
+                    <p>という整理が実務向きです。<strong>SBOMを作ることと、全部を開示することは同義ではありません。</strong></p>
+
+                    <h2>脆弱性対応フローとの連携</h2>
+                    <p>SBOMを運用に乗せるとき、最も効果が出るのは脆弱性対応フローとつなげた瞬間です。例えばNVDやJVNにCVEが出たとき、まずSBOMで該当コンポーネントの有無を確認し、次にVEXや追加評価で影響あり／なしを判断する、という流れにすると、ノイズが大きく減ります。</p>
+                    <p>CISAも、SBOMが“どこに潜在的リスクがあるか”を示し、VEXが“実際に影響しているか”を示すと説明しています。自動車業界では、この2段階があるだけでOEMとの会話がかなり変わります。単なる「CVEがありました」ではなく、「該当バージョンは含むが機能未使用で影響なし」「対象コンポーネントがあるので改修計画中」といった説明ができるからです。</p>
+
+                    <div class="related-box">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="link" class="w-4 h-4"></i> 関連記事</div>
+                        <ul class="text-base m-0 list-none pl-0 space-y-2">
+                            <li><a href="/psirt/automotive-supplier-guide/">自動車サプライヤーのPSIRT完全ガイド：UN-R155/ISO 21434対応を兼務で回す方法</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>30/60/90日で始めるロードマップ</h2>
+                    <p>では、どこから始めるか。おすすめは30/60/90日で考えることです。</p>
+                    
+                    <ul>
+                        <li><strong>最初の30日：</strong><br>トップ3製品だけでもよいので、ExcelでSBOMを作る。製品バージョンとコンポーネントバージョンの対応を明確にする。</li>
+                        <li><strong>次の60日：</strong><br>脆弱性情報との突合を始める。CVEが出たら誰が確認し、どう記録するかを決める。</li>
+                        <li><strong>90日まで：</strong><br>SPDXまたはCycloneDXへの移行方針を決める。OEM提出用と社内管理用の粒度も整理する。</li>
+                    </ul>
+                    <p>この順番なら、最初から完璧な標準対応を目指さずに、現場で回るSBOM運用へ持っていけます。JAMA/JAPIAの自己評価運用や、UN-R155/ISO21434のライフサイクル志向とも整合的です。</p>
+
+                    <h2>まとめ：運用につながるSBOMを</h2>
+                    <p>最後に、SBOMは「作成して終わり」の資料ではありません。</p>
+                    <p>本当の価値は、脆弱性対応の初動を速くし、OEMへの説明責任を支え、監査で再現可能な状態を作ることにあります。SPDXかCycloneDXかで悩み続けるより、まずは自社で使っている部品を把握し、更新し、影響判定につなげるところから始める方が早いです。</p>
+                    <p>自動車サプライヤーの現実解は、最初から満点のSBOMではなく、運用につながるSBOMです。</p>
+
+                </div>
+            </div>
+
+            <!-- CTA Section -->
+            <div class="glass-card rounded-3xl p-8 md:p-12 text-center border-t-4 border-t-brand bg-navy-800/80 shadow-[0_0_40px_-10px_rgba(59,130,246,0.3)]">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">既存のExcel部品表を、そのままツールに読み込ませませんか？</h2>
+                <p class="text-slate-300 mb-8 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+                    「SBOMの作り方が分からない」「手元にあるExcelの部品表で十分なのか不安」という方は、まずはオンライン無料相談をご活用ください。<br><br>
+                    <strong>Auto PSIRT Cloud</strong>なら、自由形式のExcelをそのままアップロードするだけで、日々の脆弱性チェックを全自動化できます。
+                </p>
+                <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-white bg-brand hover:bg-brand-dark transition-all duration-300 shadow-lg shadow-brand/20 w-full sm:w-auto hover:-translate-y-1">
+                    <i data-lucide="calendar" class="w-5 h-5"></i>
+                    【無料】オンライン相談 ＆ 画面デモを予約する
+                </a>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/5 text-center text-sm text-slate-500 mt-auto bg-navy-900/80">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span class="font-bold text-slate-400">Auto PSIRT Cloud</span>
+            </div>
+            <p>&copy; 2026 Unimobilities株式会社. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
