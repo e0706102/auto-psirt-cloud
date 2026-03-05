@@ -94,7 +94,7 @@
                         <span class="hidden sm:inline">トップページへ戻る</span>
                     </a>
                     <a href="demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
-                        デモを予約する
+                        相談 or デモ予約
                     </a>
                 </div>
             </div>
@@ -134,66 +134,8 @@
 
             <!-- 記事一覧グリッド -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-
-                <!-- 新しい記事カード (SBOM完全ガイド) -->
-                <a href="/psirt/sbom-complete-guide/" class="glass-card rounded-2xl overflow-hidden group hover:-translate-y-1 hover:border-brand/50 transition-all duration-300 flex flex-col h-full bg-navy-900/60">
-                    <div class="relative h-48 overflow-hidden bg-navy-800 border-b border-white/5">
-                        <div class="absolute inset-0 bg-gradient-to-br from-brand/20 to-accent/20 group-hover:scale-105 transition-transform duration-500"></div>
-                        <div class="absolute inset-0 flex items-center justify-center opacity-50 group-hover:opacity-80 transition-opacity">
-                            <i data-lucide="table" class="w-16 h-16 text-white"></i>
-                        </div>
-                        <div class="absolute top-3 left-3 flex gap-2">
-                            <span class="bg-accent/80 backdrop-blur-md text-white text-xs font-bold px-2.5 py-1 rounded">インサイト</span>
-                        </div>
-                    </div>
-                    <div class="p-6 flex flex-col flex-grow">
-                        <time class="text-xs text-slate-400 font-medium mb-3 flex items-center gap-1.5">
-                            <i data-lucide="calendar" class="w-3.5 h-3.5"></i> 2026.03.05
-                        </time>
-                        <h2 class="text-lg font-bold text-slate-100 mb-3 group-hover:text-brand-light transition-colors line-clamp-2">
-                            SBOM完全ガイド（SPDX/CycloneDX/Excel運用・提出と機密の現実解）
-                        </h2>
-                        <p class="text-sm text-slate-400 leading-relaxed line-clamp-3 mb-4 flex-grow">
-                            「SPDXじゃないとダメ？」いいえ、最初はExcelで構いません。中小サプライヤー向けのSBOM作成からOEM提出時の機密対策まで徹底解説します。
-                        </p>
-                        <div class="flex items-center justify-between w-full mt-auto pt-4">
-                            <div class="flex items-center text-brand-light text-sm font-bold group-hover:gap-2 transition-all">
-                                続きを読む <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i>
-                            </div>
-                        </div>
-                    </div>
-                </a>
                 
-                <!-- 新しい記事カード (PSIRTとは) -->
-                <a href="/psirt/what-is-psirt/" class="glass-card rounded-2xl overflow-hidden group hover:-translate-y-1 hover:border-brand/50 transition-all duration-300 flex flex-col h-full bg-navy-900/60">
-                    <div class="relative h-48 overflow-hidden bg-navy-800 border-b border-white/5">
-                        <div class="absolute inset-0 bg-gradient-to-br from-brand/20 to-accent/20 group-hover:scale-105 transition-transform duration-500"></div>
-                        <div class="absolute inset-0 flex items-center justify-center opacity-50 group-hover:opacity-80 transition-opacity">
-                            <i data-lucide="help-circle" class="w-16 h-16 text-white"></i>
-                        </div>
-                        <div class="absolute top-3 left-3 flex gap-2">
-                            <span class="bg-accent/80 backdrop-blur-md text-white text-xs font-bold px-2.5 py-1 rounded">インサイト</span>
-                        </div>
-                    </div>
-                    <div class="p-6 flex flex-col flex-grow">
-                        <time class="text-xs text-slate-400 font-medium mb-3 flex items-center gap-1.5">
-                            <i data-lucide="calendar" class="w-3.5 h-3.5"></i> 2026.03.05
-                        </time>
-                        <h2 class="text-lg font-bold text-slate-100 mb-3 group-hover:text-brand-light transition-colors line-clamp-2">
-                            PSIRTとは（自動車サプライヤー版）：OEM要求にどう答えるか
-                        </h2>
-                        <p class="text-sm text-slate-400 leading-relaxed line-clamp-3 mb-4 flex-grow">
-                            SOC/VSOCとの違いやOEMが本当に期待していること、兼務でもできる最小構成での立ち上げ方を実務目線で解説します。
-                        </p>
-                        <div class="flex items-center justify-between w-full mt-auto pt-4">
-                            <div class="flex items-center text-brand-light text-sm font-bold group-hover:gap-2 transition-all">
-                                続きを読む <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i>
-                            </div>
-                        </div>
-                    </div>
-                </a>
-
-                <!-- 新しい記事カード (PSIRT完全ガイド) -->
+                <!-- 記事カード 1 (PSIRT完全ガイド) -->
                 <a href="/psirt/automotive-supplier-guide/" class="glass-card rounded-2xl overflow-hidden group hover:-translate-y-1 hover:border-brand/50 transition-all duration-300 flex flex-col h-full bg-navy-900/60">
                     <div class="relative h-48 overflow-hidden bg-navy-800 border-b border-white/5">
                         <div class="absolute inset-0 bg-gradient-to-br from-brand/20 to-accent/20 group-hover:scale-105 transition-transform duration-500"></div>
@@ -214,42 +156,44 @@
                         <p class="text-sm text-slate-400 leading-relaxed line-clamp-3 mb-4 flex-grow">
                             OEMから「PSIRT体制を示してください」「SBOMを提出してください」と言われ困っていませんか？兼務でも回る最小体制や運用フローを実務目線で解説します。
                         </p>
-                        <div class="flex items-center text-brand-light text-sm font-bold mt-auto group-hover:gap-2 transition-all">
-                            続きを読む <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i>
+                        <div class="flex items-center justify-between w-full mt-auto pt-4 border-t border-white/5">
+                            <div class="flex items-center text-brand-light text-sm font-bold group-hover:gap-2 transition-all">
+                                続きを読む <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i>
+                            </div>
+                            <button onclick="event.preventDefault(); summarizeArticle(this, '自動車サプライヤーのPSIRT完全ガイド：UN-R155/ISO 21434対応を兼務で回す方法')" class="flex items-center gap-1.5 px-3 py-1.5 bg-brand/10 hover:bg-brand/20 text-brand-light border border-brand/30 rounded-lg transition-colors text-xs font-bold z-10 relative">
+                                ✨ AI要約
+                            </button>
                         </div>
+                        <div class="ai-summary-container hidden mt-4 p-3 bg-navy-800/90 rounded-lg border border-white/10 text-sm text-slate-300 relative z-10 shadow-inner"></div>
                     </div>
                 </a>
 
-                <!-- 記事カード 1 (note連携想定) -->
-                <!-- noteの記事URLをhrefに設定します -->
-                <a href="https://note.com/your_account_name/your_article_url" target="_blank" rel="noopener noreferrer" class="glass-card rounded-2xl overflow-hidden group hover:-translate-y-1 hover:border-brand/50 transition-all duration-300 flex flex-col h-full bg-navy-900/60">
+                <!-- 記事カード 2 (PSIRTとは) -->
+                <a href="/psirt/what-is-psirt/" class="glass-card rounded-2xl overflow-hidden group hover:-translate-y-1 hover:border-brand/50 transition-all duration-300 flex flex-col h-full bg-navy-900/60">
                     <div class="relative h-48 overflow-hidden bg-navy-800 border-b border-white/5">
-                        <div class="absolute inset-0 bg-gradient-to-br from-brand/20 to-accent/20 group-hover:scale-105 transition-transform duration-500"></div>
+                        <div class="absolute inset-0 bg-gradient-to-br from-purple-500/20 to-brand/20 group-hover:scale-105 transition-transform duration-500"></div>
                         <div class="absolute inset-0 flex items-center justify-center opacity-50 group-hover:opacity-80 transition-opacity">
-                            <i data-lucide="shield" class="w-16 h-16 text-white"></i>
+                            <i data-lucide="help-circle" class="w-16 h-16 text-white"></i>
                         </div>
                         <div class="absolute top-3 left-3 flex gap-2">
                             <span class="bg-accent/80 backdrop-blur-md text-white text-xs font-bold px-2.5 py-1 rounded">インサイト</span>
-                            <span class="bg-white/10 backdrop-blur-md border border-white/20 text-white text-xs font-medium px-2.5 py-1 rounded flex items-center gap-1">
-                                <i data-lucide="external-link" class="w-3 h-3"></i> note
-                            </span>
                         </div>
                     </div>
                     <div class="p-6 flex flex-col flex-grow">
                         <time class="text-xs text-slate-400 font-medium mb-3 flex items-center gap-1.5">
-                            <i data-lucide="calendar" class="w-3.5 h-3.5"></i> 2026.03.04
+                            <i data-lucide="calendar" class="w-3.5 h-3.5"></i> 2026.03.05
                         </time>
                         <h2 class="text-lg font-bold text-slate-100 mb-3 group-hover:text-brand-light transition-colors line-clamp-2">
-                            中小サプライヤーが陥る「UN-R155対応」3つの罠と、その解決策
+                            PSIRTとは（自動車サプライヤー版）：OEM要求にどう答えるか
                         </h2>
                         <p class="text-sm text-slate-400 leading-relaxed line-clamp-3 mb-4 flex-grow">
-                            巨大OEMから突然降ってくる脆弱性対応の要求。専任のセキュリティ担当者がいないTier N企業が、いかにしてこの荒波を乗り越えるべきか、具体的なステップを解説します。
+                            SOC/VSOCとの違いやOEMが本当に期待していること、兼務でもできる最小構成での立ち上げ方を実務目線で解説します。
                         </p>
-                        <div class="flex items-center justify-between w-full mt-auto pt-4">
+                        <div class="flex items-center justify-between w-full mt-auto pt-4 border-t border-white/5">
                             <div class="flex items-center text-brand-light text-sm font-bold group-hover:gap-2 transition-all">
                                 続きを読む <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i>
                             </div>
-                            <button onclick="event.preventDefault(); summarizeArticle(this, '中小サプライヤーが陥る「UN-R155対応」3つの罠と、その解決策')" class="flex items-center gap-1.5 px-3 py-1.5 bg-brand/10 hover:bg-brand/20 text-brand-light border border-brand/30 rounded-lg transition-colors text-xs font-bold z-10 relative">
+                            <button onclick="event.preventDefault(); summarizeArticle(this, 'PSIRTとは（自動車サプライヤー版）：OEM要求にどう答えるか')" class="flex items-center gap-1.5 px-3 py-1.5 bg-brand/10 hover:bg-brand/20 text-brand-light border border-brand/30 rounded-lg transition-colors text-xs font-bold z-10 relative">
                                 ✨ AI要約
                             </button>
                         </div>
@@ -257,67 +201,32 @@
                     </div>
                 </a>
 
-                <!-- 記事カード 2 (自社お知らせ想定) -->
-                <a href="#" class="glass-card rounded-2xl overflow-hidden group hover:-translate-y-1 hover:border-brand/50 transition-all duration-300 flex flex-col h-full bg-navy-900/60">
-                    <div class="relative h-48 overflow-hidden bg-navy-800 border-b border-white/5 flex items-center justify-center">
-                        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-brand to-accent flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
-                            <i data-lucide="rocket" class="w-8 h-8 text-white"></i>
-                        </div>
-                        <div class="absolute top-3 left-3">
-                            <span class="bg-brand/80 backdrop-blur-md text-white text-xs font-bold px-2.5 py-1 rounded">お知らせ</span>
-                        </div>
-                    </div>
-                    <div class="p-6 flex flex-col flex-grow">
-                        <time class="text-xs text-slate-400 font-medium mb-3 flex items-center gap-1.5">
-                            <i data-lucide="calendar" class="w-3.5 h-3.5"></i> 2026.03.01
-                        </time>
-                        <h2 class="text-lg font-bold text-slate-100 mb-3 group-hover:text-brand-light transition-colors line-clamp-2">
-                            Auto PSIRT Cloud β版の提供を開始しました
-                        </h2>
-                        <p class="text-sm text-slate-400 leading-relaxed line-clamp-3 mb-4 flex-grow">
-                            Tier N向け自動PSIRTプラットフォーム「Auto PSIRT Cloud」のβ版をリリースいたしました。現在、無料のデモ予約を受付中です。
-                        </p>
-                        <div class="flex items-center justify-between w-full mt-auto pt-4">
-                            <div class="flex items-center text-brand-light text-sm font-bold group-hover:gap-2 transition-all">
-                                続きを読む <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i>
-                            </div>
-                            <button onclick="event.preventDefault(); summarizeArticle(this, 'Auto PSIRT Cloud β版の提供を開始しました')" class="flex items-center gap-1.5 px-3 py-1.5 bg-brand/10 hover:bg-brand/20 text-brand-light border border-brand/30 rounded-lg transition-colors text-xs font-bold z-10 relative">
-                                ✨ AI要約
-                            </button>
-                        </div>
-                        <div class="ai-summary-container hidden mt-4 p-3 bg-navy-800/90 rounded-lg border border-white/10 text-sm text-slate-300 relative z-10 shadow-inner"></div>
-                    </div>
-                </a>
-
-                <!-- 記事カード 3 (note連携想定) -->
-                <a href="#" class="glass-card rounded-2xl overflow-hidden group hover:-translate-y-1 hover:border-brand/50 transition-all duration-300 flex flex-col h-full bg-navy-900/60">
+                <!-- 記事カード 3 (SBOM完全ガイド) -->
+                <a href="/psirt/sbom-complete-guide/" class="glass-card rounded-2xl overflow-hidden group hover:-translate-y-1 hover:border-brand/50 transition-all duration-300 flex flex-col h-full bg-navy-900/60">
                     <div class="relative h-48 overflow-hidden bg-navy-800 border-b border-white/5">
-                        <div class="absolute inset-0 bg-gradient-to-bl from-purple-500/20 to-brand/20 group-hover:scale-105 transition-transform duration-500"></div>
+                        <div class="absolute inset-0 bg-gradient-to-br from-brand/20 to-emerald-500/20 group-hover:scale-105 transition-transform duration-500"></div>
                         <div class="absolute inset-0 flex items-center justify-center opacity-50 group-hover:opacity-80 transition-opacity">
-                            <i data-lucide="database" class="w-16 h-16 text-white"></i>
+                            <i data-lucide="table" class="w-16 h-16 text-white"></i>
                         </div>
                         <div class="absolute top-3 left-3 flex gap-2">
                             <span class="bg-accent/80 backdrop-blur-md text-white text-xs font-bold px-2.5 py-1 rounded">インサイト</span>
-                            <span class="bg-white/10 backdrop-blur-md border border-white/20 text-white text-xs font-medium px-2.5 py-1 rounded flex items-center gap-1">
-                                <i data-lucide="external-link" class="w-3 h-3"></i> note
-                            </span>
                         </div>
                     </div>
                     <div class="p-6 flex flex-col flex-grow">
                         <time class="text-xs text-slate-400 font-medium mb-3 flex items-center gap-1.5">
-                            <i data-lucide="calendar" class="w-3.5 h-3.5"></i> 2026.02.20
+                            <i data-lucide="calendar" class="w-3.5 h-3.5"></i> 2026.03.05
                         </time>
                         <h2 class="text-lg font-bold text-slate-100 mb-3 group-hover:text-brand-light transition-colors line-clamp-2">
-                            SBOM（ソフトウェア部品表）は、なぜExcel管理では破綻するのか？
+                            SBOM完全ガイド（SPDX/CycloneDX/Excel運用・提出と機密の現実解）
                         </h2>
                         <p class="text-sm text-slate-400 leading-relaxed line-clamp-3 mb-4 flex-grow">
-                            多くの部品メーカーがとりあえずExcelで作成しているSBOM。しかし、日々の脆弱性チェックを人力で行うことの限界と、自動化ツール導入のメリットについて考察します。
+                            「SPDXじゃないとダメ？」いいえ、最初はExcelで構いません。中小サプライヤー向けのSBOM作成からOEM提出時の機密対策まで徹底解説します。
                         </p>
-                        <div class="flex items-center justify-between w-full mt-auto pt-4">
+                        <div class="flex items-center justify-between w-full mt-auto pt-4 border-t border-white/5">
                             <div class="flex items-center text-brand-light text-sm font-bold group-hover:gap-2 transition-all">
                                 続きを読む <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i>
                             </div>
-                            <button onclick="event.preventDefault(); summarizeArticle(this, 'SBOM（ソフトウェア部品表）は、なぜExcel管理では破綻するのか？')" class="flex items-center gap-1.5 px-3 py-1.5 bg-brand/10 hover:bg-brand/20 text-brand-light border border-brand/30 rounded-lg transition-colors text-xs font-bold z-10 relative">
+                            <button onclick="event.preventDefault(); summarizeArticle(this, 'SBOM完全ガイド（SPDX/CycloneDX/Excel運用・提出と機密の現実解）')" class="flex items-center gap-1.5 px-3 py-1.5 bg-brand/10 hover:bg-brand/20 text-brand-light border border-brand/30 rounded-lg transition-colors text-xs font-bold z-10 relative">
                                 ✨ AI要約
                             </button>
                         </div>
@@ -325,23 +234,6 @@
                     </div>
                 </a>
 
-            </div>
-
-            <!-- ページネーション (見た目のみのモックアップ) -->
-            <div class="mt-12 flex justify-center items-center gap-2">
-                <button class="w-10 h-10 rounded-lg border border-white/10 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/5 transition-colors cursor-not-allowed opacity-50">
-                    <i data-lucide="chevron-left" class="w-5 h-5"></i>
-                </button>
-                <button class="w-10 h-10 rounded-lg bg-brand border border-brand text-white font-bold flex items-center justify-center">
-                    1
-                </button>
-                <button class="w-10 h-10 rounded-lg border border-white/10 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/5 transition-colors font-medium">
-                    2
-                </button>
-                <span class="text-slate-500 mx-1">...</span>
-                <button class="w-10 h-10 rounded-lg border border-white/10 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/5 transition-colors">
-                    <i data-lucide="chevron-right" class="w-5 h-5"></i>
-                </button>
             </div>
 
         </div>
@@ -612,6 +504,3 @@
     </script>
 </body>
 </html>
-
-
-
