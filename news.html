@@ -134,7 +134,34 @@
 
             <!-- 記事一覧グリッド -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                
+
+                <!-- 新しい記事カード (PSIRT完全ガイド) -->
+                <a href="/psirt/automotive-supplier-guide/" class="glass-card rounded-2xl overflow-hidden group hover:-translate-y-1 hover:border-brand/50 transition-all duration-300 flex flex-col h-full bg-navy-900/60">
+                    <div class="relative h-48 overflow-hidden bg-navy-800 border-b border-white/5">
+                        <div class="absolute inset-0 bg-gradient-to-br from-brand/20 to-accent/20 group-hover:scale-105 transition-transform duration-500"></div>
+                        <div class="absolute inset-0 flex items-center justify-center opacity-50 group-hover:opacity-80 transition-opacity">
+                            <i data-lucide="book-open" class="w-16 h-16 text-white"></i>
+                        </div>
+                        <div class="absolute top-3 left-3 flex gap-2">
+                            <span class="bg-accent/80 backdrop-blur-md text-white text-xs font-bold px-2.5 py-1 rounded">インサイト</span>
+                        </div>
+                    </div>
+                    <div class="p-6 flex flex-col flex-grow">
+                        <time class="text-xs text-slate-400 font-medium mb-3 flex items-center gap-1.5">
+                            <i data-lucide="calendar" class="w-3.5 h-3.5"></i> 2026.03.05
+                        </time>
+                        <h2 class="text-lg font-bold text-slate-100 mb-3 group-hover:text-brand-light transition-colors line-clamp-2">
+                            自動車サプライヤーのPSIRT完全ガイド：UN-R155/ISO 21434対応を兼務で回す方法
+                        </h2>
+                        <p class="text-sm text-slate-400 leading-relaxed line-clamp-3 mb-4 flex-grow">
+                            OEMから「PSIRT体制を示してください」「SBOMを提出してください」と言われ困っていませんか？兼務でも回る最小体制や運用フローを実務目線で解説します。
+                        </p>
+                        <div class="flex items-center text-brand-light text-sm font-bold mt-auto group-hover:gap-2 transition-all">
+                            続きを読む <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i>
+                        </div>
+                    </div>
+                </a>
+
                 <!-- 記事カード 1 (note連携想定) -->
                 <!-- noteの記事URLをhrefに設定します -->
                 <a href="https://note.com/your_account_name/your_article_url" target="_blank" rel="noopener noreferrer" class="glass-card rounded-2xl overflow-hidden group hover:-translate-y-1 hover:border-brand/50 transition-all duration-300 flex flex-col h-full bg-navy-900/60">
@@ -527,3 +554,4 @@
     </script>
 </body>
 </html>
+
