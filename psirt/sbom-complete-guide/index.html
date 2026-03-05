@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <!-- SEOメタタグ -->
-    <title>SBOM完全ガイド：SPDX / CycloneDX / Excel運用・提出と機密の現実解 | Auto PSIRT Cloud</title>
-    <meta name="description" content="自動車サプライヤー向けSBOMの現実的な運用方法。SPDXとCycloneDXの違い、Excelからの始め方、OEM提出時の機密対策、そしてVEXとの連携まで実務目線で徹底解説します。">
-    <meta name="keywords" content="SBOM, 自動車セキュリティ, SPDX, CycloneDX, Excel, VEX, 脆弱性管理, 提出">
+    <title>自動車サプライヤー向けSBOM完全ガイド｜SPDX・CycloneDX・Excel運用 | Auto PSIRT Cloud</title>
+    <meta name="description" content="自動車サプライヤー向けに、SBOMの基本からSPDX/CycloneDXの違い、Excelで始める方法、版管理、機密対策、脆弱性対応との接続までを実務目線で解説します。">
+    <meta name="keywords" content="SBOM, 自動車 サプライヤー SBOM, SPDX, CycloneDX, SBOM Excel, SBOM 脆弱性管理">
     <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/psirt/sbom-complete-guide/">
     
     <!-- OGPタグ (SNSシェア用) -->
-    <meta property="og:title" content="SBOM完全ガイド：SPDX/CycloneDX/Excel運用・提出と機密の現実解">
-    <meta property="og:description" content="自動車サプライヤー向けSBOMの現実的な運用方法。Excelからの始め方、OEM提出時の機密対策などを徹底解説。">
+    <meta property="og:title" content="自動車サプライヤー向けSBOM完全ガイド｜SPDX・CycloneDX・Excel運用">
+    <meta property="og:description" content="SBOMの基本からSPDX/CycloneDXの違い、Excelでの始め方まで実務目線で徹底解説。">
     <meta property="og:type" content="article">
     <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/psirt/sbom-complete-guide/">
     <meta property="og:site_name" content="Auto PSIRT Cloud">
@@ -81,9 +81,10 @@
         }
         .prose h3 {
             color: #e2e8f0;
-            margin-top: 2rem;
+            margin-top: 2.5rem;
             border-left: 3px solid #3b82f6;
             padding-left: 0.75rem;
+            font-size: 1.25rem;
         }
         .prose a {
             color: #60a5fa;
@@ -103,6 +104,13 @@
             border-left: 4px solid #10b981; /* エメラルド系でアクセント */
             padding: 1.5rem;
             border-radius: 0 0.5rem 0.5rem 0;
+            margin: 2rem 0;
+        }
+        .toc-box {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 1.5rem;
+            border-radius: 0.75rem;
             margin: 2rem 0;
         }
     </style>
@@ -172,14 +180,16 @@
                     </time>
                 </div>
                 <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
-                    SBOM完全ガイド：<br/>SPDX / CycloneDX / Excel運用・提出と機密の現実解
+                    SBOM完全ガイド｜SPDX / CycloneDX / Excel運用・提出と機密の現実解
                 </h1>
                 
                 <!-- 導入文 -->
                 <div class="text-lg text-slate-300 leading-relaxed p-6 bg-navy-800/50 rounded-2xl border border-white/5">
-                    <p>自動車サプライヤーにとって、SBOMはもはや「一部の大企業だけが対応するもの」ではありません。背景にあるのは、車両がソフトウェア集約型になり、出荷後も脆弱性や更新を継続管理する必要が高まっていることです。</p>
-                    <p class="mt-4">ISO/SAE 21434は、車両のE/Eシステムに対するサイバーセキュリティ工学をライフサイクル全体で扱う標準として定義しており、UN Regulation No.155は車両メーカーに継続的なサイバーセキュリティ管理を求めています。日本でもJAMA/JAPIAがガイドラインを公開し、自己評価とPDCAによる改善運用を後押ししています。</p>
-                    <p class="mt-4">つまり、SBOMに取り組む意味は、単なる海外規制対応ではなく、<strong>取引・監査・脆弱性照会に耐える管理レベルを作ること</strong>にあります。本記事では、SBOMの本質からフォーマットの選び方、Excelでの始め方、機密情報の扱い方までを徹底解説します。</p>
+                    <p>自動車サプライヤーにとって、SBOMはもはや一部の大企業だけの話ではありません。</p>
+                    <p class="mt-4">OEMや取引先から「使用しているソフトウェア部品を説明してほしい」「脆弱性照会に答えられる体制を示してほしい」と求められる場面は確実に増えています。背景にあるのは、車両がソフトウェア依存を強め、出荷後も継続的に脆弱性を管理しなければならなくなったことです。</p>
+                    <p class="mt-4">ISO/SAE 21434は、車両のE/Eシステムに対するサイバーセキュリティをライフサイクル全体で扱う考え方を示しています。さらにUN-R155の流れにより、車両メーカー側は脅威・脆弱性・インシデントを継続的に監視し、サプライチェーン全体で説明責任を果たすことを求められています。その結果として、部品メーカー側にも「何が入っているか」「どの脆弱性が関係するか」を答えられる状態が必要になっています。</p>
+                    <p class="mt-4">SBOMの議論で大事なのは、これを<strong>提出物としてだけ理解しないこと</strong>です。</p>
+                    <p class="mt-4">SBOMの本質は、自社製品に何が入っているかを把握し、脆弱性が出たときに素早く影響確認できる状態を作ることにあります。つまりSBOMは、監査対策の資料であると同時に、PSIRTや脆弱性対応の土台でもあります。</p>
                 </div>
             </header>
 
@@ -187,184 +197,313 @@
             <div class="glass-card p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl bg-navy-900/80 mb-16">
                 <div class="prose prose-invert prose-slate prose-lg max-w-none">
                     
-                    <h2>1. 自動車サプライヤーがSBOMでつまずく理由</h2>
-                    <p>SBOMの話になると、現場ではまず次のような反応が出ます。</p>
-                    <ul>
-                        <li>「OSSをそんなに多く使っていない」</li>
-                        <li>「ライブラリ一覧なら設計担当の頭の中にある」</li>
-                        <li>「OEMから正式に様式を求められていない」</li>
-                        <li>「標準フォーマットが難しすぎる」</li>
-                    </ul>
-                    <p>この感覚自体は自然です。実際、Tier2〜Tier4の現場では、専任のセキュリティ担当者やPSIRTがあるとは限りません。ですが、問題は脆弱性が出た瞬間に<strong>“誰も即答できない”</strong>状態にあることです。SBOMがないと、どの製品に何が入っているかを毎回ゼロから調べることになり、OEM照会、監査、是正計画のどれも遅れます。SBOMの本当の価値は、平時ではなく有事の初動を速くすることです。</p>
-                    <p>特に自動車業界では、ECU単位、機能単位、プロジェクト単位で構成が変わり、同じコンポーネントでも設定が異なる場合があります。だからこそ、SBOMは“理想的に全部を最初から表現する”ことより、<strong>どの単位で棚卸しし、どの単位で更新するかを先に決めた方が立ち上がります。</strong>ここを曖昧にすると、SPDXだろうがCycloneDXだろうが、結局は使われないファイルになります。</p>
-
-                    <div class="related-box">
-                        <div class="text-sm font-bold text-emerald-400 mb-2 flex items-center gap-2"><i data-lucide="link" class="w-4 h-4"></i> 関連記事</div>
-                        <ul class="text-base m-0 list-none pl-0 space-y-2">
-                            <li><a href="/psirt/what-is-psirt/" class="!text-emerald-300 hover:!text-emerald-200">PSIRTとは（自動車サプライヤー版）：OEM要求にどう答えるか</a></li>
+                    <!-- 内部リンク① -->
+                    <div class="related-box mt-0 border-l-brand">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="book-open" class="w-4 h-4"></i> まず理解する</div>
+                        <p class="text-sm text-slate-300 mb-2">まずSBOMの意味を短く確認したい方は、こちらの記事を先に読むと全体像がつかみやすくなります。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="#" class="!text-brand-light hover:!text-brand">SBOMとは（部品メーカーが押さえるべき要点）</a></li>
                         </ul>
                     </div>
 
-                    <h2>2. まず押さえるべき2大フォーマット</h2>
-                    <h3>SPDX と CycloneDX は何が違うのか</h3>
-                    <p>実務で最初に比較対象になるのは、SPDX と CycloneDX です。</p>
-                    <p><strong>SPDX</strong>はLinux Foundation系プロジェクトの仕様で、ISO/IEC 5962:2021 の国際標準として位置づけられています。ライセンス情報やソフトウェア部品表の標準化、文書化の面で安心感があり、「標準として説明しやすい」ことが大きな強みです。</p>
-                    <p>一方の<strong>CycloneDX</strong>は、OWASP主導で発展し、v1.6がEcma International standardとなりました。単なるSBOM仕様ではなく、ソフトウェアからAI/ML、暗号まで扱えるxBOM標準として打ち出されており、脆弱性やVEXなど、セキュリティ運用との接続を意識したエコシステムが強いのが特徴です。</p>
+                    <!-- 目次 -->
+                    <div class="toc-box">
+                        <h4 class="text-lg font-bold text-white mt-0 mb-4 flex items-center gap-2">
+                            <i data-lucide="list" class="w-5 h-5 text-brand-light"></i> この記事でわかること
+                        </h4>
+                        <ul class="text-base text-slate-300 m-0 space-y-2">
+                            <li>SBOMとは何か、なぜ自動車サプライヤーに必要なのか</li>
+                            <li>SPDX と CycloneDX の違い</li>
+                            <li>ExcelからSBOMを始める現実的な方法</li>
+                            <li>SBOMの更新・版管理・機密対策の考え方</li>
+                            <li>SBOMを脆弱性管理やVEXにつなげる方法</li>
+                        </ul>
+                    </div>
+
+                    <h2>SBOMとは何か</h2>
+                    <h3>提出書類ではなく、運用資産として理解する</h3>
+                    <p>SBOMは Software Bill of Materials の略で、ソフトウェアを構成するコンポーネントの一覧です。分かりやすく言えば、<strong>ソフトウェアの部品表</strong>です。</p>
+                    <p>ただし、ここで重要なのは「部品表だから一覧にして終わり」ではないという点です。SBOMが本当に価値を持つのは、脆弱性管理や製品説明とつながったときです。たとえばCVEが公開されたとき、SBOMがあれば「その部品が自社製品に入っているか」「どのバージョンに入っているか」をすぐ確認できます。逆にSBOMがないと、そのたびに設計担当・ソフト担当・品質保証が個別に調査し、回答が遅れます。</p>
                     
-                    <p>この違いを、自動車サプライヤー目線で言い換えるとこうです。</p>
-                    <ul>
-                        <li><strong>SPDX：</strong>「標準性・文書性・ライセンス整理の強さ」</li>
-                        <li><strong>CycloneDX：</strong>「脆弱性運用・機械可読・拡張性の強さ」</li>
-                    </ul>
-                    <p>実務では、次のような見分け方が扱いやすいです。</p>
-                    <div class="bg-navy-800 p-4 rounded-lg border border-white/10 my-4 text-sm font-medium">
-                        取引先説明・標準性重視 → <span class="text-brand-light">SPDX寄り</span><br>
-                        脆弱性突合・VEX・自動連携重視 → <span class="text-emerald-400">CycloneDX寄り</span><br>
-                        まずはExcelで始めて、後でどちらかへ移行 → <span class="text-orange-400">現実的</span>
-                    </div>
-
-                    <h2>3. 最初はExcelで始めてよい</h2>
-                    <h3>“機械可読でないと意味がない”は誤解</h3>
-                    <p class="text-xl border-l-4 border-emerald-500 pl-4 font-bold text-white bg-emerald-500/10 py-4 my-6">
-                        結論から言うと、最初はExcelで始めて構いません。
-                    </p>
-                    <p>CISAはSBOMを透明性とリスク管理の基盤と説明していますが、重要なのは「最初から完璧な標準フォーマットであること」より、運用に乗ることです。現場で一番価値があるのは、CVEが出た日に「そのコンポーネントは入っている／いない」「どの製品バージョンまで関係する」と言えることです。Excelでも、それができれば最初の壁は越えています。</p>
-                    <p>もちろん、最終的にはSPDXやCycloneDXへ寄せた方が自動突合に有利です。しかし、Excelでさえ整わない状態でツールだけ導入すると保守されなくなります。自動車サプライヤーの現実解は、<strong>Excelで“正しい棚卸しの単位”を作ってから標準化すること</strong>です。</p>
-
-                    <h2>4. Tier2〜Tier4向け 最小SBOMに入れるべき項目</h2>
-                    <p>MVP的に始めるなら、SBOMには最低でも次の項目を入れてください。</p>
-                    <ul>
-                        <li>製品名</li>
-                        <li><strong>製品バージョン</strong></li>
-                        <li>コンポーネント名</li>
-                        <li><strong>コンポーネントバージョン</strong></li>
-                        <li>取得元 / 供給元</li>
-                        <li>OSS / 商用 / 自社開発の区分</li>
-                        <li><strong>搭載箇所（ECU / 機能 / モジュール）</strong></li>
-                        <li><strong>利用条件や備考（機能無効、ビルド条件など）</strong></li>
-                        <li>更新日</li>
-                        <li>責任部門 / 更新担当者</li>
-                    </ul>
-                    <p>特に見落とされやすいのが、搭載箇所 と 備考 です。同じライブラリでも、製品によって外部通信経路に乗るかどうかが異なります。この差が、後で「影響あり / なし」の判断に直結します。</p>
-
-                    <h2>5. SBOM作成の実務フロー</h2>
-                    <h3>いきなり全部やらない</h3>
-                    <p>SBOMで失敗する典型例は、「全製品」「全バージョン」「全サプライヤー」を同時にやろうとして止まることです。現実的には、トップ3製品、またはOEM照会が多い製品から始めるのがよいです。</p>
-                    <p>実務フローとしては、次の順番が安定します。</p>
+                    <p>自動車サプライヤーの実務では、SBOMは次の3つの役割を持ちます。</p>
                     <ol>
-                        <li>まず、製品単位で使用ソフトウェアを棚卸しする。</li>
-                        <li>次に、版数と取得元を正規化する。</li>
-                        <li>その後で、製品バージョンとコンポーネントを紐づける。</li>
-                        <li>最後に、<strong>更新責任者と更新タイミング</strong>を決める。</li>
+                        <li><strong>構成の可視化：</strong>何が入っているかを一覧で把握する</li>
+                        <li><strong>脆弱性対応の初動短縮：</strong>CVEが出たときに対象製品を早く絞る</li>
+                        <li><strong>OEM・監査への説明責任：</strong>「なぜ影響あり / なしなのか」を根拠付きで返す</li>
                     </ol>
+                    <p>この3つを満たすなら、SBOMは単なる資料ではなく、運用資産になっています。</p>
 
-                    <div class="related-box">
-                        <div class="text-sm font-bold text-emerald-400 mb-2 flex items-center gap-2"><i data-lucide="link" class="w-4 h-4"></i> 関連記事</div>
-                        <ul class="text-base m-0 list-none pl-0 space-y-2">
-                            <li><a href="/psirt/automotive-supplier-guide/" class="!text-emerald-300 hover:!text-emerald-200">自動車サプライヤーのPSIRT完全ガイド：UN-R155/ISO 21434対応を兼務で回す方法</a></li>
+                    <!-- 内部リンク② -->
+                    <div class="related-box border-l-brand">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="link" class="w-4 h-4"></i> 関連記事</div>
+                        <p class="text-sm text-slate-300 mb-2">「SBOMは提出物ではなく運用資産」という観点を短く整理した記事として、こちらもあわせて読むと理解が深まります。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="#" class="!text-brand-light hover:!text-brand">SBOMとは（提出物ではなく運用資産）</a></li>
                         </ul>
                     </div>
 
-                    <h2>6. 更新頻度と版管理</h2>
-                    <h3>SBOMは“静的文書”ではない</h3>
-                    <p>最低でも、以下のタイミングでは更新すべきです。</p>
+                    <h2>なぜ自動車サプライヤーにSBOMが必要なのか</h2>
+                    <h3>規制対応だけでなく、OEM照会と監査対応のため</h3>
+                    <p>SBOMが必要になる理由を「規制だから」とだけ言うと、現場では腹落ちしません。本当に重要なのは、<strong>OEMや監査対応の現場で、SBOMがないと何も答えられなくなること</strong>です。</p>
+                    <p>たとえば、あるOSSライブラリに重大な脆弱性が見つかったとします。OEMから「あなたの部品に影響はありますか」と聞かれたとき、SBOMがなければ次のような状況になりがちです。</p>
+                    <ul>
+                        <li>そもそも対象ライブラリを使っているか分からない</li>
+                        <li>使っていても、どの製品バージョンまで入っているか分からない</li>
+                        <li>同じライブラリでも機能や設定が違い、影響の有無が判断できない</li>
+                        <li>OEMに返すまで数日〜数週間かかる</li>
+                    </ul>
+                    <p>これでは、規制以前に取引上の信頼を失います。だからこそSBOMは、法規対応のためだけではなく、日々の照会・監査・是正計画に答えるための基盤として必要です。</p>
+                    <p>特にTier2〜Tier4では、PSIRT専任者がいないことも多く、脆弱性対応が兼務で回っています。その場合、SBOMがあるかないかで、初動速度が大きく変わります。つまりSBOMは、人が足りない現場ほど効く仕組みです。</p>
+
+                    <h2>SPDX と CycloneDX の違い</h2>
+                    <h3>どちらが正しいかではなく、何に使うかで選ぶ</h3>
+                    <p>SBOMを始めようとすると、ほぼ必ず「SPDX と CycloneDX のどちらを選ぶべきか」という話になります。結論から言うと、どちらが上かではなく、自社の用途にどちらが合うかで考えるべきです。</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-8">
+                        <div class="bg-navy-800/50 p-6 rounded-xl border border-white/10">
+                            <h4 class="text-brand-light font-bold mt-0 mb-3 flex items-center gap-2">
+                                <i data-lucide="file-text" class="w-5 h-5"></i> SPDX が向いているケース
+                            </h4>
+                            <ul class="text-sm m-0 space-y-2 pl-4">
+                                <li>国際標準としての説明性を重視したい</li>
+                                <li>ライセンス情報も含めて整理したい</li>
+                                <li>提出・文書管理の標準性を重視したい</li>
+                            </ul>
+                        </div>
+                        <div class="bg-navy-800/50 p-6 rounded-xl border border-white/10">
+                            <h4 class="text-emerald-400 font-bold mt-0 mb-3 flex items-center gap-2">
+                                <i data-lucide="git-compare" class="w-5 h-5"></i> CycloneDX が向いているケース
+                            </h4>
+                            <ul class="text-sm m-0 space-y-2 pl-4">
+                                <li>脆弱性管理や自動突合に早くつなげたい</li>
+                                <li>VEXやセキュリティ運用との接続を重視したい</li>
+                                <li>ソフトウェア以外も含めた拡張性を意識したい</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <p>実務では次のように考えると分かりやすいです。</p>
+                    <ul class="font-medium">
+                        <li>提出や標準性を優先 → <strong>SPDX寄り</strong></li>
+                        <li>脆弱性管理や自動化を優先 → <strong>CycloneDX寄り</strong></li>
+                        <li>まだ運用が固まっていない → <strong>Excelから始めて後で標準化</strong></li>
+                    </ul>
+                    <p>最初からフォーマットだけを決めると、運用が追いつかずに形骸化しやすいです。大切なのは、「誰が、どの情報を、何のために使うか」を決めることです。</p>
+
+                    <h2>Excelから始めてよい</h2>
+                    <h3>最初から完璧な標準対応を目指さない</h3>
+                    <p class="text-xl border-l-4 border-emerald-500 pl-4 font-bold text-white bg-emerald-500/10 py-4 my-6">
+                        ここが、多くの現場で一番安心してよいポイントです。最初はExcelで始めて構いません。
+                    </p>
+                    <p>特に中小サプライヤーでは、いきなりSPDXやCycloneDXの完全運用へ入ると、整備より先に運用が止まります。理由は単純で、部品表そのものがまだ整理されていないからです。その状態で標準フォーマットだけ導入しても、ファイルはできても更新されません。</p>
+                    
+                    <p>現実的なやり方はこうです。</p>
+                    <ol>
+                        <li>まずExcelで主要製品の構成を棚卸しする</li>
+                        <li>製品バージョンとコンポーネントバージョンをひも付ける</li>
+                        <li>更新タイミングと責任者を決める</li>
+                        <li>運用が回り始めてからSPDX / CycloneDXへ寄せる</li>
+                    </ol>
+                    <p>この順番にすると、「SBOMを作ったのに誰も使わない」を避けやすくなります。</p>
+
+                    <!-- 内部リンク③ -->
+                    <div class="related-box border-l-brand">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="link" class="w-4 h-4"></i> 関連記事</div>
+                        <p class="text-sm text-slate-300 mb-2">まずは最小構成で始めたい場合は、こちらの記事をあわせて読むと実務に落とし込みやすくなります。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="#" class="!text-brand-light hover:!text-brand">SBOMをExcelから始める（最小テンプレと運用ルール）</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>SBOMに最低限入れるべき項目</h2>
+                    <h3>まずは“答えられる状態”を作る</h3>
+                    <p>MVPとして始めるなら、最低限以下の項目を入れてください。</p>
+                    
+                    <div class="bg-navy-800 p-6 rounded-lg border border-white/10 my-6">
+                        <ul class="m-0 list-disc list-inside space-y-1.5 columns-1 sm:columns-2">
+                            <li>製品名</li>
+                            <li><strong>製品バージョン</strong></li>
+                            <li>コンポーネント名</li>
+                            <li><strong>コンポーネントバージョン</strong></li>
+                            <li>OSS / 商用 / 自社開発の区分</li>
+                            <li>取得元 / 供給元</li>
+                            <li><strong>搭載箇所</strong>（ECU / 機能 / モジュール）</li>
+                            <li><strong>備考</strong>（機能無効化、利用条件、設定差分など）</li>
+                            <li>更新日</li>
+                            <li>更新担当者 / 管理部門</li>
+                        </ul>
+                    </div>
+
+                    <p>この中で特に重要なのは、<strong>製品バージョン と コンポーネントバージョン を分けて持つこと</strong>です。ここが分かれていないと、CVEが出たときに「どの製品まで影響するか」が追えません。</p>
+                    <p>また、<strong>搭載箇所 と 備考</strong> も重要です。同じライブラリでも、ある製品では外部から到達可能で、別の製品では内部利用だけということがあります。後でVEXや影響判定に進むと、この差が大きく効いてきます。</p>
+
+                    <!-- 内部リンク④ -->
+                    <div class="related-box border-l-brand">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="link" class="w-4 h-4"></i> 関連記事</div>
+                        <p class="text-sm text-slate-300 mb-2">最小項目から着手する場合は、こちらのテンプレをベースにすると、棚卸しの抜け漏れを減らしやすくなります。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="#" class="!text-brand-light hover:!text-brand">SBOM Excelテンプレ（最小項目版）</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>SBOMの更新頻度と版管理</h2>
+                    <h3>作った瞬間から古くなる前提で設計する</h3>
+                    <p>SBOMの失敗は、作成よりも更新で起きます。一覧を一度作っても、更新ルールがないとすぐに使えなくなります。最低でも、次のタイミングでは更新対象にすべきです。</p>
                     <ul>
                         <li>新規リリース時</li>
-                        <li>マイナー更新 / パッチ適用時</li>
+                        <li>マイナー更新時</li>
+                        <li>パッチ適用時</li>
                         <li>外部ライブラリ更新時</li>
                         <li>機能追加や構成変更時</li>
-                        <li>OEM提出前の確認時</li>
+                        <li>OEM提出前</li>
                     </ul>
-                    <p>版管理でおすすめなのは、<strong>製品版数とSBOM版数を分けて持つこと</strong>です。たとえば製品が `2.1.0` でも、SBOM自体は `2.1.0-a`、`2.1.0-b` のように改訂される場合があります。これを分けておくと、「製品は同じだが、脆弱性情報を追記して部品表の精度が上がった」といった履歴を残しやすくなります。</p>
+                    
+                    <p>ここでおすすめなのは、<strong>製品版数 と SBOM版数 を分けること</strong>です。たとえば製品が <code>2.1.0</code> でも、SBOMは <code>2.1.0-a</code> / <code>2.1.0-b</code> のように改訂される場合があります。これを分けておくと、「製品は同じだが部品表の記述を更新した」「脆弱性情報の追記をした」といった変更履歴を残しやすくなります。</p>
 
-                    <h2>7. 機密情報と提出範囲</h2>
-                    <h3>“全部見せる”必要はない</h3>
-                    <p>SBOMに対する最大の懸念の1つが、設計情報の漏えいです。SBOMを作ることと、完全な情報を誰にでも配ることは同じではありません。</p>
-                    <p>現実的な整理は、次の3層です。</p>
-                    <ol>
-                        <li><strong>社内完全版：</strong>詳細な搭載箇所、備考、ビルド条件まで含む</li>
-                        <li><strong>OEM提出版：</strong>必要範囲の構成要素と版数を中心にする</li>
-                        <li><strong>照会回答版：</strong>対象CVEに関係する部分だけを抜粋する</li>
-                    </ol>
-                    <p>この分け方をしておくと、機密を守りながら、必要な説明責任は果たしやすくなります。</p>
-
-                    <h2>8. SBOMと脆弱性管理をつなぐ</h2>
-                    <h3>NVD / CPE / PURL の実務</h3>
-                    <p>SBOMが本当に効いてくるのは、NVDなどの脆弱性管理とつながった瞬間です。ここで重要になるのが「何の識別子を持つか」です。CycloneDXは、OSSには<strong>PURL</strong>を推奨し、プロプライエタリソフトウェアやNVDとの照合には<strong>CPE</strong>が適すると説明しています。</p>
-                    <div class="bg-navy-800 p-4 rounded-lg border border-white/10 my-4 text-sm font-medium">
-                        OSSやパッケージ系 → <span class="text-brand-light">PURLを優先</span><br>
-                        NVD照合やOEM説明 → <span class="text-emerald-400">CPEも理解する</span>
-                    </div>
-
-                    <h2>9. SBOMとVEXをつなげる</h2>
-                    <h3>“影響なし”を説明できるようにする</h3>
-                    <p>SBOMだけでは「入っているか」は分かっても、「その脆弱性が実際に悪用可能か」は分かりません。そこで<strong>VEX（Vulnerability Exploitability eXchange）</strong>が必要になります。</p>
-                    <p>CISAのVEX最小要件では、特に <code>NOT AFFECTED</code>（影響なし）の説明で役立つ Justification（根拠）の考え方が整理されています。「コンポーネントが存在しない」「脆弱コードが存在しない」「実行経路にない」「攻撃者が制御できない」「緩和策がある」といった語彙を使うことで、OEMへの説明が圧倒的に強くなります。</p>
-
-                    <div class="related-box">
-                        <div class="text-sm font-bold text-emerald-400 mb-2 flex items-center gap-2"><i data-lucide="link" class="w-4 h-4"></i> 関連記事</div>
-                        <ul class="text-base m-0 list-none pl-0 space-y-2">
-                            <li><a href="/psirt/cve-triage-vex-guide/" class="!text-emerald-300 hover:!text-emerald-200">CVEトリアージ＆VEX実務 完全ガイド：ノイズ削減・優先度付け・説明責任</a></li>
+                    <!-- 内部リンク⑤ -->
+                    <div class="related-box border-l-brand">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="link" class="w-4 h-4"></i> 関連記事</div>
+                        <p class="text-sm text-slate-300 mb-2">更新ルールをより具体化したい場合は、こちらも参照してください。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="#" class="!text-brand-light hover:!text-brand">SBOMの更新頻度と版管理</a></li>
                         </ul>
                     </div>
 
-                    <h2>10. よくある失敗</h2>
-                    <ol>
-                        <li><strong>作ること自体が目的になる：</strong>提出できた時点で満足し、運用に使われない。</li>
-                        <li><strong>製品版数と部品版数が分かれていない：</strong>CVEが出たときに、どの製品まで影響するか追えない。</li>
-                        <li><strong>更新責任者が決まっていない：</strong>最初の1回は作れるが、その後の改訂が止まる。</li>
-                        <li><strong>機密配慮がなく、共有ルールで止まる：</strong>作っても提出判断ができず、現場が使いにくい。</li>
-                        <li><strong>VEXや脆弱性対応とつながっていない：</strong>一覧表はあるが、結局OEM照会でゼロから調査する。</li>
-                    </ol>
+                    <!-- 内部リンク⑥ -->
+                    <div class="related-box border-l-brand mt-4">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="file-check" class="w-4 h-4"></i> 運用ルール</div>
+                        <p class="text-sm text-slate-300 mb-2">社内ポリシーとして形にするなら、こちらの記事を別記事として用意しておくと運用が安定します。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="#" class="!text-brand-light hover:!text-brand">SBOM更新・版管理ルール雛形（運用ポリシー）</a></li>
+                        </ul>
+                    </div>
 
-                    <h2>11. 30 / 60 / 90日で立ち上げる現実解</h2>
+                    <h2>機密情報と提出範囲</h2>
+                    <h3>“全部出す”と“何も出せない”の間を設計する</h3>
+                    <p>SBOMで現場が止まりやすいのが、機密の扱いです。「部品表を出すと設計情報まで見えてしまうのではないか」という不安はもっともです。ここで重要なのは、<strong>SBOMを作ること と 全情報を開示すること を分けること</strong>です。</p>
+                    
+                    <p>現実的には、次の3層で考えると整理しやすくなります。</p>
+                    <ol>
+                        <li><strong>社内完全版：</strong>搭載箇所、備考、ビルド条件、設定差分まで含む</li>
+                        <li><strong>OEM提出版：</strong>必要なコンポーネントと版数を中心にする。設計の詳細や内部事情は必要最低限にする</li>
+                        <li><strong>照会回答版：</strong>対象CVEに関係する部分だけを抜粋する。影響有無と根拠に絞る</li>
+                    </ol>
+                    <p>このように分けておくと、社内での精密運用と、外部への適切な開示を両立しやすくなります。SBOMは「全部を見せるための資料」ではなく、「必要な範囲を説明するための基盤」です。</p>
+
+                    <h2>SBOMと脆弱性管理をどうつなぐか</h2>
+                    <h3>NVD / CPE / PURL / VEX の基本動線</h3>
+                    <p>SBOMの価値が最も発揮されるのは、脆弱性管理と接続したときです。たとえばNVDやJVNでCVEが公開されたとき、次の流れで判断できるようになります。</p>
+                    <ol>
+                        <li>SBOMで対象コンポーネントが存在するか確認する</li>
+                        <li>バージョン一致を確認する</li>
+                        <li>搭載箇所や利用条件を確認する</li>
+                        <li>影響あり / なし / 要確認を判断する</li>
+                        <li>OEMへ説明する</li>
+                    </ol>
+                    
+                    <p>ここで重要なのが識別子です。OSS系では <strong>PURL</strong> が扱いやすく、NVD照合や説明では <strong>CPE</strong> の理解も必要になります。識別子が曖昧だと、誤検知も見落としも増えます。つまりSBOM整備は、一覧表づくりであると同時に、<strong>脆弱性照合のための識別子設計</strong> でもあります。</p>
+                    
+                    <p>さらに、SBOMだけでは「入っているか」は分かっても、「その脆弱性が実際に影響するか」は分かりません。そこで必要になるのが <strong>VEX</strong> です。VEXの考え方を使うと、同じCVEでも次のような説明が可能になります。</p>
+                    <ul>
+                        <li>コンポーネントが存在しない</li>
+                        <li>脆弱コードが含まれない</li>
+                        <li>実行経路に乗らない</li>
+                        <li>攻撃者が制御できない</li>
+                        <li>緩和策がすでにある</li>
+                    </ul>
+                    <p>この説明ができると、「影響なし」の回答品質が大きく上がります。つまり、<strong>SBOMは入口、VEXは説明の型</strong> です。</p>
+
+                    <!-- 内部リンク⑦ -->
+                    <div class="related-box border-l-brand">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="arrow-right-circle" class="w-4 h-4"></i> 次に読むべき記事</div>
+                        <p class="text-sm text-slate-300 mb-2">SBOMの次は、脆弱性トリアージとVEXの実務について確認しましょう。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/cve-triage-vex-guide/" class="!text-brand-light hover:!text-brand">CVEトリアージ＆VEX実務 完全ガイド</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>30 / 60 / 90日で立ち上げる現実解</h2>
                     <h3>最初の30日</h3>
-                    <p>トップ3製品を対象に、Excelで最低限のSBOMを作ります。この段階では、製品版数とコンポーネント版数の対応を出せることと、担当部門・更新責任者を決めることが大切です。</p>
+                    <ul>
+                        <li>トップ3製品に絞ってSBOMを作る</li>
+                        <li>Excelで最低限の項目をそろえる</li>
+                        <li>更新担当者を決める</li>
+                    </ul>
                     
                     <h3>次の60日</h3>
-                    <p>NVDなどの脆弱性情報をウォッチし、SBOMと照合する運用を始めます。OEM照会に対しては、まず「影響あり / 要確認 / 影響なし」の3段階で返せる型を作ります。</p>
+                    <ul>
+                        <li>脆弱性情報との突合運用を始める</li>
+                        <li>影響あり / なし / 要確認の3段階で判断する</li>
+                        <li>OEM照会を想定した説明文の型を作る</li>
+                    </ul>
                     
                     <h3>90日まで</h3>
-                    <p>SPDXまたはCycloneDXのどちらに寄せるかを決めます。VEX的な判断理由をテンプレ化し、OEM回答書との接続を固めます。重要なのは、“標準化した”ことよりも、脆弱性照会に一週間以内で再現可能に答えられることです。</p>
+                    <ul>
+                        <li>SPDX または CycloneDX への移行方針を決める</li>
+                        <li>提出版と社内版の粒度差を整理する</li>
+                        <li>VEX的な説明ルールを整える</li>
+                    </ul>
+                    <p>この順番なら、最初から完璧を目指さずに、現場で使える運用へ進めやすくなります。</p>
+
+                    <h2>よくある失敗</h2>
+                    <h3>SBOM運用が止まる典型パターン</h3>
+                    <ol>
+                        <li><strong>作ること自体が目的になる：</strong>提出できたことで満足し、脆弱性対応に使われない。</li>
+                        <li><strong>製品版数と部品版数が分かれていない：</strong>CVEが出ても、どの製品まで影響するか追えない。</li>
+                        <li><strong>更新責任者が決まっていない：</strong>最初の1回だけで終わる。</li>
+                        <li><strong>機密の扱いが曖昧：</strong>社内で「出してよい範囲」が決まらず、毎回止まる。</li>
+                        <li><strong>VEXやOEM回答とつながっていない：</strong>一覧表はあるが、説明責任を果たせない。</li>
+                    </ol>
+                    <p>SBOMの失敗は、フォーマットの選択よりも、<strong>運用設計の不足</strong> で起きることがほとんどです。</p>
 
                     <hr class="border-white/10 my-10">
 
-                    <h2>FAQ</h2>
-                    <div class="space-y-6">
+                    <h2>FAQ：自動車サプライヤーのSBOMでよくある質問</h2>
+                    <div class="space-y-6 mt-6">
                         <div>
-                            <strong class="text-emerald-400 block mb-2">Q1. 自動車サプライヤーにSBOMは本当に必要ですか？</strong>
-                            <p class="m-0 text-slate-300">直接法令で「全サプライヤーがSBOMを作れ」と一律に書かれているわけではありません。しかし、UN R155やISO/SAE 21434の流れから、OEM要求や監査を通じてSBOM相当の管理が求められやすいのが実務上の現実です。</p>
+                            <strong class="text-brand-light block mb-2">Q1. 自動車サプライヤーにSBOMは本当に必要ですか？</strong>
+                            <p class="m-0 text-slate-300">必要です。法令条文上の言い方よりも、実務ではOEM要求・監査・脆弱性照会への対応として必要になります。特に、出荷後の脆弱性管理を説明するうえで、SBOMは基盤になります。</p>
                         </div>
                         <div>
-                            <strong class="text-emerald-400 block mb-2">Q2. SPDXとCycloneDX、どちらを選ぶべきですか？</strong>
-                            <p class="m-0 text-slate-300">標準性やライセンス情報を重視するならSPDX、脆弱性運用やVEX連携を重視するならCycloneDXが選ばれやすいです。取引先要求と自社運用の両方で決めるのが現実的です。</p>
+                            <strong class="text-brand-light block mb-2">Q2. SBOMと通常のBOMは何が違いますか？</strong>
+                            <p class="m-0 text-slate-300">通常のBOMは製品や部材全体の部品表ですが、SBOMはソフトウェア構成要素に特化した部品表です。脆弱性管理やライセンス管理までつながる点が大きな違いです。</p>
                         </div>
                         <div>
-                            <strong class="text-emerald-400 block mb-2">Q3. Excelで始めるのは間違いですか？</strong>
-                            <p class="m-0 text-slate-300">間違いではありません。棚卸しの単位と更新責任が定まっていない段階ではExcelの方が現場定着しやすいことがあります。あとで標準フォーマットへ移行できるよう、項目と版管理を崩さないことが重要です。</p>
+                            <strong class="text-brand-light block mb-2">Q3. SPDXとCycloneDXのどちらを選べばよいですか？</strong>
+                            <p class="m-0 text-slate-300">標準性や文書性を重視するなら SPDX、脆弱性管理やVEX連携を重視するなら CycloneDX が向いています。まずは運用目的を先に決める方が失敗しません。</p>
                         </div>
                         <div>
-                            <strong class="text-emerald-400 block mb-2">Q4. SBOMを作ったら全部開示しないといけませんか？</strong>
-                            <p class="m-0 text-slate-300">いいえ。共有範囲と粒度は運用設計の問題です。社内完全版、OEM提出版、照会回答版のように分ける方が実務的です。</p>
+                            <strong class="text-brand-light block mb-2">Q4. Excelで管理しても問題ありませんか？</strong>
+                            <p class="m-0 text-slate-300">最初は問題ありません。むしろ棚卸しの単位と更新責任が定まっていない段階では、Excelの方が定着しやすい場合があります。大切なのは、後で標準フォーマットへ移行できる形で管理することです。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q5. SBOMはどこまで開示すべきですか？</strong>
+                            <p class="m-0 text-slate-300">すべてを開示する必要はありません。社内完全版、OEM提出版、照会回答版のように粒度を分けると、機密保護と説明責任を両立しやすくなります。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q6. SBOMがあれば脆弱性対応は完了ですか？</strong>
+                            <p class="m-0 text-slate-300">いいえ。SBOMは入口です。実際の影響有無や優先順位判断には、NVD / JVN / VEX / 社内判断基準が必要です。SBOM単独では完結しません。</p>
                         </div>
                     </div>
 
                     <h2>まとめ</h2>
-                    <p>SBOMは、フォーマットの名前を覚えることが本質ではありません。本質は、自社製品に何が入っているかを把握し、脆弱性が出たときに、どの製品へどの程度影響するかを説明できる状態を作ることです。</p>
-                    <p>そのSBOMが、<strong>OEM照会・監査・脆弱性対応で本当に使われるか。</strong>ここに答えられるなら、そのSBOMは生きています。SBOMは提出物ではなく、説明責任を回すための実務基盤です。</p>
+                    <p>SBOMは、フォーマットを選ぶことが目的ではありません。</p>
+                    <p>本質は、自社製品に何が入っているかを把握し、脆弱性が出たときに素早く影響確認できる状態を作ることです。SPDXかCycloneDXか、Excelから始めるか、どこまで開示するか。これらはすべて大事ですが、最終的に問われるのは1つです。</p>
+                    <p class="text-xl font-bold text-white my-6">そのSBOMが、OEM照会・監査・脆弱性対応で本当に使われるか。</p>
+                    <p>その問いに答えられるなら、そのSBOMは生きています。答えられないなら、どれだけ立派な形式でも、まだ実務資産にはなっていません。自動車サプライヤーにとってのSBOMは、提出物ではなく、説明責任を回すための基盤です。</p>
 
                 </div>
             </div>
 
             <!-- CTA Section -->
-            <div class="glass-card rounded-3xl p-8 md:p-12 text-center border-t-4 border-t-emerald-500 bg-navy-800/80 shadow-[0_0_40px_-10px_rgba(16,185,129,0.2)]">
-                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">既存のExcel部品表を、そのままツールに読み込ませませんか？</h2>
+            <div class="glass-card rounded-3xl p-8 md:p-12 text-center border-t-4 border-t-brand bg-navy-800/80 shadow-[0_0_40px_-10px_rgba(59,130,246,0.3)]">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">SBOMをどこから整備すべきか、迷っていませんか？</h2>
                 <p class="text-slate-300 mb-8 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
-                    「SBOMの作り方が分からない」「手元にあるExcelの部品表で十分なのか不安」という方は、まずはオンライン無料相談をご活用ください。<br><br>
-                    <strong>Auto PSIRT Cloud</strong>なら、自由形式のExcelをそのままアップロードするだけで、日々の脆弱性チェックを全自動化できます。
+                    自社の製品構成に合わせてSBOMの粒度を整理したい方は、無料相談をご利用ください。<br><br>
+                    また、<strong>Auto PSIRT Cloud</strong>なら、Excelの部品表を読み込ませるだけで日々の脆弱性チェックを自動化できます。SBOM取り込みから脆弱性突合までの流れを実際の画面で確認したい方は、オンライン相談＆デモをご予約ください。
                 </p>
-                <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-navy-900 bg-white hover:bg-slate-200 transition-all duration-300 shadow-xl shadow-white/10 w-full sm:w-auto hover:-translate-y-1">
-                    <i data-lucide="calendar" class="w-5 h-5 text-emerald-600"></i>
+                <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-white bg-brand hover:bg-brand-dark transition-all duration-300 shadow-lg shadow-brand/20 w-full sm:w-auto hover:-translate-y-1">
+                    <i data-lucide="calendar" class="w-5 h-5"></i>
                     【無料】オンライン相談 ＆ 画面デモを予約する
                 </a>
             </div>
