@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEOメタタグ -->
+    <title>PSIRTとは（自動車サプライヤー版）：OEM要求にどう答えるか | Auto PSIRT Cloud</title>
+    <meta name="description" content="自動車サプライヤーの現場で求められる「PSIRT」について、SOC/VSOCとの違いやOEMが本当に期待していること、兼務でもできる最小構成での立ち上げ方を実務目線で解説します。">
+    <meta name="keywords" content="PSIRTとは, 自動車セキュリティ, UN-R155, OEM要求, SOC, VSOC, Tier N">
+    <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/psirt/what-is-psirt/">
+    
+    <!-- OGPタグ (SNSシェア用) -->
+    <meta property="og:title" content="PSIRTとは（自動車サプライヤー版）：OEM要求にどう答えるか">
+    <meta property="og:description" content="SOC/VSOCとの違いやOEMが本当に期待していること、最小構成での立ち上げ方を解説します。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/psirt/what-is-psirt/">
+    <meta property="og:site_name" content="Auto PSIRT Cloud">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0a0f1c',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        brand: {
+                            light: '#60a5fa',
+                            DEFAULT: '#3b82f6',
+                            dark: '#2563eb',
+                        },
+                        accent: {
+                            DEFAULT: '#06b6d4',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #60a5fa, #06b6d4);
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* 記事用カスタムスタイル */
+        .prose h2 {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-top: 3rem;
+            color: #f8fafc;
+        }
+        .prose h3 {
+            color: #e2e8f0;
+            margin-top: 2rem;
+        }
+        .prose a {
+            color: #60a5fa;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .prose a:hover {
+            border-bottom-color: #60a5fa;
+        }
+        .prose strong {
+            color: #f8fafc;
+            background: linear-gradient(transparent 60%, rgba(59, 130, 246, 0.3) 40%);
+        }
+        .related-box {
+            background: rgba(30, 41, 59, 0.6);
+            border-left: 4px solid #3b82f6;
+            padding: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-brand selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-brand/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-accent/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-accent flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="/news.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        ニュース一覧へ戻る
+                    </a>
+                    <a href="/demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                        相談 or デモ予約
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <article class="max-w-4xl mx-auto">
+            
+            <!-- パンくずリスト -->
+            <nav class="flex text-sm text-slate-400 mb-8" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/index.html" class="hover:text-white transition-colors">ホーム</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <a href="/news.html" class="hover:text-white transition-colors">ニュース・インサイト</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <span class="text-slate-500 truncate max-w-[200px] sm:max-w-none">PSIRTとは（自動車サプライヤー版）</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- 記事ヘッダー -->
+            <header class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-accent/20 border border-accent/30 text-accent text-xs font-bold px-3 py-1 rounded-full">インサイト</span>
+                    <time class="text-slate-400 text-sm flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> 2026.03.05
+                    </time>
+                </div>
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
+                    PSIRTとは（自動車サプライヤー版）：<br/>OEM要求にどう答えるか
+                </h1>
+                
+                <!-- 導入文 -->
+                <div class="text-lg text-slate-300 leading-relaxed p-6 bg-navy-800/50 rounded-2xl border border-white/5">
+                    <p>自動車サプライヤーの現場で「PSIRTを作ってください」「脆弱性対応体制を示してください」と言われる場面が増えています。背景にあるのは、車両メーカー側がUN-R155のCSMS対応を進め、開発・生産・出荷後を通じてサイバーセキュリティを管理し、新たな脅威や脆弱性を監視・検知・対応することを求められているからです。</p>
+                    <p class="mt-4">ISO/SAE 21434も、車載のE/Eシステムをライフサイクル全体で扱う前提を置いています。さらに日本ではJAMA/JAPIAの自動車産業サイバーセキュリティガイドラインが、サプライチェーン全体での対策レベル向上と自己評価を推進しています。</p>
+                    <p class="mt-4">つまり、OEMの要求は単なる“追加のお願い”ではなく、規制・標準・業界運用の流れがサプライヤー側に降りてきた結果だと理解するのが正確です。</p>
+                </div>
+            </header>
+
+            <!-- 記事本文 -->
+            <div class="glass-card p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl bg-navy-900/80 mb-16">
+                <div class="prose prose-invert prose-slate prose-lg max-w-none">
+                    
+                    <h2>PSIRTとは何か</h2>
+                    <p>では、PSIRTとは何か。FIRSTのPSIRT Services Frameworkでは、PSIRTは自社が製造・販売する製品やサービスに関する脆弱性リスクを特定し、評価し、対処する組織的な機能として説明されています。また、PSIRTは開発から切り離された孤立組織ではなく、より広いセキュアエンジニアリングの取り組みの一部として動くべきものだとされています。つまりPSIRTは、単なる「受付窓口」でも「問い合わせ対応班」でもなく、製品セキュリティの意思決定を回す仕組みそのものです。</p>
+                    <p>自動車サプライヤーにとってのPSIRTを、もっと実務寄りに言い換えるとこうなります。</p>
+                    <p class="text-xl border-l-4 border-brand pl-4 font-bold text-white bg-brand/5 py-4 my-6">
+                        「OEMや顧客から脆弱性について聞かれたときに、誰が、何を根拠に、いつまでに、どう答えるかを定義する体制」
+                    </p>
+                    
+                    <p>現場で本当に困るのは、脆弱性そのものよりも、</p>
+                    <ul>
+                        <li>そもそも自社製品が影響を受けるのか分からない</li>
+                        <li>誰が判断するのか決まっていない</li>
+                        <li>OEMに返す文面や証跡がない</li>
+                    </ul>
+                    <p>という3点です。UN-R155が求めるのは“脅威や脆弱性を監視・検知・対応すること”であり、FIRSTのPSIRT frameworkも、内部外部のステークホルダー連携や、再現性ある手順・ワークフローの整備を重視しています。したがって、OEMが見ているのは「完璧な24時間SOCがあるか」ではなく、<strong>製品脆弱性対応の流れが止まらないか</strong>です。</p>
+
+                    <h2>兼務でも回る最小構成</h2>
+                    <p>ここで重要なのが、PSIRTを大げさに考えすぎないことです。Tier2〜Tier4の企業で、いきなり専任チームを作る必要はありません。最小構成なら、次の4役で十分回せます。</p>
+                    
+                    <ul>
+                        <li><strong>受付担当：</strong>OEMや顧客、社内からの問い合わせを受け、期限を管理する人。</li>
+                        <li><strong>技術評価担当：</strong>設計・ソフト担当として、影響有無を判断する人。</li>
+                        <li><strong>対外回答担当：</strong>品質保証や営業技術として、OEMに説明可能な形へ整える人。</li>
+                        <li><strong>承認者：</strong>最終的に外部へ出す回答を承認する責任者。</li>
+                    </ul>
+                    
+                    <p>この4つは、4人の専任者が必要という意味ではありません。兼務で構いません。大切なのは、役割が明確で、止まったときに誰がボールを持つか分かることです。FIRSTも、PSIRTが開発、品質、リリース、サポートなど複数の内部関係者と継続的に連携することを重視しています。</p>
+
+                    <div class="related-box">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="link" class="w-4 h-4"></i> 関連記事</div>
+                        <ul class="text-base m-0 list-none pl-0 space-y-2">
+                            <!-- 1記事目へのアンカーリンクを設置 -->
+                            <li><a href="/psirt/automotive-supplier-guide/">自動車サプライヤーのPSIRT完全ガイド：UN-R155/ISO 21434対応を兼務で回す方法</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>PSIRTとSOC、VSOCの違い</h2>
+                    <p>PSIRTと混同されやすいのがSOCやVSOCです。違いを一言で言えば、PSIRTは「製品の脆弱性対応」、<strong>SOC/VSOCは「運用監視と検知」</strong>です。</p>
+                    <p>FIRSTの整理でも、PSIRTは製品やサービスに関する脆弱性情報の受領・調査・報告を担う一方、Enterprise CSIRTは組織内ICTのインシデントを扱うと分けられています。自動車業界ではここに車両・フリート側の監視機能が加わってVSOCと呼ばれることがありますが、少なくともサプライヤーが最初に整えるべきなのは、ログ監視よりも<strong>「脆弱性照会に答えられるPSIRT」</strong>です。</p>
+
+                    <h2>OEMはPSIRTに何を期待しているのか</h2>
+                    <p>では、OEMはPSIRTに何を期待しているのでしょうか。実務上は、主に3つです。</p>
+                    <ol>
+                        <li><strong>第一に、窓口があること。</strong>問い合わせ先が明確で、返答の初動が早いこと。</li>
+                        <li><strong>第二に、影響判定ができること。</strong>自社製品・部品・バージョン単位で、影響あり／なしを説明できること。</li>
+                        <li><strong>第三に、証跡が残ること。</strong>誰がどう判断し、何を回答したかを後から示せることです。</li>
+                    </ol>
+                    <p>この3つは、UN-R155の継続監視・対応要求、FIRSTのPSIRT業務、そしてJAMA/JAPIAの自己評価運用の方向性と整合しています。だからこそ、「脆弱性をゼロにする」ことよりも、「対応を再現可能にする」ことの方が先に見られます。</p>
+
+                    <h2>SBOMの重要性と説明責任</h2>
+                    <p>もう1つ、PSIRTを回す上で避けて通れないのが<strong>SBOM（ソフトウェア部品表）</strong>です。</p>
+                    <p>CISAはSBOMを、ソフトウェアを構成するコンポーネントの“材料表”として位置づけています。またVEXは、その製品が既知の脆弱性に影響を受けるかどうかを示すための考え方です。つまりOEMが欲しいのは、単なる「たぶん大丈夫です」ではなく、どのコンポーネントが入り、どのバージョンで、なぜ影響がある／ないのかという説明です。</p>
+                    <p>PSIRTは、この説明責任を回すための中核機能だと考えると腹落ちしやすくなります。</p>
+
+                    <h2>最初の一歩はどう踏み出すか</h2>
+                    <p>自動車サプライヤーがPSIRTを立ち上げるなら、最初の一歩は大きくありません。</p>
+                    <ul>
+                        <li><strong>まずは脆弱性受付の窓口を1つ決める。</strong></li>
+                        <li><strong>次に、製品一覧と主要ソフト部品の棚卸しを始める。</strong></li>
+                        <li><strong>そして、影響あり・要確認・影響なしの3段階で仮置きできるルールを決める。</strong></li>
+                    </ul>
+                    <p>この3つだけで、OEMからの突然の照会に対して「社内で判断不能で止まる」状態はかなり減ります。JAMA/JAPIAのガイドラインが自己評価と改善を前提にしていることを踏まえても、最初から100点を目指すより、まず継続できる最小運用を作る方が現実的です。</p>
+
+                    <h2>まとめ：説明責任を回す仕組み</h2>
+                    <p>最後に、PSIRTを一言でまとめるなら、<strong>製品脆弱性への“説明責任を回す仕組み”</strong>です。</p>
+                    <p>自動車サプライヤーにとって重要なのは、「うちは中小企業だから無理」と考えることではなく、「OEMが納得する最小の型は何か」を定義することです。窓口、影響判定、証跡。この3つが回り始めれば、PSIRTはもう始まっています。規制や標準は厳しく見えますが、現場で必要なのはまず、迷わず返せる仕組みです。</p>
+
+                </div>
+            </div>
+
+            <!-- CTA Section -->
+            <div class="glass-card rounded-3xl p-8 md:p-12 text-center border-t-4 border-t-brand bg-navy-800/80 shadow-[0_0_40px_-10px_rgba(59,130,246,0.3)]">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">PSIRTの立ち上げで悩んでいませんか？</h2>
+                <p class="text-slate-300 mb-8 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+                    「兼務体制でどう回せばいいか分からない」「既存のExcel部品表をどう活用すればいいか知りたい」という方は、まずはオンライン無料相談をご活用ください。<br><br>
+                    <strong>Auto PSIRT Cloud</strong>なら、月額5万円で専門知識ゼロでも回せる運用基盤をすぐに構築できます。
+                </p>
+                <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-white bg-brand hover:bg-brand-dark transition-all duration-300 shadow-lg shadow-brand/20 w-full sm:w-auto hover:-translate-y-1">
+                    <i data-lucide="calendar" class="w-5 h-5"></i>
+                    【無料】オンライン相談 ＆ 画面デモを予約する
+                </a>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/5 text-center text-sm text-slate-500 mt-auto bg-navy-900/80">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span class="font-bold text-slate-400">Auto PSIRT Cloud</span>
+            </div>
+            <p>&copy; 2026 Unimobilities株式会社. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
