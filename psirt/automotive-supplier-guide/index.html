@@ -1,1 +1,547 @@
-<h1>テスト記事です</h1>
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEOメタタグ -->
+    <title>自動車サプライヤーのPSIRT完全ガイド：UN-R155/ISO 21434対応を兼務で回す方法 | Auto PSIRT Cloud</title>
+    <meta name="description" content="自動車部品メーカー向けPSIRT完全ガイド。UN-R155/ISO 21434対応を、兼務でも回る最小体制・運用フロー・SBOM・脆弱性トリアージ・OEM回答まで実務目線で解説します。">
+    <meta name="keywords" content="PSIRT, 自動車セキュリティ, UN-R155, ISO21434, SBOM, 脆弱性管理, Tier2, 兼務">
+    <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/psirt/automotive-supplier-guide/">
+    
+    <!-- OGPタグ (SNSシェア用) -->
+    <meta property="og:title" content="自動車サプライヤーのPSIRT完全ガイド：UN-R155対応を兼務で回す方法">
+    <meta property="og:description" content="兼務でも回る最小体制・運用フロー・SBOM・脆弱性トリアージ・OEM回答まで実務目線で解説します。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/psirt/automotive-supplier-guide/">
+    <meta property="og:site_name" content="Auto PSIRT Cloud">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0a0f1c',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        brand: {
+                            light: '#60a5fa',
+                            DEFAULT: '#3b82f6',
+                            dark: '#2563eb',
+                        },
+                        accent: {
+                            DEFAULT: '#06b6d4',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #60a5fa, #06b6d4);
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* 記事用カスタムスタイル */
+        .prose h2 {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-top: 3rem;
+            color: #f8fafc;
+        }
+        .prose h3 {
+            color: #e2e8f0;
+            margin-top: 2rem;
+        }
+        .prose a {
+            color: #60a5fa;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .prose a:hover {
+            border-bottom-color: #60a5fa;
+        }
+        .prose strong {
+            color: #f8fafc;
+            background: linear-gradient(transparent 60%, rgba(59, 130, 246, 0.3) 40%);
+        }
+        .related-box {
+            background: rgba(30, 41, 59, 0.6);
+            border-left: 4px solid #3b82f6;
+            padding: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-brand selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-brand/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-accent/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Navigation (ルートへの絶対パスを使用) -->
+    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-accent flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="/news.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        ニュース一覧へ戻る
+                    </a>
+                    <a href="/demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                        相談 or デモ予約
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <article class="max-w-4xl mx-auto">
+            
+            <!-- パンくずリスト -->
+            <nav class="flex text-sm text-slate-400 mb-8" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/index.html" class="hover:text-white transition-colors">ホーム</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <a href="/news.html" class="hover:text-white transition-colors">ニュース・インサイト</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <span class="text-slate-500 truncate max-w-[200px] sm:max-w-none">自動車サプライヤーのPSIRT完全ガイド</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- 記事ヘッダー -->
+            <header class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-accent/20 border border-accent/30 text-accent text-xs font-bold px-3 py-1 rounded-full">インサイト</span>
+                    <time class="text-slate-400 text-sm flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> 2026.03.05
+                    </time>
+                </div>
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
+                    自動車サプライヤーのPSIRT完全ガイド：<br/>UN-R155/ISO 21434対応を兼務で回す方法
+                </h1>
+                
+                <!-- 導入文 -->
+                <div class="text-lg text-slate-300 leading-relaxed p-6 bg-navy-800/50 rounded-2xl border border-white/5">
+                    <p class="mb-4">OEMから「PSIRT体制を示してください」「このCVEの影響有無を回答してください」「SBOMを提出してください」と言われ、困っている自動車サプライヤーは少なくありません。特にTier2〜Tier4では、品質保証、設計、情シスの誰かが“兼務”で脆弱性対応を背負わされ、専門知識も時間も足りないまま対応しているケースが多いはずです。</p>
+                    <p class="mb-4">しかし、ここで重要なのは、<strong>PSIRTは最初から大規模な専門組織である必要はない</strong>ということです。</p>
+                    <p class="mb-4">自動車業界では、UN Regulation No.155がサイバーセキュリティ管理体制を求め、ISO/SAE 21434が車両の電気・電子システムに対するサイバーセキュリティエンジニアリングの全ライフサイクル要求を整理しています。つまり、開発時だけでなく、市場投入後も継続的に脆弱性を監視し、評価し、説明し、必要に応じて対処する運用が必要です。</p>
+                    <p>この記事では、自動車サプライヤーが兼務でも回せるPSIRTの最小構成を前提に、実務レベルでの論点と運用フローを整理します。</p>
+                </div>
+            </header>
+
+            <!-- 記事本文 (Tailwind Typographyを使用) -->
+            <div class="glass-card p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl bg-navy-900/80 mb-16">
+                <div class="prose prose-invert prose-slate prose-lg max-w-none">
+                    
+                    <h2>まず結論：兼務PSIRTが“回る状態”の最小要件</h2>
+                    <p>最初に結論を言うと、自動車サプライヤーのPSIRTは、次の5つが揃えば運用を始められます。</p>
+                    <ul>
+                        <li>受付窓口がある</li>
+                        <li>影響評価の責任者が決まっている</li>
+                        <li>回答テンプレがある</li>
+                        <li>SBOMまたは簡易部品表がある</li>
+                        <li>判断の記録が残る</li>
+                    </ul>
+                    <p>ここで大事なのは、「完璧にやる」ことではなく、<strong>同じ手順で繰り返し回せること</strong>です。</p>
+                    <p>OEMや監査側が見ているのは、きれいな理想論よりも、脆弱性情報を受け取ったときに、誰が、どう評価し、どう回答したかが説明できるかです。つまりPSIRTは、華やかなセキュリティ組織というより、まずは運用ルールと証跡管理の仕組みです。</p>
+                    
+                    <div class="related-box">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="link" class="w-4 h-4"></i> 関連記事候補</div>
+                        <ul class="text-base m-0 list-none pl-0 space-y-2">
+                            <li><a href="#">PSIRTとは（サプライヤー版）</a></li>
+                            <li><a href="#">兼務でも回るPSIRT最小体制</a></li>
+                            <li><a href="#">PSIRT運用フロー図解</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>PSIRTとは何か：SOCやVSOCとの違い</h2>
+                    <p>PSIRTは Product Security Incident Response Team の略で、製品に関する脆弱性やセキュリティインシデントへ対応するための体制・運用を指します。<br>やることは大きく分けて次の5つです。</p>
+                    <ol>
+                        <li>脆弱性情報の受付</li>
+                        <li>影響有無の確認</li>
+                        <li>優先度の判断</li>
+                        <li>顧客/OEMへの連絡</li>
+                        <li>修正または回避策の管理</li>
+                    </ol>
+                    <p>ここで混同されやすいのがSOCやVSOCです。</p>
+                    <ul>
+                        <li><strong>SOC：</strong>ITシステムやネットワークの監視・検知・分析</li>
+                        <li><strong>VSOC：</strong>車両や車両関連システムの運用監視</li>
+                        <li><strong>PSIRT：</strong>製品脆弱性に対する受付・評価・対外対応・是正管理</li>
+                    </ul>
+                    <p>Tier2〜Tier4のサプライヤーにとって、<strong>最初に必要なのは多くの場合VSOCではなくPSIRT</strong>です。</p>
+                    <p>なぜなら、いきなり24時間365日の監視体制を作るより前に、OEMから来る脆弱性照会へ答えられることの方が現実的かつ緊急だからです。もちろん、将来的には脅威監視や外部インテリジェンスの継続取得も必要になります。ただ、立ち上げ初期の論点はまず「製品脆弱性に説明責任を持てるか」にあります。</p>
+
+                    <h2>なぜ自動車サプライヤーにもPSIRTが必要なのか</h2>
+                    <p>ISO/SAE 21434は、車両の電気・電子システムとそのコンポーネント、インターフェースを対象に、コンセプト、開発、製造、運用、保守、廃棄まで含むライフサイクル全体でのサイバーセキュリティリスク管理要求を定義しています。ISO自身も、この規格が車両のライフサイクル全体でサイバーセキュリティを考慮するための枠組みだと説明しています。</p>
+                    <p>また、UN Regulation No.155はサイバーセキュリティおよびサイバーセキュリティ管理システムを扱う公式規則であり、UNECEは条文と改訂版を継続的に公開しています。つまり、これは一過性の流行ではなく、型式認証やOEM要求に関わる実務要件です。</p>
+                    <p>ここで重要なのは、Tier2〜Tier4が<strong>「法規の直接適用対象ではないから関係ない」とは言えない</strong>ことです。</p>
+                    <p>実際にはOEMやTier1がUN-R155/CSMSに対応するため、下位サプライヤーに対しても次のような要求が降りてきます。</p>
+                    <ul>
+                        <li>使用OSSやソフト部品の把握</li>
+                        <li>脆弱性情報の継続監視</li>
+                        <li>影響有無の回答</li>
+                        <li>是正計画または回避策の提示</li>
+                        <li>証跡の提出</li>
+                    </ul>
+                    <p>つまり、<strong>OEMに売るためにPSIRTが必要</strong>というのが現実です。</p>
+
+                    <h2>OEMが本当に見ているのは“説明責任”である</h2>
+                    <p>OEMからの要求を受けると、多くの企業は「とにかくCVEを全部追わなければ」と考えがちです。<br>ですが、OEMが本当に見ているのはCVEの数ではありません。見ているのは、次の3点です。</p>
+                    
+                    <h3>1. 自社製品への影響を判断できるか</h3>
+                    <p>そのCVEが、自社のどの製品・どのバージョン・どの構成に関係するかを説明できるか。</p>
+                    
+                    <h3>2. 対応優先度を決められるか</h3>
+                    <p>全部を同じ重さで扱っていないか。何を優先し、何を調査中とし、何を影響なしとするかの基準があるか。</p>
+                    
+                    <h3>3. 期限内に回答できるか</h3>
+                    <p>社内調査が完了していなくても、中間報告・追加確認・確定報告の流れを持っているか。</p>
+                    
+                    <p>ここを外すと、いくらセキュリティツールを入れても運用は破綻します。逆に言えば、PSIRT立ち上げで最初に作るべきは巨大な監視基盤ではなく、説明責任を支える運用フローです。</p>
+
+                    <div class="related-box">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="link" class="w-4 h-4"></i> 関連記事候補</div>
+                        <ul class="text-base m-0 list-none pl-0 space-y-2">
+                            <li><a href="#">OEMから調査依頼が来たときの初動</a></li>
+                            <li><a href="#">回答書に必ず入れるべき項目</a></li>
+                            <li><a href="#">OEM監査でよく聞かれる質問集</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>兼務でも回るPSIRT最小体制</h2>
+                    <p>PSIRTを立ち上げようとすると、「専任チームが必要では」と考えて止まってしまいがちです。<br>ですが、立ち上げ初期は4ロールで十分です。</p>
+                    
+                    <h3>1. 受付窓口</h3>
+                    <p>品質保証または情シスが担うことが多いです。役割は、OEMや外部からの問い合わせを受け、期限を管理し、チケットを起票することです。</p>
+                    
+                    <h3>2. 技術評価</h3>
+                    <p>設計、ソフト開発、製品担当が担います。その脆弱性が実際に使っている部品・ソフト・機能に関係するかを確認します。</p>
+                    
+                    <h3>3. 顧客対応</h3>
+                    <p>品質保証や営業技術が担います。OEM向けの回答文面を整え、必要に応じて補足説明や中間報告を出します。</p>
+                    
+                    <h3>4. 承認者</h3>
+                    <p>部門長または品質責任者です。対外回答の最終承認と、リスク受容の判断を行います。</p>
+                    
+                    <p>この4ロールは、4人必要という意味ではありません。実際には1人が複数ロールを兼務して構いません。ただし、<strong>誰が最終承認するのか</strong>だけは曖昧にしないことが重要です。</p>
+
+                    <h3>兼務PSIRTでよくある失敗</h3>
+                    <ul>
+                        <li>受付窓口がなく、メールが個人に埋もれる</li>
+                        <li>技術評価の依頼先が曖昧で止まる</li>
+                        <li>対外回答の承認待ちで期限を過ぎる</li>
+                    </ul>
+                    <p>この3つを潰すだけでも、PSIRT運用の安定度はかなり上がります。</p>
+
+                    <h2>PSIRT運用フロー：受付からクローズまで</h2>
+                    <p>兼務体制では、フローを文章ではなく状態遷移で持つ方が運用しやすくなります。おすすめは次の7ステータスです。</p>
+                    <ul>
+                        <li><strong>New：</strong>受付</li>
+                        <li><strong>Triage：</strong>一次評価中</li>
+                        <li><strong>Need Info：</strong>追加情報待ち</li>
+                        <li><strong>Decision：</strong>方針決定</li>
+                        <li><strong>Remediation：</strong>修正または回避策対応中</li>
+                        <li><strong>Reported：</strong>OEM報告済み</li>
+                        <li><strong>Closed：</strong>証跡保管まで完了</li>
+                    </ul>
+
+                    <h3>受付時に最低限記録すべき項目</h3>
+                    <ul>
+                        <li>受付日</li>
+                        <li>依頼元</li>
+                        <li>回答期限</li>
+                        <li>CVE番号</li>
+                        <li>対象製品</li>
+                        <li>現在の担当</li>
+                        <li>現時点の判定</li>
+                        <li>次のアクション</li>
+                    </ul>
+                    <p>このレベルでも、メールだけで対応するよりはるかに強くなります。監査や社内レビューの場面でも、「どの案件が止まっているか」を見える化できます。</p>
+
+                    <h2>SBOMがないとPSIRTはすぐ詰まる</h2>
+                    <p>PSIRT運用で最も大きなボトルネックは、「そのCVEが自社製品に関係あるか分からない」状態です。この問題を解決する基礎がSBOMです。</p>
+                    <p>CISAはSBOMを、ソフトウェアを構成するコンポーネントの“入れ子状の在庫表”と説明しています。また、CISAはSBOMと関連する概念としてVEXを挙げ、VEXを「既知の脆弱性に対して製品が影響を受けるかどうかを示す表明」と説明しています。</p>
+
+                    <h3>ただし、最初から完璧なSBOMでなくてよい</h3>
+                    <p>よくある誤解は、「SPDXかCycloneDXで完全なSBOMがないと始められない」というものです。実務上は、まず次の項目が追えれば十分です。</p>
+                    <ul>
+                        <li>製品名</li>
+                        <li>バージョン</li>
+                        <li>使用ソフト/OSS名</li>
+                        <li>バージョン</li>
+                        <li>担当者</li>
+                        <li>出荷との紐付け</li>
+                    </ul>
+                    <p>つまり、<strong>Excelの簡易部品表からでも始められる</strong>ということです。大切なのは形式よりも、次の2点です。</p>
+                    <ol>
+                        <li>出荷中の製品と紐づいていること</li>
+                        <li>更新責任者が決まっていること</li>
+                    </ol>
+                    <p>SBOMがないままPSIRTをやると、OEMからの照会が来るたびに、設計担当へ個別確認を投げることになり、運用が疲弊します。</p>
+
+                    <div class="related-box">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="link" class="w-4 h-4"></i> 関連記事候補</div>
+                        <ul class="text-base m-0 list-none pl-0 space-y-2">
+                            <li><a href="#">SBOM完全ガイド</a></li>
+                            <li><a href="#">SBOMをExcelで始める方法</a></li>
+                            <li><a href="#">SBOMに最低限入れるべき項目</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>脆弱性トリアージ：CVSSだけで回さない</h2>
+                    <p>CVEを追い始めると、多くの組織はCVSSの点数だけで優先順位を決めようとします。<br>しかし、これは兼務PSIRTにとって危険です。なぜなら、CVSSは脆弱性の深刻度を見る指標であって、<strong>あなたの製品にとって今どれだけ優先すべきか</strong>を単独で決めるものではないからです。</p>
+
+                    <h3>実務では3段階で十分</h3>
+                    <p>まずは次の3区分に落とすのが現実的です。</p>
+                    <ul>
+                        <li>対応必須</li>
+                        <li>要確認</li>
+                        <li>対応不要</li>
+                    </ul>
+
+                    <h3>判断の基準</h3>
+                    <p>次の3つで見ます。</p>
+                    <ol>
+                        <li><strong>使っているか：</strong>SBOMや部品表上で、そのコンポーネントが入っているか。</li>
+                        <li><strong>到達可能か：</strong>外部インターフェース、通信機能、診断機能などを通じて、その脆弱な機能に到達できるか。</li>
+                        <li><strong>悪用リスクが高いか：</strong>実際に悪用されている、または短期的に悪用されやすいか。</li>
+                    </ol>
+                    <p>この3つで切るだけでも、ノイズはかなり減ります。</p>
+
+                    <h2>VEXの考え方：“影響なし”を説明できるようにする</h2>
+                    <p>VEXは、製品やコンポーネントが特定の脆弱性に対してどの状態にあるかを機械可読で表すための枠組みです。CISAのVEX最小要件では、VEXはソフトウェア製品やコンポーネントが脆弱性に対してどういう状態かを示すもので、SBOMや脆弱性DB、セキュリティアドバイザリと統合できるが、それらを必須とはしないと整理されています。</p>
+                    <p>自動車サプライヤーの実務で特に重要なのは、<strong>“Not affected（影響なし）”をきちんと説明する語彙を持つこと</strong>です。</p>
+
+                    <h3>典型パターン</h3>
+                    <ul>
+                        <li>そもそも該当コンポーネントを使っていない</li>
+                        <li>該当コードがビルドに含まれていない</li>
+                        <li>到達経路が存在しない</li>
+                        <li>既存設定やアーキテクチャで緩和されている</li>
+                    </ul>
+                    <p>ここを毎回ゼロから文章で書くと、担当者によって回答品質がぶれます。だからこそ、判定理由の型を持つことが大事です。</p>
+
+                    <h3>“調査中”も立派な回答</h3>
+                    <p>結論が出ない場合に黙るのが一番危険です。「現時点では調査中だが、追加で確認して○日までに再回答する」と返せるようにしておく方が、対外運用としては強いです。</p>
+
+                    <h2>NVD、KEV、EPSSをどう使うか</h2>
+                    <p>脆弱性情報の取り込み先として、まず押さえやすいのがNVDです。NVDはCVE情報をAPIで取得でき、ページング、最終更新日、CPE指定、KEV追加日などの条件で取得できます。NVDはまた、CVEが公開されると通常1時間以内にNVDへ入ると説明しています。</p>
+                    
+                    <ul>
+                        <li><strong>KEV：</strong>CISAのKnown Exploited Vulnerabilities Catalogは、実際に悪用が確認されている脆弱性をまとめた一覧で、CISA自身も脆弱性優先順位付けの入力として使うよう勧めています。</li>
+                        <li><strong>EPSS：</strong>FIRSTのEPSSは、脆弱性が今後30日以内に現実世界で悪用される確率を推定する仕組みです。FIRSTはEPSSをリスクスコアそのものではなく、リスクのうち“脅威側”を補う情報として扱うべきだと説明しています。</li>
+                    </ul>
+
+                    <h3>実務上の使い方</h3>
+                    <ul>
+                        <li><strong>NVD：</strong>基本データの取得</li>
+                        <li><strong>KEV：</strong>優先対応のシグナル</li>
+                        <li><strong>EPSS：</strong>要確認案件の優先順位付け補助</li>
+                    </ul>
+                    <p>これで「CVSSが高いから全部急ぐ」という誤りを避けやすくなります。</p>
+
+                    <h2>OEM調査依頼への対応：何を返せばよいか</h2>
+                    <p>OEMからの照会に対して、回答書に最低限入れるべき内容は次の通りです。</p>
+                    <ul>
+                        <li>対象CVE</li>
+                        <li>対象製品/バージョン</li>
+                        <li>影響有無</li>
+                        <li>判定根拠</li>
+                        <li>現在の対応状況</li>
+                        <li>今後の予定</li>
+                        <li>連絡先/承認者</li>
+                    </ul>
+
+                    <h3>“影響なし”で返す場合</h3>
+                    <p>一番重要なのは、短くてもよいので理由があることです。</p>
+                    <div class="bg-red-500/10 border-l-4 border-red-500 p-4 rounded-r my-4">
+                        <strong class="text-red-400 block mb-1">悪い例</strong>
+                        「影響ありません」
+                    </div>
+                    <div class="bg-emerald-500/10 border-l-4 border-emerald-500 p-4 rounded-r my-4">
+                        <strong class="text-emerald-400 block mb-1">良い例</strong>
+                        「当該CVEの対象コンポーネントは当社製品の出荷構成に含まれておらず、影響なしと判断しています。」<br>
+                        または<br>
+                        「対象ライブラリは含まれるものの、脆弱な機能は当社構成で有効化されておらず、外部到達経路も存在しないため、現時点で影響なしと判断しています。」
+                    </div>
+
+                    <h3>“影響あり”で返す場合</h3>
+                    <p>この場合も、最初から完璧な修正完了を求められているわけではありません。返すべき内容は次の順です。</p>
+                    <ol>
+                        <li>影響あり</li>
+                        <li>暫定回避策の有無</li>
+                        <li>恒久対応の予定</li>
+                        <li>次回報告タイミング</li>
+                    </ol>
+                    <p>この型を持っておくだけで、社内調整がかなり楽になります。</p>
+
+                    <h2>30日で立ち上げる現実的ロードマップ</h2>
+                    <p>PSIRTを一気に完璧にしようとすると止まります。おすすめは30日で最小運用を作ることです。</p>
+                    
+                    <ul>
+                        <li><strong>1週目：窓口とフローを決める</strong>
+                            <ul>
+                                <li>問い合わせ窓口を1つ決める</li>
+                                <li>チケット管理表を作る</li>
+                                <li>承認者を決める</li>
+                            </ul>
+                        </li>
+                        <li><strong>2週目：トップ製品の部品表を整理する</strong>
+                            <ul>
+                                <li>売上上位またはOEM要求が強い製品から着手</li>
+                                <li>Excelでもよいので部品・ソフト一覧を作る</li>
+                            </ul>
+                        </li>
+                        <li><strong>3週目：トリアージルールを決める</strong>
+                            <ul>
+                                <li>対応必須 / 要確認 / 対応不要</li>
+                                <li>判定根拠の型を決める</li>
+                            </ul>
+                        </li>
+                        <li><strong>4週目：模擬案件で回す</strong>
+                            <ul>
+                                <li>OEM照会を想定して1件通してみる</li>
+                                <li>どこで止まったか洗い出す</li>
+                                <li>テンプレを更新する</li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <p>この進め方なら、専任不在でもPSIRTを“存在する状態”にできます。</p>
+
+                    <h3>よくある失敗</h3>
+                    <ul>
+                        <li><strong>SBOMを作って終わる：</strong>更新されないSBOMは、ほぼ役に立ちません。出荷バージョンと紐づいて初めて意味があります。</li>
+                        <li><strong>CVSSだけで全部高優先度にする：</strong>兼務運用では確実に破綻します。露出、到達性、悪用状況で絞る必要があります。</li>
+                        <li><strong>対外回答の承認者がいない：</strong>回答文はできているのに、誰も最終判断できず期限が過ぎるケースは非常に多いです。</li>
+                        <li><strong>“調査中”を出せない：</strong>結論が出ない間に無言になるのが最悪です。中間報告の型を持っておくべきです。</li>
+                    </ul>
+
+                    <h2>まとめ：PSIRTは“組織名”ではなく“回る運用”である</h2>
+                    <p>自動車サプライヤーにとってPSIRTは、立派な看板を作ることではありません。本質は、<strong>脆弱性を受け取り、影響を判断し、OEMへ説明し、記録を残す一連の運用を回せること</strong>です。</p>
+                    <p>そのために必要なのは、最初から巨大な組織ではなく、次の最小セットです。</p>
+                    <ul>
+                        <li>受付窓口</li>
+                        <li>4ロールの責任分界</li>
+                        <li>状態遷移で管理する運用フロー</li>
+                        <li>SBOMまたは簡易部品表</li>
+                        <li>3段階のトリアージ基準</li>
+                        <li>OEM回答テンプレ</li>
+                        <li>証跡保管</li>
+                    </ul>
+                    <p>ここまで揃えば、兼務PSIRTでも十分にスタートできます。そして、ここからSBOM自動化、VEX整備、OEMフォーマット出力、自動トリアージへと拡張していくのが現実的です。</p>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2>よくある質問（FAQ）</h2>
+                    <div class="space-y-6">
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q1. PSIRTとは何ですか？自動車サプライヤーにも必要ですか？</strong>
+                            <p class="m-0 text-slate-300">はい、必要です。OEMが市場出荷後の脆弱性対応体制を求めるため、Tier2〜Tier4でも受付、影響評価、回答、証跡管理の運用が必要になります。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q2. PSIRTとVSOCの違いは何ですか？</strong>
+                            <p class="m-0 text-slate-300">PSIRTは製品脆弱性への対応運用、VSOCは車両や関連システムの運用監視です。Tier NはまずPSIRT整備を優先する方が現実的です。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q3. SBOMがなくてもPSIRTは始められますか？</strong>
+                            <p class="m-0 text-slate-300">始められます。ただし効率は下がります。最初はExcelの簡易部品表でもよいので、出荷中製品との紐付けを作るのが重要です。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q4. CVSSが高ければ必ず対応必須ですか？</strong>
+                            <p class="m-0 text-slate-300">いいえ。実務では、使っているか、到達できるか、悪用リスクが高いかを併せて判断する必要があります。EPSSやKEVも補助になります。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q5. “影響なし”はどう書けばいいですか？</strong>
+                            <p class="m-0 text-slate-300">「影響なし」だけでは足りません。コンポーネント未使用、到達不能、機能無効化済みなど、理由を短く明確に示すことが重要です。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CTA Section (記事末尾用) -->
+            <div class="glass-card rounded-3xl p-8 md:p-12 text-center border-t-4 border-t-brand bg-navy-800/80 shadow-[0_0_40px_-10px_rgba(59,130,246,0.3)]">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">無料相談・画面デモを予約する</h2>
+                <p class="text-slate-300 mb-8 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+                    OEMからPSIRT体制やSBOM提出、脆弱性回答を求められているものの、<br class="hidden sm:block"/>
+                    <strong>「何から手を付けるべきか分からない」</strong><br class="hidden sm:block"/>
+                    <strong>「既存のExcel部品表でどこまで対応できるか知りたい」</strong><br class="hidden sm:block"/>
+                    という方は、まずオンライン相談をご活用ください。<br><br>
+                    実際の画面では、<span class="text-brand-light font-bold">SBOMの読み込み、脆弱性トリアージ、OEM向け回答イメージ</span> まで確認できます。無理な営業ではなく、現状の課題整理から進めます。
+                </p>
+                <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-white bg-brand hover:bg-brand-dark transition-all duration-300 shadow-lg shadow-brand/20 w-full sm:w-auto hover:-translate-y-1">
+                    <i data-lucide="calendar" class="w-5 h-5"></i>
+                    【無料】オンライン相談 ＆ 画面デモを予約する
+                </a>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/5 text-center text-sm text-slate-500 mt-auto bg-navy-900/80">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span class="font-bold text-slate-400">Auto PSIRT Cloud</span>
+            </div>
+            <p>&copy; 2026 Unimobilities株式会社. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
