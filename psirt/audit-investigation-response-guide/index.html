@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEOメタタグ -->
+    <title>OEM調査依頼・監査対応の進め方｜回答書・証跡・SLAまで完全ガイド | Auto PSIRT Cloud</title>
+    <meta name="description" content="OEMから突然届く調査依頼・監査にどう対応する？自動車サプライヤー向けに、初動、調査の進め方、回答書（提出物）の作り方、証跡（エビデンス）の残し方、期限/可用性/SLA管理までを一気通貫で解説します。">
+    <meta name="keywords" content="OEM調査依頼・監査対応, OEM調査依頼, 監査対応, 回答書, SLA, 提出, エビデンス">
+    <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/psirt/audit-investigation-response-guide/">
+    
+    <!-- OGPタグ (SNSシェア用) -->
+    <meta property="og:title" content="OEM調査依頼・監査対応の進め方｜回答書・証跡・SLAまで完全ガイド">
+    <meta property="og:description" content="OEMからの突然の調査依頼・監査対応。初動から回答書の作り方まで一気通貫で解説。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/psirt/audit-investigation-response-guide/">
+    <meta property="og:site_name" content="Auto PSIRT Cloud">
+
+    <!-- ファビコン -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%233b82f6%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z%22/><path d=%22m9 12 2 2 4-4%22/></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0a0f1c',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        brand: {
+                            light: '#60a5fa',
+                            DEFAULT: '#3b82f6',
+                            dark: '#2563eb',
+                        },
+                        accent: {
+                            DEFAULT: '#06b6d4',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #60a5fa, #06b6d4);
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* 記事用カスタムスタイル */
+        .prose h2 {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-top: 3.5rem;
+            color: #f8fafc;
+        }
+        .prose h3 {
+            color: #e2e8f0;
+            margin-top: 2.5rem;
+            border-left: 3px solid #3b82f6;
+            padding-left: 0.75rem;
+            font-size: 1.25rem;
+        }
+        .prose a {
+            color: #60a5fa;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .prose a:hover {
+            border-bottom-color: #60a5fa;
+        }
+        .prose strong {
+            color: #f8fafc;
+            background: linear-gradient(transparent 60%, rgba(59, 130, 246, 0.3) 40%);
+        }
+        .related-box {
+            background: rgba(30, 41, 59, 0.6);
+            border-left: 4px solid #14b8a6; /* Teal系でアクセント */
+            padding: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 2rem 0;
+        }
+        .toc-box {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-brand selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-brand/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-teal-500/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-accent flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="/news.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        ニュース一覧へ戻る
+                    </a>
+                    <a href="/demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                        相談 or デモ予約
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <article class="max-w-4xl mx-auto">
+            
+            <!-- パンくずリスト -->
+            <nav class="flex text-sm text-slate-400 mb-8" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/index.html" class="hover:text-white transition-colors">ホーム</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <a href="/news.html" class="hover:text-white transition-colors">ニュース・インサイト</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <span class="text-slate-500 truncate max-w-[200px] sm:max-w-none">OEM調査依頼・監査対応</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- 記事ヘッダー -->
+            <header class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-teal-500/20 border border-teal-500/30 text-teal-400 text-xs font-bold px-3 py-1 rounded-full">実務ガイド</span>
+                    <time class="text-slate-400 text-sm flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> 2026.03.06
+                    </time>
+                </div>
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
+                    OEMから突然来た調査依頼・監査対応 完全ガイド<br/>
+                    <span class="text-2xl md:text-3xl text-slate-300 font-medium">（回答書・証跡・可用性/SLA管理）</span>
+                </h1>
+                
+                <!-- 導入文 -->
+                <div class="text-lg text-slate-300 leading-relaxed p-6 bg-navy-800/50 rounded-2xl border border-white/5 space-y-4">
+                    <p>「OEMから突然、調査依頼（アンケート／照会／質問票）が来た」<br>
+                    「監査の通知が来て、提出物が山ほどある」<br>
+                    「回答期限が短く、社内の誰に振ればいいか分からない」</p>
+                    
+                    <p>Tier2〜Tier4のサプライヤーにとって、OEM調査依頼・監査対応は“ある日いきなり炎上する仕事”になりがちです。しかも、回答の良し悪しは技術力だけでは決まりません。</p>
+                    
+                    <p><strong>初動の速さ／回答書の型／証跡（エビデンス）の揃え方／期限（SLA）管理</strong>──この4点が揃って初めて「OEMが納得する回答」になります。</p>
+                    
+                    <p>この記事では、兼務担当でも回るように、「初動→調査→回答書→証跡→是正・フォロー」の全体像を、実務の型としてまとめます。</p>
+                </div>
+            </header>
+
+            <!-- 記事本文 -->
+            <div class="glass-card p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl bg-navy-900/80 mb-16">
+                <div class="prose prose-invert prose-slate prose-lg max-w-none">
+                    
+                    <!-- 目次 -->
+                    <div class="toc-box">
+                        <h4 class="text-lg font-bold text-white mt-0 mb-4 flex items-center gap-2">
+                            <i data-lucide="list-checks" class="w-5 h-5 text-teal-400"></i> この記事でわかること（忙しい人向け）
+                        </h4>
+                        <ul class="text-base text-slate-300 m-0 space-y-2">
+                            <li>OEM調査依頼と監査の違い、依頼が来る典型パターン</li>
+                            <li>受領直後の初動（期限・範囲・提出物の確定）</li>
+                            <li>社内タスクの振り分け（兼務でも破綻しないRACI）</li>
+                            <li>回答書（提出物）の「OEMが読みやすい型」</li>
+                            <li>証跡（エビデンス）を“後から集めない”ための設計</li>
+                            <li>可用性／期限／SLAの捉え方と運用のコツ</li>
+                            <li>よくある失敗と、回避策</li>
+                        </ul>
+                    </div>
+
+                    <h2>まず整理：OEMの「調査依頼」と「監査」は何が違う？</h2>
+                    <p>同じ“依頼”でも、対処の仕方が変わるので最初に整理します。</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-8">
+                        <div class="bg-navy-800/50 p-6 rounded-xl border border-white/10">
+                            <h4 class="text-brand-light font-bold mt-0 mb-3 border-b border-white/10 pb-2">調査依頼（照会・質問票）</h4>
+                            <ul class="text-sm m-0 space-y-3 pl-0 list-none">
+                                <li><strong class="text-slate-400">目的：</strong> 特定の懸念（脆弱性、SBOM、体制）について、短期で事実確認したい</li>
+                                <li><strong class="text-slate-400">特徴：</strong> 期限が短い／回答形式がバラバラ／追加質問が来る</li>
+                                <li><strong class="text-slate-400">成果物：</strong> 回答書（Excel/Word/フォーム）＋補足資料</li>
+                            </ul>
+                        </div>
+                        <div class="bg-navy-800/50 p-6 rounded-xl border border-white/10">
+                            <h4 class="text-teal-400 font-bold mt-0 mb-3 border-b border-white/10 pb-2">監査（定期/臨時）</h4>
+                            <ul class="text-sm m-0 space-y-3 pl-0 list-none">
+                                <li><strong class="text-slate-400">目的：</strong> サプライヤーの仕組みが「要求を満たす」かを、体系的に評価したい</li>
+                                <li><strong class="text-slate-400">特徴：</strong> 要求事項が多い／証跡の粒度が細かい／是正がセット</li>
+                                <li><strong class="text-slate-400">成果物：</strong> 監査チェックリスト回答＋証跡一式＋是正計画（CAPA）</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <p class="text-xl font-bold bg-white/5 p-4 rounded text-center">
+                        調査依頼は“短距離走”、監査は“マラソン”です。
+                    </p>
+                    <p>どちらも「回答書と証跡」が要ですが、設計の重点が違います。</p>
+
+                    <h2>全体像：OEM対応を「1本のフロー」にすると強くなる</h2>
+                    <p>現場が混乱する最大の理由は、「依頼ごとに毎回ゼロから対応」してしまうことです。そこで、どのOEMでも通用しやすい“標準フロー”に寄せます。</p>
+
+                    <div class="bg-navy-800 p-6 rounded-lg border border-white/10 my-6">
+                        <h4 class="text-white font-bold mt-0 mb-4">OEM調査依頼・監査対応の標準フロー（7ステップ）</h4>
+                        <ol class="m-0 space-y-2">
+                            <li><strong>受領・一次受付</strong>（チケット化／期限確認）</li>
+                            <li><strong>範囲確定</strong>（対象製品・対象版数・要求事項・提出形式）</li>
+                            <li><strong>社内振り分け</strong>（担当割り当て／RACI）</li>
+                            <li><strong>調査・事実確認</strong>（SBOM/構成/設計/運用/ログ）</li>
+                            <li><strong>回答書作成</strong>（結論→根拠→対応方針）</li>
+                            <li><strong>証跡（エビデンス）整理</strong>（添付・参照・保管）</li>
+                            <li><strong>提出・フォロー</strong>（追加質問／是正計画／再提出）</li>
+                        </ol>
+                    </div>
+                    <p>このフローを“毎回同じ型”で回すと、時間も品質も安定します。</p>
+
+                    <h2>Step1：受領した瞬間にやること（最重要は「期限」と「範囲」）</h2>
+                    <p>受領直後に確認すべきは、以下の5点です。ここが曖昧だと後で必ず手戻りします。</p>
+
+                    <ul>
+                        <li><strong>回答期限（いつまで）：</strong>暫定回答OKか／延長交渉の余地はあるか</li>
+                        <li><strong>対象範囲：</strong>製品名・型番・ソフト版数・出荷期間・顧客範囲</li>
+                        <li><strong>要求事項：</strong>何を答えれば“完了”か（Yes/Noで良いのか、証跡必須か）</li>
+                        <li><strong>提出形式：</strong>OEM指定Excel／PDF／ポータル入力／メール</li>
+                        <li><strong>連絡経路：</strong>質問先・窓口・CCルール（品質/調達/セキュリティ等）</li>
+                    </ul>
+
+                    <div class="bg-navy-800/80 border-l-4 border-yellow-500 p-5 rounded-r my-8">
+                        <h4 class="text-yellow-400 font-bold mt-0 mb-2 flex items-center gap-2">
+                            <i data-lucide="lightbulb" class="w-5 h-5"></i> ミニ豆知識：「いつまで」の意味は“回答期限”だけじゃない
+                        </h4>
+                        <p class="text-sm text-slate-300 mb-3">OEMの期限には、実務上いくつかの種類が混在します。</p>
+                        <ul class="text-sm m-0 space-y-1">
+                            <li><strong>受付期限：</strong>受領したことを返す（Acknowledgement）</li>
+                            <li><strong>一次回答期限：</strong>暫定でもよいので影響有無を返す</li>
+                            <li><strong>最終回答期限：</strong>証跡込みで確定回答を返す</li>
+                            <li><strong>是正期限：</strong>対策計画の提出や実施の期限</li>
+                        </ul>
+                        <p class="text-sm text-slate-300 mt-3 mb-0">この区別を最初に押さえておくと、期限が短くても「何をどこまで出すか」を切り分けられます。</p>
+                        
+                        <!-- 内部リンク① -->
+                        <div class="mt-4 pt-4 border-t border-white/10">
+                            <a href="#" class="text-sm font-bold text-brand-light hover:text-brand flex items-center gap-1">
+                                <i data-lucide="file-text" class="w-4 h-4"></i> OEMから突然来た調査依頼・監査対応（詳細記事）
+                            </a>
+                        </div>
+                    </div>
+
+                    <h2>Step2：チケット化（“見える化”しないと必ず漏れる）</h2>
+                    <p>兼務体制で最初に導入すべきは、ツールではなくチケット化（タスク管理）です。メールで回すと「誰が何をどこまでやったか」が消えます。</p>
+
+                    <h3>チケットに必ず入れる項目（最小）</h3>
+                    <ul>
+                        <li>OEM名／案件名／依頼種別（調査依頼or監査）</li>
+                        <li>期限（受付／一次／最終／是正）</li>
+                        <li>対象製品・対象バージョン</li>
+                        <li>要求事項（質問票の添付リンク）</li>
+                        <li>提出形式（Excel/ポータル等）</li>
+                        <li>主管（最終責任者）／作業担当／レビュー（品質/上長）</li>
+                        <li>証跡の保管場所（フォルダURLなど）</li>
+                    </ul>
+                    <p class="text-brand-light font-bold">ポイント： チケットには「結論」より先に「期限と範囲」を固定します。調査が進んでも、期限と範囲が揺れると全てが崩れます。</p>
+
+                    <h2>Step3：社内振り分け（RACIで“兼務でも回る形”にする）</h2>
+                    <p>調査依頼・監査対応は、品質保証だけでも情シスだけでも完結しません。だからこそ、役割を先に固定します。</p>
+
+                    <div class="overflow-x-auto my-6">
+                        <table class="w-full text-sm text-left border-collapse">
+                            <thead>
+                                <tr class="bg-white/5 border-b border-white/10">
+                                    <th class="p-3 font-bold text-slate-200">役割（RACI）</th>
+                                    <th class="p-3 font-bold text-slate-200">担当部門の例（小規模サプライヤー）</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-white/5">
+                                <tr>
+                                    <td class="p-3 font-bold text-brand-light">R（実行）</td>
+                                    <td class="p-3 text-slate-300">依頼内容に応じて設計 / ソフト / 品質 / 製造</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 font-bold text-red-400">A（最終責任）</td>
+                                    <td class="p-3 text-slate-300">品質保証（またはプロジェクト責任者）</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 font-bold text-yellow-400">C（相談）</td>
+                                    <td class="p-3 text-slate-300">情シス / セキュリティ（兼務でOK）</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 font-bold text-emerald-400">I（共有）</td>
+                                    <td class="p-3 text-slate-300">営業 / 調達（OEM窓口の場合が多い）</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p><strong>“誰が最終的に署名して提出するか（A）”</strong>を必ず決めます。Aが曖昧なまま作業を始めると、最後の承認で止まります。</p>
+
+                    <h2>Step4：調査（事実確認）で集めるべき情報（最小セット）</h2>
+                    <p>依頼内容はOEMごとに違いますが、頻出情報は決まっています。</p>
+
+                    <ol>
+                        <li><strong>対象製品の構成情報</strong>
+                            <ul>
+                                <li>ソフト構成（バージョン、ビルド、オプション）</li>
+                                <li>主要コンポーネント一覧（OSS/商用/自社）</li>
+                                <li>必要に応じてSBOMや簡易部品表</li>
+                            </ul>
+                        </li>
+                        <li><strong>接続・到達性（攻撃成立性に直結）</strong>
+                            <ul>
+                                <li>外部IF（Bluetooth/Wi-Fi/USB/CAN/Ethernet等）</li>
+                                <li>外部からの入力経路（診断、アップデート、通信）</li>
+                                <li>ネットワーク境界（閉域/ゲートウェイ有無）</li>
+                            </ul>
+                        </li>
+                        <li><strong>運用・更新の情報</strong>
+                            <ul>
+                                <li>更新方法（現地/OTA/工場）</li>
+                                <li>既知不具合の扱い（リリース手順、例外手順）</li>
+                                <li>ログ保全や解析の体制（可能な範囲で）</li>
+                            </ul>
+                        </li>
+                    </ol>
+
+                    <h2>Step5：回答書（提出物）は「結論→根拠→対応方針」で作る</h2>
+                    <p>OEMが読みたいのは、長い説明ではなく <strong>“結論と次のアクション”</strong> です。回答書は、どのテーマでも基本構造を固定すると強くなります。</p>
+
+                    <div class="bg-navy-800 p-6 rounded-lg border border-white/10 my-6">
+                        <h4 class="text-white font-bold mt-0 mb-4">回答書の基本構造（コピペで使える）</h4>
+                        <ol class="m-0 text-slate-300">
+                            <li><strong>結論</strong>（Yes / No / 調査中）</li>
+                            <li><strong>根拠</strong>（何を確認してそう判断したか）</li>
+                            <li><strong>対象範囲</strong>（製品名・版数・出荷範囲）</li>
+                            <li><strong>対応方針</strong>（対策有無・計画・次回更新日）</li>
+                            <li><strong>添付証跡</strong>（エビデンス）一覧</li>
+                        </ol>
+                    </div>
+
+                    <h3>例：短い結論文のテンプレ</h3>
+                    <ul>
+                        <li><strong>影響あり：</strong>「当該事象は対象製品に影響します。対策方針と暫定措置は以下の通りです。」</li>
+                        <li><strong>影響なし：</strong>「当該事象は対象製品に影響しません。判断根拠は以下の通りです。」</li>
+                        <li><strong>調査中：</strong>「現時点では影響有無を調査中です。一次回答として状況と次回更新日を提示します。」</li>
+                    </ul>
+
+                    <h2>Step6：証跡（エビデンス）を“後から集めない”設計</h2>
+                    <p>監査・調査依頼で一番時間を食うのが「証跡集め」です。後から集めるほど、「どの版数か分からない」「口頭確認で終わって再現できない」「担当者異動で消える」といった問題が起きます。</p>
+
+                    <h3>証跡（エビデンス）の種類（実務で多い順）</h3>
+                    <ul>
+                        <li>設計資料（IF仕様、構成図、設定値の根拠）</li>
+                        <li>構成情報（SBOM/部品表/依存関係）</li>
+                        <li>変更履歴（Git、チケット、リリースノート）</li>
+                        <li>テスト結果（該当機能の無効化確認など）</li>
+                        <li>手順書（更新手順、例外手順）</li>
+                        <li>体制資料（窓口、役割分担、教育記録）</li>
+                    </ul>
+                    <p class="text-brand-light font-bold">ポイント：証跡は「全部添付」より “参照可能な形で整える” が現実的です。添付しない場合でも、証跡ID／保存場所／版数を回答書に残しておくと強いです。</p>
+
+                    <h2>Step7：提出・フォロー（追加質問と是正計画はセットで来る）</h2>
+                    <p>提出して終わりではありません。現実には「追加質問」「是正要求」「フォーマット差し替え」などが来ます。</p>
+                    <p>ここで大事なのは、<strong>更新日（次回回答日）を最初から宣言すること</strong>です。「いつまでに」「何を更新するか」を明示すると、追加質問のペースが落ちます。</p>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2>付随論点：可用性/SLA管理が“監査の勝敗”を左右する</h2>
+                    <p>OEMが見ているのは、技術だけでなく <strong>“運用の可用性”</strong> です。</p>
+                    <ul>
+                        <li>連絡が取れる窓口があるか</li>
+                        <li>期限までに回答が返るか</li>
+                        <li>調査中の案件が放置されないか</li>
+                        <li>是正が期限どおりに進むか</li>
+                    </ul>
+                    <p>この可用性は、結局 <strong>SLA（社内の目標時間）</strong> として運用に落ちます。最初から厳密な数値でなくても、まずは社内で“基準”を置くと安定します。</p>
+
+                    <h3>兼務体制でも置けるSLAの例（最小）</h3>
+                    <ul class="space-y-2">
+                        <li><strong>受領確認：</strong> 1営業日以内</li>
+                        <li><strong>一次回答（影響有無/調査中宣言）：</strong> 3〜5営業日</li>
+                        <li><strong>最終回答（証跡込み）：</strong> 10営業日（案件により調整）</li>
+                        <li><strong>是正計画：</strong> 2週間以内（監査の指摘内容で調整）</li>
+                    </ul>
+
+                    <h2>よくある失敗（ここだけ読めば事故が減る）</h2>
+                    <div class="space-y-4 my-6">
+                        <div class="bg-red-500/10 border border-red-500/20 p-4 rounded-lg">
+                            <strong class="text-red-400 block mb-1">失敗1：期限を“最終期限”だと思い込み、一次回答が遅れる</strong>
+                            <p class="text-slate-300 m-0">→ 受付／一次／最終／是正で分ける</p>
+                        </div>
+                        <div class="bg-red-500/10 border border-red-500/20 p-4 rounded-lg">
+                            <strong class="text-red-400 block mb-1">失敗2：対象範囲（製品・版数）が揺れて手戻り</strong>
+                            <p class="text-slate-300 m-0">→ 最初に対象版数を固定し、ブレる場合は“範囲拡張”として管理する</p>
+                        </div>
+                        <div class="bg-red-500/10 border border-red-500/20 p-4 rounded-lg">
+                            <strong class="text-red-400 block mb-1">失敗3：「影響なし」を根拠なしで書く</strong>
+                            <p class="text-slate-300 m-0">→ 何を確認したか（証跡）を短く添える</p>
+                        </div>
+                        <div class="bg-red-500/10 border border-red-500/20 p-4 rounded-lg">
+                            <strong class="text-red-400 block mb-1">失敗4：証跡が散らばって再現できない</strong>
+                            <p class="text-slate-300 m-0">→ 証跡IDと保管場所を回答書に残す</p>
+                        </div>
+                        <div class="bg-red-500/10 border border-red-500/20 p-4 rounded-lg">
+                            <strong class="text-red-400 block mb-1">失敗5：提出後の追加質問で再炎上</strong>
+                            <p class="text-slate-300 m-0">→ 次回更新日を宣言し、更新サイクルでコントロールする</p>
+                        </div>
+                    </div>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2>FAQ（OEM調査依頼・監査対応のやり方）</h2>
+                    <div class="space-y-6 mt-6">
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q1. OEMの調査依頼が来たら、最初に何をすべきですか？</strong>
+                            <p class="m-0 text-slate-300">最初に「期限（受付/一次/最終/是正）」「対象範囲（製品名・版数）」「提出形式」を確定し、チケット化して担当を割り当てます。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q2. 監査対応と調査依頼対応は、やり方が違いますか？</strong>
+                            <p class="m-0 text-slate-300">違います。調査依頼は短期の事実確認、監査は仕組みの評価と是正まで含むため、証跡の量と粒度が増えます。ただし、どちらも「結論→根拠→対応方針」の回答書の型は共通です。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q3. 回答期限に間に合わない場合、どうすればいいですか？</strong>
+                            <p class="m-0 text-slate-300">「調査中（一次回答）」を期限内に出し、次回更新日（いつ最終回答できるか）を宣言するのが現実的です。黙るより、状態と次回更新日を出す方が信頼が落ちにくいです。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q4. OEMが求める“エビデンス（証跡）”とは何ですか？</strong>
+                            <p class="m-0 text-slate-300">設計資料、構成情報、変更履歴、テスト結果、手順書、体制資料など、判断の根拠を再現できる形で示す材料です。添付できない場合も、証跡IDと保管場所、版数を明記すると強いです。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q5. 回答書には何を書けばOEMが納得しますか？</strong>
+                            <p class="m-0 text-slate-300">最初に結論（Yes/No/調査中）を置き、根拠（何を確認したか）、対象範囲（版数）、対応方針（次回更新日含む）、証跡一覧の順でまとめると読みやすくなります。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q6. SLA（可用性）って、サプライヤー側でも必要ですか？</strong>
+                            <p class="m-0 text-slate-300">必要です。OEMが見ているのは「運用が止まらないこと」です。受領確認、一次回答、最終回答、是正計画の目標時間を社内で置くだけでも安定します。</p>
+                        </div>
+                    </div>
+
+                    <!-- 内部リンク領域：次に読む＆まとめ -->
+                    <div class="mt-12 space-y-6">
+                        
+                        <!-- 内部リンク② -->
+                        <div class="related-box border-l-brand my-0">
+                            <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="clock" class="w-4 h-4"></i> 次に読む</div>
+                            <ul class="text-base m-0 list-none pl-0">
+                                <li><a href="#" class="!text-brand-light hover:!text-brand">付随論点：可用性/SLA管理</a></li>
+                            </ul>
+                        </div>
+
+                        <h2>記事マップ：まとめ（このテーマを“面”で攻略する）</h2>
+                        <p>調査依頼・監査対応は、この記事1本だけだと現場で回しにくいので、テンプレ／チェックリスト／深掘り論点をセットで持つと強くなります。</p>
+
+                        <!-- 内部リンク③ -->
+                        <div class="related-box border-l-emerald-500 my-0">
+                            <div class="text-sm font-bold text-emerald-400 mb-2 flex items-center gap-2"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> 実務にすぐ使える</div>
+                            <ul class="text-base m-0 list-none pl-0">
+                                <li><a href="#" class="!text-emerald-400 hover:!text-emerald-300">回答書テンプレ／チェックシート</a></li>
+                            </ul>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- CTA Section -->
+            <div class="glass-card rounded-3xl p-8 md:p-12 text-center border-t-4 border-t-brand bg-navy-800/80 shadow-[0_0_40px_-10px_rgba(59,130,246,0.3)]">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">OEMへの回答、毎回ゼロから作って消耗していませんか？</h2>
+                <p class="text-slate-300 mb-8 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+                    OEMから突然来た調査依頼・監査対応の進め方を自社向けに整理したい方は、無料相談をご利用ください。<br><br>
+                    <strong>Auto PSIRT Cloud</strong>なら、JASICガイドライン等に準拠したウィザードに答えるだけで、主要OEMの指定フォーマットに合わせた回答書を自動生成できます。
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-navy-900 bg-white hover:bg-slate-200 transition-all duration-300 shadow-xl shadow-white/10 w-full sm:w-auto hover:-translate-y-1">
+                        <i data-lucide="message-square" class="w-5 h-5 text-brand"></i>
+                        【無料】オンライン相談を予約する
+                    </a>
+                    <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-white bg-brand/20 hover:bg-brand border border-brand/30 transition-all duration-300 w-full sm:w-auto hover:-translate-y-1">
+                        <i class="w-5 h-5" data-lucide="monitor-play"></i>
+                        OEM回答書作成フローをデモで確認する
+                    </a>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/5 text-center text-sm text-slate-500 mt-auto bg-navy-900/80">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span class="font-bold text-slate-400">Auto PSIRT Cloud</span>
+            </div>
+            <p>&copy; 2026 Unimobilities株式会社. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
