@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEOメタタグ -->
+    <title>SPDX vs CycloneDX｜SBOMはどっち？違いと選び方（サプライヤー向け） | Auto PSIRT Cloud</title>
+    <meta name="description" content="SPDXとCycloneDXの違いを比較し、SBOMをどちらで作るべきかの判断基準を解説。OEM提出・脆弱性突合・運用のしやすさの観点で、兼務でも迷わない選び方をまとめます。">
+    <meta name="keywords" content="SPDX vs CycloneDX：どっち, SPDX, CycloneDX, SBOM">
+    <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/psirt/spdx-vs-cyclonedx/">
+    
+    <!-- OGPタグ (SNSシェア用) -->
+    <meta property="og:title" content="SPDX vs CycloneDX｜SBOMはどっち？違いと選び方">
+    <meta property="og:description" content="SPDXとCycloneDXの違いを比較。OEM提出・脆弱性対応の観点から、部品メーカー向けの現実的な選び方を解説します。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/psirt/spdx-vs-cyclonedx/">
+    <meta property="og:site_name" content="Auto PSIRT Cloud">
+
+    <!-- ファビコン -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%233b82f6%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z%22/><path d=%22m9 12 2 2 4-4%22/></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0a0f1c',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        brand: {
+                            light: '#60a5fa',
+                            DEFAULT: '#3b82f6',
+                            dark: '#2563eb',
+                        },
+                        accent: {
+                            DEFAULT: '#06b6d4',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #60a5fa, #06b6d4);
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* 記事用カスタムスタイル */
+        .prose h2 {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-top: 3.5rem;
+            color: #f8fafc;
+        }
+        .prose h3 {
+            color: #e2e8f0;
+            margin-top: 2.5rem;
+            border-left: 3px solid #10b981; /* SBOM系記事はEmerald系アクセント */
+            padding-left: 0.75rem;
+            font-size: 1.25rem;
+        }
+        .prose a {
+            color: #60a5fa;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .prose a:hover {
+            border-bottom-color: #60a5fa;
+        }
+        .prose strong {
+            color: #f8fafc;
+            background: linear-gradient(transparent 60%, rgba(16, 185, 129, 0.3) 40%);
+        }
+        .related-box {
+            background: rgba(30, 41, 59, 0.6);
+            border-left: 4px solid #10b981;
+            padding: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 2rem 0;
+        }
+        
+        .comparison-table th {
+            background-color: rgba(30, 41, 59, 0.8);
+            border-bottom: 2px solid #10b981;
+        }
+        .comparison-table td {
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .comparison-table tr:hover td {
+            background-color: rgba(255,255,255,0.02);
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-brand selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-brand/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-emerald-500/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-accent flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="/news.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        ニュース一覧へ戻る
+                    </a>
+                    <a href="/demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                        相談 or デモ予約
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <article class="max-w-4xl mx-auto">
+            
+            <!-- パンくずリスト -->
+            <nav class="flex text-sm text-slate-400 mb-8" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/index.html" class="hover:text-white transition-colors">ホーム</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <a href="/news.html" class="hover:text-white transition-colors">ニュース・インサイト</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <span class="text-slate-500 truncate max-w-[200px] sm:max-w-none">SPDX vs CycloneDX</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- 記事ヘッダー -->
+            <header class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-xs font-bold px-3 py-1 rounded-full">実務ガイド</span>
+                    <time class="text-slate-400 text-sm flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> 2026.03.06
+                    </time>
+                </div>
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
+                    SPDX vs CycloneDX：<br/>
+                    <span class="text-2xl md:text-3xl text-slate-300 font-medium">SBOMはどっち？違いと選び方</span>
+                </h1>
+                
+                <!-- 導入文 -->
+                <div class="text-lg text-slate-300 leading-relaxed p-6 bg-navy-800/50 rounded-2xl border border-white/5 space-y-4">
+                    <p>SBOMに取り組み始めた部品メーカーが、ほぼ必ずぶつかるのがこの疑問です。</p>
+                    
+                    <ul class="m-0 list-disc list-inside">
+                        <li>「SBOMって SPDX と CycloneDX、結局どっちで作るの？」</li>
+                        <li>「OEM提出で通るのはどっち？」</li>
+                        <li>「脆弱性（CVE）突合やトリアージを回すならどっちがラク？」</li>
+                    </ul>
+                    
+                    <p>結論から言うと、<strong>“どちらが正解”ではなく、用途で最適が変わります。</strong>しかも現実には、社内運用と対外提出で“求められる姿”が違うことも多いです。</p>
+                    
+                    <p>この記事では、Tier2〜Tier4の実務（兼務で回す、提出と監査がある、脆弱性照会が来る）に合わせて、SPDXとCycloneDXの違いと選び方を比較で整理します。</p>
+                </div>
+            </header>
+
+            <!-- 記事本文 -->
+            <div class="glass-card p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl bg-navy-900/80 mb-16">
+                <div class="prose prose-invert prose-slate prose-lg max-w-none">
+                    
+                    <!-- 内部リンク①：全体像 -->
+                    <div class="related-box mt-0 border-l-brand">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="map" class="w-4 h-4"></i> 全体像を先に見直す</div>
+                        <p class="text-sm text-slate-300 mb-2">SBOM全体像（Excel→標準化→更新運用→CVE対応のつなげ方）を先に押さえたい方はこちら。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/sbom-complete-guide/" class="!text-brand-light hover:!text-brand">SBOM完全ガイド（SPDX/CycloneDX/Excel運用・提出と機密の現実解）</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>先に結論：迷ったら“この順”で考える</h2>
+                    <p>比較記事ではありますが、最初に「迷いを減らす結論」を置きます。</p>
+
+                    <div class="space-y-6 my-8">
+                        <div class="bg-navy-800 p-5 rounded-lg border border-white/10">
+                            <h4 class="text-emerald-400 font-bold mt-0 mb-2 flex items-center gap-2"><span class="bg-emerald-500/20 text-emerald-400 w-6 h-6 rounded-full flex items-center justify-center text-sm">1</span> OEMがフォーマット指定しているなら、それが最優先</h4>
+                            <p class="text-sm text-slate-300 m-0 pl-8">OEM指定（Excel、独自様式、SPDX、CycloneDX等）がある場合は、まずそれに合わせるのが最短です。フォーマットより「期限内に、根拠付きで返せること」の方が重く見られます。</p>
+                        </div>
+                        <div class="bg-navy-800 p-5 rounded-lg border border-white/10">
+                            <h4 class="text-emerald-400 font-bold mt-0 mb-2 flex items-center gap-2"><span class="bg-emerald-500/20 text-emerald-400 w-6 h-6 rounded-full flex items-center justify-center text-sm">2</span> 指定がないなら、運用目的で選ぶ</h4>
+                            <ul class="text-sm text-slate-300 m-0 pl-8 list-none space-y-1">
+                                <li>脆弱性突合・自動トリアージ・ツール連携を最優先 → <strong>CycloneDX寄り</strong></li>
+                                <li>提出・説明性・ライセンス情報の整理を最優先 → <strong>SPDX寄り</strong></li>
+                            </ul>
+                        </div>
+                        <div class="bg-navy-800 p-5 rounded-lg border border-white/10">
+                            <h4 class="text-emerald-400 font-bold mt-0 mb-2 flex items-center gap-2"><span class="bg-emerald-500/20 text-emerald-400 w-6 h-6 rounded-full flex items-center justify-center text-sm">3</span> 実務では「両方出す」設計が一番ラクなこともある</h4>
+                            <p class="text-sm text-slate-300 m-0 pl-8">社内ではCycloneDXで自動化しつつ、提出はSPDX（またはOEM指定）に寄せる、のように <strong>“内部の正本（カノニカル）”と“外部出力”を分ける</strong> と、現場が破綻しにくいです。</p>
+                        </div>
+                    </div>
+
+                    <h2>SPDXとCycloneDXは、何が違うのか（ざっくり定義）</h2>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
+                        <div class="bg-navy-800/50 p-5 rounded-xl border border-white/10">
+                            <h4 class="text-brand-light font-bold mt-0 mb-3 border-b border-white/10 pb-2 flex items-center gap-2">
+                                <i data-lucide="file-text" class="w-5 h-5"></i> SPDX（エスピーディーエックス）
+                            </h4>
+                            <ul class="text-sm m-0 text-slate-300 space-y-2 pl-4">
+                                <li>もともとライセンス情報やソフトウェア部品情報を整理する文脈が強い</li>
+                                <li>人が読める文書としても扱いやすく、説明性・標準性の安心感がある</li>
+                                <li><strong>「提出物として整ったSBOM」</strong>に寄せやすい</li>
+                            </ul>
+                        </div>
+                        <div class="bg-navy-800/50 p-5 rounded-xl border border-white/10">
+                            <h4 class="text-orange-400 font-bold mt-0 mb-3 border-b border-white/10 pb-2 flex items-center gap-2">
+                                <i data-lucide="git-compare" class="w-5 h-5"></i> CycloneDX（サイクロンディーエックス）
+                            </h4>
+                            <ul class="text-sm m-0 text-slate-300 space-y-2 pl-4">
+                                <li>SBOMを“運用データ”として扱い、脆弱性管理や自動化とつなげやすい</li>
+                                <li>依存関係やセキュリティ運用（例：VEX）を視野に入れた設計</li>
+                                <li><strong>「CVE突合→トリアージ→回答書」</strong>へつなげやすい</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <p class="text-sm text-slate-400 text-center">※どちらも「SBOMとして成立」します。差は“得意領域”です。</p>
+
+                    <h2>比較表：SPDX vs CycloneDX（部品メーカー視点）</h2>
+
+                    <div class="overflow-x-auto my-8">
+                        <table class="w-full text-sm text-left border-collapse comparison-table min-w-[600px]">
+                            <thead>
+                                <tr>
+                                    <th class="p-4 font-bold text-white rounded-tl-lg">観点</th>
+                                    <th class="p-4 font-bold text-brand-light">SPDXが向く</th>
+                                    <th class="p-4 font-bold text-orange-400 rounded-tr-lg">CycloneDXが向く</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-slate-300">
+                                <tr>
+                                    <td class="p-4 font-bold text-slate-200 border-r border-white/5">目的</td>
+                                    <td class="p-4">提出・説明・標準性重視</td>
+                                    <td class="p-4">運用・自動化・突合重視</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-4 font-bold text-slate-200 border-r border-white/5">現場の使い方</td>
+                                    <td class="p-4">「提出物の整形」に寄せやすい</td>
+                                    <td class="p-4">「日々の脆弱性対応」に寄せやすい</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-4 font-bold text-slate-200 border-r border-white/5">ライセンス/コンプライアンス</td>
+                                    <td class="p-4 font-bold text-brand-light">強い文脈で扱いやすい</td>
+                                    <td class="p-4">もちろん可能だが運用寄り</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-4 font-bold text-slate-200 border-r border-white/5">脆弱性（CVE）突合</td>
+                                    <td class="p-4">可能（ツール次第）</td>
+                                    <td class="p-4 font-bold text-orange-400">突合・拡張・運用連携に寄せやすい</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-4 font-bold text-slate-200 border-r border-white/5">“兼務が回す”観点</td>
+                                    <td class="p-4">文書的で分かりやすい</td>
+                                    <td class="p-4">自動化できると負荷が落ちる</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-4 font-bold text-slate-200 border-r border-white/5">OEM提出の現実</td>
+                                    <td class="p-4">OEM側が求めることが多い</td>
+                                    <td class="p-4">OEMが指定するケースも増える<br><span class="text-xs text-slate-400">（ただし様式はまちまち）</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p>この表を見て分かる通り、「運用」ならCycloneDX、「提出」ならSPDXに寄りがちです。ただし、最初から完璧な標準化に寄せようとすると止まるので、次の判断フローで“落としどころ”を作ります。</p>
+
+                    <h2>選び方：5つの質問で決める（判断フロー）</h2>
+                    <p>次の質問に「はい」が多い方へ寄せると、失敗しにくいです。</p>
+
+                    <div class="space-y-4 my-6">
+                        <div class="bg-navy-800/80 p-4 rounded-lg border border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <strong class="text-slate-200">Q1. 目的は「提出」より「脆弱性対応（CVE照会）を回す」？</strong>
+                            <div class="shrink-0 text-sm">
+                                <span class="text-orange-400 font-bold">はい → CycloneDX寄り</span><br>
+                                <span class="text-brand-light font-bold">いいえ → SPDX寄り</span>
+                            </div>
+                        </div>
+                        <div class="bg-navy-800/80 p-4 rounded-lg border border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <strong class="text-slate-200">Q2. SBOMをツールで自動突合（定期）して、ノイズを減らしたい？</strong>
+                            <div class="shrink-0 text-sm">
+                                <span class="text-orange-400 font-bold">はい → CycloneDX寄り</span><br>
+                                <span class="text-brand-light font-bold">いいえ → SPDX寄り（またはExcel）</span>
+                            </div>
+                        </div>
+                        <div class="bg-navy-800/80 p-4 rounded-lg border border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <strong class="text-slate-200">Q3. OEMが求める“説明資料としての整い”を優先したい？</strong>
+                            <div class="shrink-0 text-sm">
+                                <span class="text-brand-light font-bold">はい → SPDX寄り</span><br>
+                                <span class="text-orange-400 font-bold">いいえ → CycloneDX寄り</span>
+                            </div>
+                        </div>
+                        <div class="bg-navy-800/80 p-4 rounded-lg border border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <strong class="text-slate-200">Q4. まずはExcelで棚卸しが必要（SBOM以前に部品表が未整備）？</strong>
+                            <div class="shrink-0 text-sm">
+                                <span class="text-emerald-400 font-bold">はい → まずExcel</span><br>
+                                <span class="text-slate-400 font-bold">いいえ → SPDX/CycloneDXを検討</span>
+                            </div>
+                        </div>
+                        <div class="bg-navy-800/80 p-4 rounded-lg border border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <strong class="text-slate-200">Q5. すでに社内で何かしら出力できるツールチェーンがある？</strong>
+                            <div class="shrink-0 text-sm">
+                                <span class="text-slate-300 font-bold">ある → その出力形式に寄せる</span><br>
+                                <span class="text-slate-400 font-bold">ない → Excel→CycloneDX→SPDX</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h2>そもそも：最初はExcelで始めていい（現場が止まらないやり方）</h2>
+                    <p>比較の話をしても、現場ではこうなりがちです。</p>
+                    <ul class="text-slate-300">
+                        <li>「どっちを選べばいいか分からない」→ 何も進まない</li>
+                        <li>「標準化から始めよう」→ 更新が回らず形骸化する</li>
+                    </ul>
+                    <p class="text-lg font-bold text-emerald-400 my-4">そこで、最初の現実解は「Excelで“答えられる状態”を作る」です。</p>
+                    <p>重要なのはフォーマットではなく、対象製品・対象版数・コンポーネント版数が追えることです。</p>
+
+                    <!-- 内部リンク②：Excelテンプレ -->
+                    <div class="related-box border-l-emerald-500">
+                        <div class="text-sm font-bold text-emerald-400 mb-2 flex items-center gap-2"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> 項目チェック</div>
+                        <p class="text-sm text-slate-300 mb-2">Excelで最小項目から始めるなら、こちらのテンプレをベースに棚卸しすると早いです。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="#" class="!text-emerald-400 hover:!text-emerald-300">SBOM Excelテンプレ（最小項目版）</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>運用のコツ：どちらを選んでも、ここを外すと破綻する</h2>
+                    
+                    <ol class="space-y-4">
+                        <li>
+                            <strong>製品バージョンとコンポーネントバージョンを分ける</strong><br>
+                            <span class="text-sm text-slate-300">CVE照会で詰む最大原因です。「どの製品版まで影響するか」を切れないと、結局人手調査に戻ります。</span>
+                        </li>
+                        <li>
+                            <strong>“社内版”と“提出版”を分ける</strong><br>
+                            <span class="text-sm text-slate-300">SBOMは機密（設計情報に近い）なので、全部出せないのが普通です。社内完全版→提出版→照会回答版、のように粒度を分けると止まりません。</span>
+                        </li>
+                        <li>
+                            <strong>更新責任者・更新タイミングを決める</strong><br>
+                            <span class="text-sm text-slate-300">SBOMは「作成」より「更新」が本番です。更新しないSBOMは、提出にも照会にも使えません。</span>
+                        </li>
+                        <li>
+                            <strong>内部の正本（カノニカル）と外部出力を分ける</strong><br>
+                            <span class="text-sm text-slate-300">「社内運用：CycloneDXで自動突合」「外部提出：SPDX（またはOEM指定）」のように割り切ると、運用の手戻りが減ります。</span>
+                        </li>
+                    </ol>
+
+                    <h2>よくある失敗（比較で迷っている間に起きる事故）</h2>
+                    <ul class="space-y-2">
+                        <li><strong class="text-red-400">フォーマット議論だけ進み</strong>、棚卸し（実データ）がない</li>
+                        <li><strong class="text-red-400">SBOMはあるが、対象版数が追えず</strong>照会に答えられない</li>
+                        <li><strong class="text-red-400">「影響なし」を返すが</strong>、根拠（証跡）がなく追加質問で炎上する</li>
+                        <li><strong class="text-red-400">更新責任者がいなくて</strong>、すぐ古くなる</li>
+                        <li><strong class="text-red-400">OEM様式に合わせるだけで</strong>、社内運用に繋がっていない</li>
+                    </ul>
+
+                    <p class="text-xl font-bold text-center text-white my-8 bg-white/5 p-6 rounded-xl border border-white/10">
+                        比較の最終目的は、「どっちが上か」ではなく<br>
+                        <span class="text-emerald-400">“自社が期限内に根拠付きで返せる運用を作る”</span>ことです。
+                    </p>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2>FAQ：SPDXとCycloneDXの違いと選び方</h2>
+                    <div class="space-y-6 mt-6">
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q1. SPDXとCycloneDXの一番の違いは何ですか？</strong>
+                            <p class="m-0 text-slate-300">どちらもSBOMですが、SPDXは提出・説明・標準性に寄せやすく、CycloneDXは脆弱性対応や自動化など運用連携に寄せやすい、という得意領域の違いがあります。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q2. OEM提出ではどっちが通りやすいですか？</strong>
+                            <p class="m-0 text-slate-300">OEMが指定する形式が最優先です。指定がない場合は、提出物として整った形にしやすいのはSPDX寄りですが、実務ではExcel指定や独自様式も多いので、まずは要求に合わせるのが現実的です。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q3. 迷ったら両方作るべきですか？</strong>
+                            <p class="m-0 text-slate-300">“両方を人手で管理”はおすすめしません。内部の正本（カノニカル）を1つ決め、外部提出は変換・出力で対応する設計にすると破綻しにくいです。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q4. 最初からSPDX/CycloneDXで始めないとダメですか？</strong>
+                            <p class="m-0 text-slate-300">ダメではありません。まずExcelで棚卸し→更新運用→その後に標準化、の順の方が現場で回りやすいケースが多いです。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q5. 脆弱性対応（CVE突合）を楽にしたいならどっち？</strong>
+                            <p class="m-0 text-slate-300">ツール連携・運用データとしての扱いやすさの観点ではCycloneDX寄りになりやすいです。ただし最終的には「対象版数が追える」「根拠が残る」運用ができているかが重要です。</p>
+                        </div>
+                    </div>
+
+                    <!-- 内部リンク③：次に読む -->
+                    <div class="related-box border-l-brand mt-12">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="book-open" class="w-4 h-4"></i> 次に読む</div>
+                        <p class="text-sm text-slate-300 mb-2">SPDXの用語や構造の基礎を短く押さえたい方はこちらへ。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="#" class="!text-brand-light hover:!text-brand">SPDXとは（作成中）</a></li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- CTA Section -->
+            <div class="glass-card rounded-3xl p-8 md:p-12 text-center border-t-4 border-t-emerald-500 bg-navy-800/80 shadow-[0_0_40px_-10px_rgba(16,185,129,0.2)]">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">自社のSBOM運用、どう設計するか迷っていませんか？</h2>
+                <p class="text-slate-300 mb-8 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+                    SPDX/CycloneDXの選び方、提出版/社内版の切り分け、更新運用などを自社向けに整理したい方はご相談ください。<br><br>
+                    <strong>Auto PSIRT Cloud</strong>なら、既存のExcel部品表を取り込むだけで、CVE突合・トリアージ・提出用レポート出力までを一気通貫で自動化できます。
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-navy-900 bg-white hover:bg-slate-200 transition-all duration-300 shadow-xl shadow-white/10 w-full sm:w-auto hover:-translate-y-1">
+                        <i data-lucide="message-square" class="w-5 h-5 text-emerald-600"></i>
+                        【無料】オンライン相談を予約する
+                    </a>
+                    <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-white bg-emerald-500/20 hover:bg-emerald-500 border border-emerald-500/30 transition-all duration-300 w-full sm:w-auto hover:-translate-y-1">
+                        <i class="w-5 h-5" data-lucide="monitor-play"></i>
+                        SBOM連携からレポート出力までのデモを見る
+                    </a>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/5 text-center text-sm text-slate-500 mt-auto bg-navy-900/80">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span class="font-bold text-slate-400">Auto PSIRT Cloud</span>
+            </div>
+            <p>&copy; 2026 Unimobilities株式会社. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
