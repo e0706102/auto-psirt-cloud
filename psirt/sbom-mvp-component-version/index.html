@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEOメタタグ -->
+    <title>SBOMをMVPで始める！「コンポーネントバージョン」の重要性と構成管理の基本 | Auto PSIRT Cloud</title>
+    <meta name="description" content="SBOM導入の第一歩として「まずはインシデントに”答えられる状態”を作る」ためのMVP（必要最小限の）構成と、その中でも特に重要となる「コンポーネントバージョン」の概念について、具体例を交えて詳しく解説します。">
+    <meta name="keywords" content="SBOM, MVP, コンポーネントバージョン, 構成管理, 脆弱性管理, PSIRT">
+    <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/psirt/sbom-mvp-component-version/">
+    
+    <!-- OGPタグ (SNSシェア用) -->
+    <meta property="og:title" content="SBOMをMVPで始める！「コンポーネントバージョン」の重要性と構成管理の基本">
+    <meta property="og:description" content="SBOM導入は「答えられる状態」を作ることが最優先。MVP構成とコンポーネントバージョンの重要性を解説。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/psirt/sbom-mvp-component-version/">
+    <meta property="og:site_name" content="Auto PSIRT Cloud">
+
+    <!-- ファビコン -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%233b82f6%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z%22/><path d=%22m9 12 2 2 4-4%22/></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0a0f1c',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        brand: {
+                            light: '#60a5fa',
+                            DEFAULT: '#3b82f6',
+                            dark: '#2563eb',
+                        },
+                        accent: {
+                            DEFAULT: '#06b6d4',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #60a5fa, #06b6d4);
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* 記事用カスタムスタイル */
+        .prose h2 {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-top: 3.5rem;
+            color: #f8fafc;
+        }
+        .prose h3 {
+            color: #e2e8f0;
+            margin-top: 2.5rem;
+            border-left: 3px solid #14b8a6; /* Teal系アクセント */
+            padding-left: 0.75rem;
+            font-size: 1.25rem;
+        }
+        .prose a {
+            color: #60a5fa;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .prose a:hover {
+            border-bottom-color: #60a5fa;
+        }
+        .prose strong {
+            color: #f8fafc;
+            background: linear-gradient(transparent 60%, rgba(20, 184, 166, 0.3) 40%);
+        }
+        .related-box {
+            background: rgba(30, 41, 59, 0.6);
+            border-left: 4px solid #14b8a6;
+            padding: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 2rem 0;
+        }
+        
+        .custom-table th {
+            background-color: rgba(30, 41, 59, 0.8);
+            border-bottom: 2px solid #14b8a6;
+        }
+        .custom-table td {
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .custom-table tr:hover td {
+            background-color: rgba(255,255,255,0.02);
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-brand selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-brand/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-teal-500/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-accent flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="/news.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        ニュース一覧へ戻る
+                    </a>
+                    <a href="/demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                        相談 or デモ予約
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <article class="max-w-4xl mx-auto">
+            
+            <!-- パンくずリスト -->
+            <nav class="flex text-sm text-slate-400 mb-8" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/index.html" class="hover:text-white transition-colors">ホーム</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <a href="/news.html" class="hover:text-white transition-colors">ニュース・インサイト</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <span class="text-slate-500 truncate max-w-[200px] sm:max-w-none">SBOMをMVPで始める</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- 記事ヘッダー -->
+            <header class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-teal-500/20 border border-teal-500/30 text-teal-400 text-xs font-bold px-3 py-1 rounded-full">実務ガイド</span>
+                    <time class="text-slate-400 text-sm flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> 2026.03.06
+                    </time>
+                </div>
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
+                    SBOMをMVPで始める！<br/>
+                    <span class="text-2xl md:text-3xl text-slate-300 font-medium">「コンポーネントバージョン」の重要性と構成管理の基本</span>
+                </h1>
+                
+                <!-- 導入文 -->
+                <div class="text-lg text-slate-300 leading-relaxed p-6 bg-navy-800/50 rounded-2xl border border-white/5 space-y-4">
+                    <h3 class="text-xl font-bold text-white mt-0 mb-3 border-none p-0">はじめに：なぜ今、ソフトウェアの「部品表」が求められているのか？</h3>
+                    <p>近年、サイバーセキュリティの領域において「SBOM（エスボム：Software Bill of Materials＝ソフトウェア部品表）」という言葉を耳にする機会が急増しています。米国での大統領令によるSBOM提出の義務化要請や、経済産業省からのガイドライン策定など、国を挙げた取り組みが進んでいます。</p>
+                    <p>なぜ、ここまでSBOMが重要視されているのでしょうか。その背景にあるのが<strong>「ソフトウェア・サプライチェーン攻撃」</strong>の脅威です。現代のソフトウェアは、すべてをゼロから自社で開発することは稀であり、オープンソースソフトウェア（OSS）やサードパーティ製のライブラリといった「既存の部品（コンポーネント）」を無数に組み合わせて作られています。</p>
+                    <p>もし、世界中で使われている便利な「部品」に重大な脆弱性が見つかったらどうなるでしょうか？<br>その部品を組み込んでいる自社のシステムも、またそのシステムを利用している顧客も、連鎖的にサイバー攻撃の危機に晒されることになります。</p>
+                    <p>本記事では、SBOM導入の第一歩として<strong>「まずはインシデントに”答えられる状態”を作る」ためのMVP（必要最小限の）構成</strong>と、その中でも特に重要となる<strong>「コンポーネントバージョン」</strong>の概念について、具体例を交えて詳しく解説します。</p>
+                </div>
+            </header>
+
+            <!-- 記事本文 -->
+            <div class="glass-card p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl bg-navy-900/80 mb-16">
+                <div class="prose prose-invert prose-slate prose-lg max-w-none">
+                    
+                    <!-- 内部リンク①：全体像 -->
+                    <div class="related-box mt-0 border-l-brand">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="book-open" class="w-4 h-4"></i> 基本を押さえる</div>
+                        <p class="text-sm text-slate-300 mb-2">SBOMそのものの定義や、提出物ではなく「運用資産」として捉える考え方については、こちらの記事を先にご覧ください。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/what-is-sbom/" class="!text-brand-light hover:!text-brand">SBOMとは？提出物ではなく運用資産として理解する</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>第1章：SBOM導入で目指すべきは「答えられる状態」</h2>
+                    <p>SBOMの導入を検討し始めた企業が陥りがちな罠が、「最初から完璧な構成管理を目指してしまうこと」です。すべてのソフトウェアの依存関係を隅々まで網羅しようとすると、膨大な工数がかかり、プロジェクトが頓挫してしまいます。</p>
+                    
+                    <p>そこで重要になるのが、<strong>「MVP（Minimum Viable Product：必要最小限の価値を提供できるプロダクト）」として小さく始める</strong>というアプローチです。</p>
+                    
+                    <p class="text-xl font-bold bg-white/5 p-5 rounded-lg border-l-4 border-teal-500 my-6">
+                        SBOMにおけるMVPの目的はただ一つ、<br>
+                        <span class="text-teal-400">「インシデント発生時に、自社が影響を受けるかどうかを即答できる（＝答えられる状態を作る）こと」</span>です。
+                    </p>
+                    
+                    <p>例えば、ある日ニュースで「有名なライブラリ『〇〇』に深刻な脆弱性が発見されました」と報道されたとします。この時、経営層や顧客から「うちは大丈夫か？」と問われた際に、数分以内に「自社製品には組み込まれていないので安全です」または「〇〇のシステムで使っているため、直ちに対処します」と即答できる状態。これこそが、SBOMを導入する最大の目的であり、最初のゴールとなります。</p>
+
+                    <h2>第2章：MVPとして最低限必要なSBOMの項目とは？</h2>
+                    <p>では、「答えられる状態」を作るためには、最低限どのような情報を管理すればよいのでしょうか。SBOMのMVP構成として、以下の項目を押さえておく必要があります。</p>
+
+                    <div class="bg-navy-800 p-6 rounded-lg border border-white/10 my-6">
+                        <ul class="m-0 list-none pl-0 space-y-2">
+                            <li class="flex items-start gap-2"><i data-lucide="check-circle-2" class="w-5 h-5 text-teal-500 shrink-0 mt-0.5"></i> <div><strong>製品名</strong>（自社が提供しているシステムやアプリの名前）</div></li>
+                            <li class="flex items-start gap-2"><i data-lucide="check-circle-2" class="w-5 h-5 text-teal-500 shrink-0 mt-0.5"></i> <div><strong class="text-brand-light">製品バージョン</strong>（自社システムのリリースバージョン）</div></li>
+                            <li class="flex items-start gap-2"><i data-lucide="check-circle-2" class="w-5 h-5 text-teal-500 shrink-0 mt-0.5"></i> <div><strong>コンポーネント名</strong>（組み込んでいる部品の名前）</div></li>
+                            <li class="flex items-start gap-2"><i data-lucide="check-circle-2" class="w-5 h-5 text-teal-500 shrink-0 mt-0.5"></i> <div><strong class="text-brand-light">コンポーネントバージョン</strong>（組み込んでいる部品のバージョン）</div></li>
+                            <li class="flex items-start gap-2"><i data-lucide="check-circle-2" class="w-5 h-5 text-slate-500 shrink-0 mt-0.5"></i> <div><strong>区分</strong>（OSS / 商用 / 自社開発の区別）</div></li>
+                            <li class="flex items-start gap-2"><i data-lucide="check-circle-2" class="w-5 h-5 text-slate-500 shrink-0 mt-0.5"></i> <div><strong>取得元 / 供給元</strong>（どこから入手した部品か）</div></li>
+                            <li class="flex items-start gap-2"><i data-lucide="check-circle-2" class="w-5 h-5 text-slate-500 shrink-0 mt-0.5"></i> <div><strong>搭載箇所</strong>（どのECU、機能、モジュールで使われているか）</div></li>
+                            <li class="flex items-start gap-2"><i data-lucide="check-circle-2" class="w-5 h-5 text-slate-500 shrink-0 mt-0.5"></i> <div><strong>備考</strong>（機能の無効化、利用条件、設定の差分など）</div></li>
+                            <li class="flex items-start gap-2"><i data-lucide="check-circle-2" class="w-5 h-5 text-slate-500 shrink-0 mt-0.5"></i> <div><strong>更新日</strong>（この情報がいつ時点のものか）</div></li>
+                            <li class="flex items-start gap-2"><i data-lucide="check-circle-2" class="w-5 h-5 text-slate-500 shrink-0 mt-0.5"></i> <div><strong>更新担当者 / 管理部門</strong>（誰が管理しているか）</div></li>
+                        </ul>
+                    </div>
+
+                    <p>この中で、特に意識して区別しなければならないのが<strong>「製品バージョン」と「コンポーネントバージョン」</strong>です。自社がリリースした「製品」のバージョンと、その中身を構成する「部品」のバージョンは、まったく別物として正確に管理されなければなりません。</p>
+
+                    <h2>第3章：【本題】コンポーネントバージョンとは何か？</h2>
+                    <p>SBOMにおけるコンポーネントバージョンとは、自社製品を構成するために組み込まれている、個々の部品（ライブラリ、モジュール、フレームワークなど）の「特定のリリース番号や識別番号」のことを指します。</p>
+
+                    <h3>なぜ「コンポーネントバージョン」の把握が最重要なのか？</h3>
+                    <p>SBOMを管理する上で、コンポーネント名だけでなく「バージョン」まで特定しておくことには、主に3つの重大な理由があります。</p>
+
+                    <div class="space-y-6 my-6">
+                        <div class="bg-navy-800/50 p-5 rounded-xl border border-white/5 border-l-4 border-l-red-500">
+                            <h4 class="text-red-400 font-bold mt-0 mb-2">1. 脆弱性（CVE）は「特定のバージョン」に依存するから</h4>
+                            <p class="text-sm text-slate-300 m-0 leading-relaxed">
+                                ソフトウェアの脆弱性のほとんどは、「特定のバージョンから特定のバージョンの間」にのみ存在します。<br>
+                                例えば、世界中を震撼させた「Log4Shell（Apache Log4jの脆弱性）」の場合、影響を受けるのは「バージョン 2.0-beta9 から 2.14.1 まで」でした。<br>
+                                もし自社のSBOMに「Log4jを使っている」というコンポーネント名しか記載されていなかったら、自社が危険なのか安全なのか判断できず、ソースコードを全て見直すハメになります。<strong>バージョンが「2.15.0」と記録されていれば、即座に「今回の脆弱性の対象外である」と判断できる</strong>のです。
+                            </p>
+                        </div>
+
+                        <div class="bg-navy-800/50 p-5 rounded-xl border border-white/5 border-l-4 border-l-yellow-500">
+                            <h4 class="text-yellow-400 font-bold mt-0 mb-2">2. バージョンによって「ライセンス」が変わるから</h4>
+                            <p class="text-sm text-slate-300 m-0 leading-relaxed">
+                                特にOSS（オープンソースソフトウェア）を利用する場合、ライセンス管理は法務上の重大な課題です。OSSはバージョンアップのタイミングで、ライセンス形態（MIT、GPL、Apache Licenseなど）が変更されることがあります。<br>
+                                商用利用が可能だったコンポーネントが、バージョンを上げた途端に「ソースコードの公開義務（コピーレフト性）」を伴うライセンスに変更されてしまうケースもあり、コンポーネントバージョンの追跡はコンプライアンス遵守の観点でも必須です。
+                            </p>
+                        </div>
+
+                        <div class="bg-navy-800/50 p-5 rounded-xl border border-white/5 border-l-4 border-l-slate-400">
+                            <h4 class="text-slate-300 font-bold mt-0 mb-2">3. サポート切れ（EOL）の管理</h4>
+                            <p class="text-sm text-slate-300 m-0 leading-relaxed">
+                                ソフトウェアのコンポーネントには寿命があります。開発元がサポートを終了した（EOL：End of Life）古いバージョンのコンポーネントを使い続けると、新たな脆弱性が発見されても修正パッチが提供されません。現在使っているバージョンを把握しておくことで、計画的なアップデートのスケジュールを立てることができます。
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- 途中CTA（主CTA） -->
+                    <div class="bg-navy-800/50 p-6 md:p-8 rounded-2xl border border-teal-500/30 text-center my-10 shadow-[0_0_20px_rgba(20,184,166,0.1)]">
+                        <p class="text-slate-200 mb-6 font-medium text-lg">「自社のExcel部品表で対応できるか不安」「どうバージョン管理を始めればいいか分からない」という方はご相談ください。</p>
+                        <a href="/demo_form.html" class="inline-flex items-center gap-2 px-8 py-3.5 bg-brand hover:bg-brand-dark text-white rounded-full font-bold transition-all hover:-translate-y-1 shadow-lg shadow-brand/20">
+                            <i data-lucide="calendar" class="w-5 h-5"></i> 【無料】オンライン相談を予約する
+                        </a>
+                    </div>
+
+                    <h2>第4章：コンポーネントバージョンの具体例</h2>
+                    <p>では、実際にSBOMの中でコンポーネントバージョンはどのように記録されるのでしょうか。架空の「自社製Webアプリ」を例に見てみましょう。</p>
+
+                    <div class="overflow-x-auto my-6">
+                        <table class="w-full text-sm text-left border-collapse custom-table min-w-[600px]">
+                            <thead>
+                                <tr>
+                                    <th class="p-3 font-bold text-white rounded-tl-lg">コンポーネント名</th>
+                                    <th class="p-3 font-bold text-teal-400 bg-teal-500/10">コンポーネントバージョン</th>
+                                    <th class="p-3 font-bold text-white">区分</th>
+                                    <th class="p-3 font-bold text-white rounded-tr-lg">役割・用途</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-slate-300">
+                                <tr>
+                                    <td class="p-3 border-r border-white/5 font-mono">Apache Log4j</td>
+                                    <td class="p-3 border-r border-white/5 font-mono bg-teal-500/5 font-bold text-teal-300">2.14.1</td>
+                                    <td class="p-3 border-r border-white/5">OSS</td>
+                                    <td class="p-3">Javaのログ出力ライブラリ</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 border-r border-white/5 font-mono">React</td>
+                                    <td class="p-3 border-r border-white/5 font-mono bg-teal-500/5 font-bold text-teal-300">18.2.0</td>
+                                    <td class="p-3 border-r border-white/5">OSS</td>
+                                    <td class="p-3">UI構築用のJavaScriptライブラリ</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 border-r border-white/5 font-mono">OpenSSL</td>
+                                    <td class="p-3 border-r border-white/5 font-mono bg-teal-500/5 font-bold text-teal-300">3.0.8</td>
+                                    <td class="p-3 border-r border-white/5">OSS</td>
+                                    <td class="p-3">暗号化通信ライブラリ</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 border-r border-white/5 font-mono">PostgreSQL JDBC Driver</td>
+                                    <td class="p-3 border-r border-white/5 font-mono bg-teal-500/5 font-bold text-teal-300">42.5.0</td>
+                                    <td class="p-3 border-r border-white/5">OSS</td>
+                                    <td class="p-3">データベース接続用ドライバ</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 border-r border-white/5 font-mono">AuthModule</td>
+                                    <td class="p-3 border-r border-white/5 font-mono bg-teal-500/5 font-bold text-teal-300">v1.2.5-beta</td>
+                                    <td class="p-3 border-r border-white/5">自社開発</td>
+                                    <td class="p-3">自社で開発した共通認証モジュール</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 border-r border-white/5 font-mono">〇〇UIパッケージ</td>
+                                    <td class="p-3 border-r border-white/5 font-mono bg-teal-500/5 font-bold text-teal-300">2023.1</td>
+                                    <td class="p-3 border-r border-white/5">商用</td>
+                                    <td class="p-3">サードパーティ製の有料UI部品</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p>このように、OSSだけでなく、購入した商用パッケージや、自社内の別部門で開発された共通モジュールなども「コンポーネント」として扱い、それぞれのバージョンを明記します。これにより、製品の内部構造が「可視化（透明化）」されるのです。</p>
+
+                    <h2>第5章：バージョン管理における「よくある落とし穴」</h2>
+                    <p>SBOMの作成・運用において、コンポーネントバージョンの管理にはいくつか注意すべきポイントがあります。</p>
+
+                    <h3>推移的依存関係（孫依存）のブラックボックス化</h3>
+                    <p>ソフトウェアの部品は、別の部品を組み込んで作られていることがよくあります。<br>
+                    自社が直接組み込んだ部品（A）が、さらに別の部品（B）に依存している状態を「推移的依存関係」と呼びます。自社が意識してインストールした（A）のバージョンは把握していても、その裏で自動的にインストールされた（B）のバージョンを把握できていないケースは非常に危険です。</p>
+                    <p>MVPの次の段階として、SCA（ソフトウェアコンポジション解析）ツールなどを導入し、見えない依存関係のバージョンまで自動抽出する仕組みづくりが求められます。</p>
+
+                    <h3>バージョン表記の揺れ</h3>
+                    <p>「1.0.0」「v1.0.0」「1.0」など、コンポーネントによってバージョンの命名規則は異なります。手動でExcel等にまとめていると表記揺れが発生し、脆弱性データベース（NVDなど）と照合する際に検索に引っかからないという問題が起こります。<br>
+                    自動化ツールを活用するか、チーム内で正確な表記ルール（CPE等の標準フォーマットに準拠するなど）を定めておくことが重要です。</p>
+
+                    <div class="related-box border-l-purple-500 my-8">
+                        <div class="text-sm font-bold text-purple-400 mb-2 flex items-center gap-2"><i data-lucide="link" class="w-4 h-4"></i> 次のステップへ</div>
+                        <p class="text-sm text-slate-300 mb-2">バージョン管理ができたら、次は脆弱性（CVE）との突合です。どう優先順位をつけるかについてはこちらをご覧ください。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/cve-triage-vex-guide/" class="!text-purple-400 hover:!text-purple-300">CVEトリアージ＆VEX実務 完全ガイド：ノイズ削減・優先度付け・説明責任</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>まとめ：SBOMは「作ること」ではなく「答えること」が目的</h2>
+                    <p>SBOMの取り組みを始めると、つい「精緻なリストを完成させること」自体が目的化してしまいがちです。しかし、真の目的は<strong>「まずは”答えられる状態”を作る」こと</strong>です。</p>
+                    
+                    <p>そのためには、自社製品の中に<strong>「何という名前のコンポーネントが」「どのバージョンで」</strong>動いているのかを、MVPとして小さく、しかし正確に把握し始めることが第一歩となります。</p>
+                    
+                    <p>脆弱性が発表されたその日のうちに「自社は安全です」、あるいは「〇〇のシステムに影響があるため、パッチ適用を開始しました」と即答できる体制。これこそが、顧客からの信頼を守り、企業価値を高める現代のサイバーセキュリティの基本姿勢と言えるでしょう。</p>
+                    
+                    <p>ぜひ、自社のソフトウェア開発・運用プロセスにおいて、コンポーネントバージョンの管理が「答えられる状態」になっているか、今一度見直してみてはいかがでしょうか。</p>
+
+                </div>
+            </div>
+
+            <!-- CTA Section -->
+            <div class="glass-card rounded-3xl p-8 md:p-12 text-center border-t-4 border-t-teal-500 bg-navy-800/80 shadow-[0_0_40px_-10px_rgba(20,184,166,0.2)]">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">Excelの部品表から、自動運用へステップアップしませんか？</h2>
+                <p class="text-slate-300 mb-8 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+                    「Excelで管理を始めたが、毎日の脆弱性チェックが限界」「表記ゆれで検索に引っかからない」とお悩みではありませんか？<br><br>
+                    <strong>Auto PSIRT Cloud</strong>なら、バラバラなExcelの部品表でもアップロードするだけで、NVDデータベースと自動で突合し、本当に危険な脆弱性だけをピックアップします。
+                </p>
+                <div class="flex justify-center">
+                    <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-navy-900 bg-white hover:bg-slate-200 transition-all duration-300 shadow-xl shadow-white/10 w-full sm:w-auto hover:-translate-y-1">
+                        <i data-lucide="monitor-play" class="w-5 h-5 text-teal-600"></i>
+                        SBOM連携から自動トリアージのデモを見る
+                    </a>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/5 text-center text-sm text-slate-500 mt-auto bg-navy-900/80">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span class="font-bold text-slate-400">Auto PSIRT Cloud</span>
+            </div>
+            <p>&copy; 2026 Unimobilities株式会社. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
