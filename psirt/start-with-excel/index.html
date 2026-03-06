@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEOメタタグ -->
+    <title>SBOMをExcelから始める（新テンプレ＋最小ルール）｜最小項目と更新の回し方 | Auto PSIRT Cloud</title>
+    <meta name="description" content="SBOMをExcelから始める方法を「新テンプレ＋最小ルール」で解説。兼務でも回る最小項目、製品版数×部品版数の持ち方、更新トリガー、OEM照会に出す抜粋版SBOMの作り方まで、今日から運用できる手順に落とし込みます。">
+    <meta name="keywords" content="SBOMをExcelから始める, SBOM Excel, SBOM テンプレート, 脆弱性管理, PSIRT">
+    <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/psirt/start-with-excel/">
+    
+    <!-- OGPタグ (SNSシェア用) -->
+    <meta property="og:title" content="SBOMをExcelから始める（新テンプレ＋最小ルール）｜最小項目と更新の回し方">
+    <meta property="og:description" content="いきなり標準化は挫折の元。まずはExcelで「答えられる状態」を作るための最小手順とルールを解説します。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/psirt/start-with-excel/">
+    <meta property="og:site_name" content="Auto PSIRT Cloud">
+
+    <!-- ファビコン -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%233b82f6%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z%22/><path d=%22m9 12 2 2 4-4%22/></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0a0f1c',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        brand: {
+                            light: '#60a5fa',
+                            DEFAULT: '#3b82f6',
+                            dark: '#2563eb',
+                        },
+                        accent: {
+                            DEFAULT: '#06b6d4',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #60a5fa, #06b6d4);
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* 記事用カスタムスタイル */
+        .prose h2 {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-top: 3.5rem;
+            color: #f8fafc;
+        }
+        .prose h3 {
+            color: #e2e8f0;
+            margin-top: 2.5rem;
+            border-left: 3px solid #10b981; /* SBOM系はEmerald系アクセント */
+            padding-left: 0.75rem;
+            font-size: 1.25rem;
+        }
+        .prose a {
+            color: #60a5fa;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .prose a:hover {
+            border-bottom-color: #60a5fa;
+        }
+        .prose strong {
+            color: #f8fafc;
+            background: linear-gradient(transparent 60%, rgba(16, 185, 129, 0.3) 40%);
+        }
+        .related-box {
+            background: rgba(30, 41, 59, 0.6);
+            border-left: 4px solid #10b981;
+            padding: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 2rem 0;
+        }
+        .step-box {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-brand selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-brand/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-emerald-500/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-accent flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="/news.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        ニュース一覧へ戻る
+                    </a>
+                    <a href="/demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                        相談 or デモ予約
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <article class="max-w-4xl mx-auto">
+            
+            <!-- パンくずリスト -->
+            <nav class="flex text-sm text-slate-400 mb-8" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/index.html" class="hover:text-white transition-colors">ホーム</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <a href="/news.html" class="hover:text-white transition-colors">ニュース・インサイト</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <span class="text-slate-500 truncate max-w-[200px] sm:max-w-none">SBOMをExcelから始める</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- 記事ヘッダー -->
+            <header class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-xs font-bold px-3 py-1 rounded-full">実務ガイド</span>
+                    <time class="text-slate-400 text-sm flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> 2026.03.07
+                    </time>
+                </div>
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
+                    SBOMをExcelから始める<br/>
+                    <span class="text-2xl md:text-3xl text-slate-300 font-medium">（新テンプレ＋最小ルール）</span>
+                </h1>
+                
+                <!-- 導入文 -->
+                <div class="text-lg text-slate-300 leading-relaxed p-6 bg-navy-800/50 rounded-2xl border border-white/5 space-y-4">
+                    <p>SBOM（Software Bill of Materials）は「やった方がいい」と分かっていても、最初の一歩で止まりがちです。理由はシンプルで、<strong>いきなりSPDX/CycloneDXやツール選定から入ると、棚卸しが終わらず更新も回らないから</strong>です。</p>
+                    
+                    <p>Tier2〜Tier4の現場でまず必要なのは、完璧な標準フォーマットではなく、<strong>OEMの照会（CVE影響有無）に“版数と根拠”で答えられる状態</strong>です。</p>
+                    <p>そこで本記事では、兼務でも回るように「Excelで始めるSBOM」の現実解を、テンプレと最小ルールに絞って解説します。</p>
+                </div>
+            </header>
+
+            <!-- 記事本文 -->
+            <div class="glass-card p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl bg-navy-900/80 mb-16">
+                <div class="prose prose-invert prose-slate prose-lg max-w-none">
+                    
+                    <!-- 内部リンク①：全体像 -->
+                    <div class="related-box mt-0 border-l-brand">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="map" class="w-4 h-4"></i> 全体像を先に見直す</div>
+                        <p class="text-sm text-slate-300 mb-2">SBOMの目的や、提出版/社内版の切り分け方など、全体像を先に整理したい方はこちらをご覧ください。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/sbom-complete-guide/" class="!text-brand-light hover:!text-brand">SBOM完全ガイド（SPDX/CycloneDX/Excel運用・提出と機密の現実解）</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>1. まず決める：Excel SBOMのゴールは「答えられる」こと</h2>
+                    <p>Excelで始めるSBOMの成功条件は、次の2つだけです。</p>
+
+                    <div class="bg-navy-800 p-6 rounded-lg border border-white/10 my-6">
+                        <ul class="m-0 space-y-3 pl-0 list-none font-medium">
+                            <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-6 h-6 text-emerald-400 shrink-0"></i> <div>対象製品・対象版数が切れる（どの版の話かを断言できる）</div></li>
+                            <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-6 h-6 text-emerald-400 shrink-0"></i> <div>影響なし/要確認の根拠が残る（後から監査・追加質問に耐える）</div></li>
+                        </ul>
+                    </div>
+
+                    <p>逆に、Excelで「全部の属性（ライセンス、ハッシュ、依存関係…）」まで追うと更新が止まります。<strong>最初は“答えるための最小項目”だけ</strong>に絞ってください。</p>
+
+                    <h2>2. 新テンプレの考え方：最小項目＋根拠の一言</h2>
+                    <p>Excel SBOMで最初に持つべき列は、実務上この6〜8項目です。</p>
+
+                    <ul class="space-y-1 mb-6">
+                        <li>製品名</li>
+                        <li class="text-brand-light font-bold">製品バージョン（最重要）</li>
+                        <li>搭載箇所/モジュール（1列でOK）</li>
+                        <li>コンポーネント名（OSS/商用/自社）</li>
+                        <li class="text-brand-light font-bold">コンポーネントバージョン</li>
+                        <li>種別（OSS/商用/自社）</li>
+                        <li class="text-emerald-400 font-bold">備考（根拠の一言：外部IFなし、機能無効、実行経路なし 等）</li>
+                        <li>更新日/更新者</li>
+                    </ul>
+
+                    <div class="space-y-4 my-6">
+                        <div class="bg-navy-800/80 p-5 rounded-lg border-l-4 border-brand-light">
+                            <h4 class="text-brand-light font-bold mt-0 mb-2">コツ1：「製品版数」と「部品版数」を分ける</h4>
+                            <p class="text-sm text-slate-300 m-0">CVE照会は「どの製品版まで影響？」が必ず来ます。製品版数が無いSBOMは照会対応で詰みます。</p>
+                        </div>
+                        <div class="bg-navy-800/80 p-5 rounded-lg border-l-4 border-emerald-400">
+                            <h4 class="text-emerald-400 font-bold mt-0 mb-2">コツ2：備考は“説明用の一言”を書く場所にする</h4>
+                            <p class="text-sm text-slate-300 m-0">長文はいりません。たとえば「外部IFなし」「当該機能は無効化」「実行経路に乗らない」のように、後で“影響なし”を説明できる言葉を残します。</p>
+                        </div>
+                    </div>
+
+                    <!-- 内部リンク②：テンプレ紹介 -->
+                    <div class="related-box border-l-emerald-500">
+                        <div class="text-sm font-bold text-emerald-400 mb-2 flex items-center gap-2"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> テンプレを活用する</div>
+                        <p class="text-sm text-slate-300 mb-2">最小項目で始めるなら、コピペで使えるこちらのTSVテンプレをご活用ください。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/sbom-excel-template-minimum/" class="!text-emerald-400 hover:!text-emerald-300">SBOM Excelテンプレ（最小項目版）</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>3. 最小ルール：更新が止まらない3つの決まり</h2>
+                    <p>テンプレを作っても、ルールが無いと1か月で古くなります。最初は次の3つだけ決めてください。</p>
+
+                    <div class="space-y-6 my-6">
+                        <div class="bg-navy-800/50 p-5 rounded border border-white/10">
+                            <h4 class="text-white font-bold mt-0 mb-2">ルールA：SBOMは「製品版数ごとのスナップショット」で固定</h4>
+                            <ul class="text-sm m-0 space-y-1 pl-4 text-slate-300">
+                                <li>製品版数が変わったら、SBOMも“その版の確定版”を残す</li>
+                                <li>「最新版だけ」上書きする運用は、後から版数差分が説明できず破綻します</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="bg-navy-800/50 p-5 rounded border border-white/10">
+                            <h4 class="text-white font-bold mt-0 mb-2">ルールB：更新トリガーは3つに限定する</h4>
+                            <ul class="text-sm m-0 space-y-1 pl-4 text-slate-300">
+                                <li>製品リリース（版数が変わる）</li>
+                                <li>供給元/OSS更新（影響があるものだけ）</li>
+                                <li>OEM照会が来た（調査結果を備考・証跡に追記）</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="bg-navy-800/50 p-5 rounded border border-white/10">
+                            <h4 class="text-white font-bold mt-0 mb-2">ルールC：証跡の置き場所を決める</h4>
+                            <p class="text-sm text-slate-300 m-0 mb-2">SBOMは機密になりやすいので、提出版と社内版は分ける前提で、まず「社内の保管場所」を固定します。</p>
+                            <p class="text-sm text-brand-light m-0">依頼原本／調査メモ／回答書／提出履歴を、案件IDでまとめられると監査が楽になります。</p>
+                        </div>
+                    </div>
+
+                    <h2>4. 今日から回す：Excel SBOM 5ステップ</h2>
+
+                    <div class="step-box">
+                        <h4 class="text-emerald-400 font-bold mt-0 mb-2 flex items-center gap-2">
+                            <span class="bg-emerald-500/20 w-6 h-6 rounded-full flex items-center justify-center text-sm">1</span> 対象製品を絞る
+                        </h4>
+                        <p class="text-sm text-slate-300 m-0">全部やらず、まずは「OEM照会が多い」「外部IFがある」「売上影響が大きい」製品から始めます。</p>
+                    </div>
+
+                    <div class="step-box">
+                        <h4 class="text-emerald-400 font-bold mt-0 mb-2 flex items-center gap-2">
+                            <span class="bg-emerald-500/20 w-6 h-6 rounded-full flex items-center justify-center text-sm">2</span> テンプレを貼って、列だけ固定する
+                        </h4>
+                        <p class="text-sm text-slate-300 m-0">埋める前に“列を確定”させます。列がブレると更新が回りません。</p>
+                    </div>
+
+                    <div class="step-box">
+                        <h4 class="text-emerald-400 font-bold mt-0 mb-2 flex items-center gap-2">
+                            <span class="bg-emerald-500/20 w-6 h-6 rounded-full flex items-center justify-center text-sm">3</span> 最初は“主要コンポーネント”だけ埋める
+                        </h4>
+                        <p class="text-sm text-slate-300 m-0">100%を目指さず、影響が出やすいところ（通信、暗号、更新、診断、Web/UI）から埋めます。足りない分は「要確認」として残し、更新で埋める運用にします。</p>
+                    </div>
+
+                    <div class="step-box">
+                        <h4 class="text-emerald-400 font-bold mt-0 mb-2 flex items-center gap-2">
+                            <span class="bg-emerald-500/20 w-6 h-6 rounded-full flex items-center justify-center text-sm">4</span> 製品版数のたびにスナップショットを残す
+                        </h4>
+                        <p class="text-sm text-slate-300 m-0">リリース日・更新者も一緒に残します。これが「運用している証拠」になります。</p>
+                    </div>
+
+                    <div class="step-box">
+                        <h4 class="text-emerald-400 font-bold mt-0 mb-2 flex items-center gap-2">
+                            <span class="bg-emerald-500/20 w-6 h-6 rounded-full flex items-center justify-center text-sm">5</span> 照会が来たら“該当行の抜粋＋備考（根拠）”で返す
+                        </h4>
+                        <p class="text-sm text-slate-300 m-0">Excel SBOMの強みは、必要範囲だけ抜き出して提出できることです。<br>結論（影響あり/なし/調査中）→対象版数→根拠（備考＋証跡）をセットで返すと、追加質問が減ります。</p>
+                    </div>
+
+                    <h2>補足：OEMに提出する「抜粋版SBOM」の作り方（3ルール）</h2>
+                    <p>SBOMは設計情報に近く、丸ごと出せない（出したくない）ケースが普通です。Excelで始めるなら、まず提出のルールを3つに固定すると安全です。</p>
+
+                    <ol class="space-y-4 my-6">
+                        <li>
+                            <strong>提出は“対象範囲だけ”</strong><br>
+                            <span class="text-sm text-slate-300">照会CVEに関係するモジュール行だけを抜粋（または顧客が求める範囲だけ）。</span>
+                        </li>
+                        <li>
+                            <strong>必ず「製品版数」とセット</strong><br>
+                            <span class="text-sm text-slate-300">抜粋したSBOMが「どの製品版のものか」を必ず明記。ここが抜けると追加質問が増えます。</span>
+                        </li>
+                        <li>
+                            <strong>備考に“根拠の一言”を残す</strong><br>
+                            <span class="text-sm text-slate-300">「影響なし」を言うなら、外部IFなし／機能無効／実行経路なし等の前提を備考に残します。添付できない証跡は、参照先（フォルダ/チケットID）を書けばOKです。</span>
+                        </li>
+                    </ol>
+
+                    <!-- 途中CTA（主CTA） -->
+                    <div class="bg-navy-800/50 p-6 md:p-8 rounded-2xl border border-emerald-500/30 text-center my-10 shadow-[0_0_20px_rgba(16,185,129,0.1)]">
+                        <p class="text-slate-200 mb-6 font-medium text-lg">SBOM整備・運用範囲をどこから始めるか整理したい方は一度ご相談ください。</p>
+                        <a href="/demo_form.html" class="inline-flex items-center gap-2 px-8 py-3.5 bg-brand hover:bg-brand-dark text-white rounded-full font-bold transition-all hover:-translate-y-1 shadow-lg shadow-brand/20">
+                            <i data-lucide="calendar" class="w-5 h-5"></i> 【無料】オンライン相談を予約する
+                        </a>
+                    </div>
+
+                    <h2>5. よくある失敗と回避策</h2>
+                    <ul class="space-y-3 my-6 list-none pl-0">
+                        <li class="flex items-start gap-3"><i data-lucide="alert-triangle" class="w-5 h-5 text-yellow-500 mt-0.5 shrink-0"></i> <div><strong>失敗：製品版数が無い</strong><br><span class="text-sm text-brand-light">→ 版数列を最優先で追加する（ここだけは妥協しない）</span></div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="alert-triangle" class="w-5 h-5 text-yellow-500 mt-0.5 shrink-0"></i> <div><strong>失敗：属性を増やしすぎて更新が止まる</strong><br><span class="text-sm text-brand-light">→ 最小項目に戻し、必要になった列だけ足す</span></div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="alert-triangle" class="w-5 h-5 text-yellow-500 mt-0.5 shrink-0"></i> <div><strong>失敗：最新版だけで履歴がない</strong><br><span class="text-sm text-brand-light">→ 製品版数ごとにスナップショットを残す</span></div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="alert-triangle" class="w-5 h-5 text-yellow-500 mt-0.5 shrink-0"></i> <div><strong>失敗：正本が複数（Excelが散らばる）</strong><br><span class="text-sm text-brand-light">→ “正本は1つ”を決め、更新者と保管場所を固定する</span></div></li>
+                    </ul>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2>FAQ：ExcelでのSBOM作成について</h2>
+                    <div class="space-y-6 mt-6">
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q1. SBOMをExcelから始めても大丈夫ですか？</strong>
+                            <p class="m-0 text-slate-300">大丈夫です。最初は「照会に答えられる」ことが目的なので、Excelで最小項目を揃えて更新運用を回す方が成功率が高いです。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q2. 最小項目は何ですか？</strong>
+                            <p class="m-0 text-slate-300">最低限は「製品名・製品バージョン・コンポーネント名・コンポーネントバージョン」です。運用上は「搭載箇所」と「備考（根拠の一言）」も入れると、影響なしの説明が強くなります。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q3. どの頻度で更新すればいいですか？</strong>
+                            <p class="m-0 text-slate-300">最小は「製品リリース（版数変更）時」です。照会が多い場合は、供給元/OSS更新や照会対応を更新トリガーに入れると安定します。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q4. SPDX/CycloneDXにいつ移行すべきですか？</strong>
+                            <p class="m-0 text-slate-300">OEM指定やツール連携が必要になったタイミングで十分です。Excelで更新運用が回っていない状態で標準化しても、結局古くなります。</p>
+                        </div>
+                    </div>
+
+                    <!-- 内部リンク③：次に読む -->
+                    <div class="related-box border-l-brand mt-12">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="book-open" class="w-4 h-4"></i> 次に読む</div>
+                        <p class="text-sm text-slate-300 mb-2">そもそもSBOMの定義や目的を短く確認したい方は、こちらの記事をご覧ください。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/what-is-sbom/" class="!text-brand-light hover:!text-brand">SBOMとは？提出物ではなく運用資産として理解する</a></li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- CTA Section -->
+            <div class="glass-card rounded-3xl p-8 md:p-12 text-center border-t-4 border-t-emerald-500 bg-navy-800/80 shadow-[0_0_40px_-10px_rgba(16,185,129,0.2)]">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">Excel SBOMから、自動トリアージへ</h2>
+                <p class="text-slate-300 mb-8 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+                    <strong>Auto PSIRT Cloud</strong>なら、最小項目で作ったExcelの部品表をアップロードするだけで、日々の脆弱性（CVE）チェックを自動化できます。<br>SBOM自動化がうまく回るその流れを、デモで確認してみませんか？
+                </p>
+                <div class="flex justify-center">
+                    <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-navy-900 bg-white hover:bg-slate-200 transition-all duration-300 shadow-xl shadow-white/10 w-full sm:w-auto hover:-translate-y-1">
+                        <i data-lucide="monitor-play" class="w-5 h-5 text-emerald-600"></i>
+                        SBOM運用自動化のデモを見る
+                    </a>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/5 text-center text-sm text-slate-500 mt-auto bg-navy-900/80">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span class="font-bold text-slate-400">Auto PSIRT Cloud</span>
+            </div>
+            <p>&copy; 2026 Unimobilities株式会社. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
