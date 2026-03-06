@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEOメタタグ -->
+    <title>SBOMとは（部品メーカーが押さえるべき要点）｜OEM要求に答える最小セット | Auto PSIRT Cloud</title>
+    <meta name="description" content="SBOMとは何かを部品メーカー向けに解説。OEMからの脆弱性照会・監査・調査依頼に“速く根拠付きで答える”ためのSBOMの要点（対象範囲、版数管理、社内版/提出版、更新ルール、最小項目）を整理します。">
+    <meta name="keywords" content="SBOMとは, SBOM, 自動車 サプライヤー SBOM">
+    <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/psirt/what-is-sbom-supplier/">
+    
+    <!-- OGPタグ (SNSシェア用) -->
+    <meta property="og:title" content="SBOMとは（部品メーカーが押さえるべき要点）｜OEM要求に答える最小セット">
+    <meta property="og:description" content="OEMからの脆弱性照会に“速く根拠付きで答える”ためのSBOMの要点を、兼務担当者向けに解説します。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/psirt/what-is-sbom-supplier/">
+    <meta property="og:site_name" content="Auto PSIRT Cloud">
+
+    <!-- ファビコン -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%233b82f6%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z%22/><path d=%22m9 12 2 2 4-4%22/></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0a0f1c',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        brand: {
+                            light: '#60a5fa',
+                            DEFAULT: '#3b82f6',
+                            dark: '#2563eb',
+                        },
+                        accent: {
+                            DEFAULT: '#06b6d4',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #60a5fa, #06b6d4);
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* 記事用カスタムスタイル */
+        .prose h2 {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-top: 3.5rem;
+            color: #f8fafc;
+        }
+        .prose h3 {
+            color: #e2e8f0;
+            margin-top: 2.5rem;
+            border-left: 3px solid #10b981; /* SBOM系の記事はEmerald系アクセント */
+            padding-left: 0.75rem;
+            font-size: 1.25rem;
+        }
+        .prose a {
+            color: #60a5fa;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .prose a:hover {
+            border-bottom-color: #60a5fa;
+        }
+        .prose strong {
+            color: #f8fafc;
+            background: linear-gradient(transparent 60%, rgba(16, 185, 129, 0.3) 40%);
+        }
+        .related-box {
+            background: rgba(30, 41, 59, 0.6);
+            border-left: 4px solid #10b981;
+            padding: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 2rem 0;
+        }
+        .point-box {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+        .point-box h4 {
+            color: #34d399;
+            margin-top: 0;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-brand selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-brand/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-emerald-500/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-accent flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="/news.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        ニュース一覧へ戻る
+                    </a>
+                    <a href="/demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                        相談 or デモ予約
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <article class="max-w-4xl mx-auto">
+            
+            <!-- パンくずリスト -->
+            <nav class="flex text-sm text-slate-400 mb-8" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/index.html" class="hover:text-white transition-colors">ホーム</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <a href="/news.html" class="hover:text-white transition-colors">ニュース・インサイト</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <span class="text-slate-500 truncate max-w-[200px] sm:max-w-none">SBOMとは（部品メーカー版）</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- 記事ヘッダー -->
+            <header class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-xs font-bold px-3 py-1 rounded-full">入門解説</span>
+                    <time class="text-slate-400 text-sm flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> 2026.03.06
+                    </time>
+                </div>
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
+                    SBOMとは（部品メーカーが押さえるべき要点）
+                </h1>
+                
+                <!-- 導入文 -->
+                <div class="text-lg text-slate-300 leading-relaxed p-6 bg-navy-800/50 rounded-2xl border border-white/5 space-y-4">
+                    <p>OEMから「SBOMを出してください」「このCVEは影響ありますか？」と突然言われて困った——。</p>
+                    <p>Tier2〜Tier4の部品メーカーで増えている典型パターンです。</p>
+                    <p>SBOM（Software Bill of Materials）は、ソフトウェアの“部品表”です。ただし実務では、単なる一覧表ではなく <strong>「脆弱性照会・監査・調査依頼に“速く正確に答えるための前提情報”」</strong> として扱われます。</p>
+                    <p>この記事では、部品メーカーがSBOMでまず押さえるべき要点を、兼務担当でも迷わないように整理します。</p>
+                </div>
+            </header>
+
+            <!-- 記事本文 -->
+            <div class="glass-card p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl bg-navy-900/80 mb-16">
+                <div class="prose prose-invert prose-slate prose-lg max-w-none">
+                    
+                    <h2>SBOMとは何か（ひとことで）</h2>
+                    <p>SBOMは「製品のソフトウェアを構成するコンポーネント（OSS/商用/自社）と、そのバージョン、依存関係などを一覧化したもの」です。</p>
+                    <p>ハードや機械部品のBOMが“物理部品表”なら、<strong>SBOMは“ソフト部品表”</strong>です。</p>
+                    
+                    <p>ここで重要なのは、SBOMがあると次の問いに答えられるようになることです。</p>
+                    <div class="bg-navy-800 p-6 rounded-lg border border-white/10 my-6">
+                        <ul class="m-0 space-y-3 pl-0 list-none">
+                            <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-6 h-6 text-brand-light shrink-0"></i> <span>この脆弱性（CVE）が <strong>自社製品のどの版</strong> に関係するか？</span></li>
+                            <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-6 h-6 text-brand-light shrink-0"></i> <span>そのコンポーネントは <strong>どこで/どう使っている</strong> のか？</span></li>
+                            <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-6 h-6 text-brand-light shrink-0"></i> <span>影響あり・なしの判断を <strong>根拠付きで説明</strong> できるか？</span></li>
+                        </ul>
+                    </div>
+
+                    <h2>部品メーカーが押さえるべき要点（まずはこの5つ）</h2>
+                    
+                    <div class="point-box">
+                        <h4>1) SBOMは「提出物」ではなく「照会に答えるための台帳」</h4>
+                        <p class="m-0 text-slate-300 text-base">SBOMは“1回作って終わり”にするとすぐに古くなります。目的は提出よりも、CVE照会・監査・調査依頼に対して <strong>再現性のある回答</strong> を返すことです。</p>
+                    </div>
+
+                    <div class="point-box">
+                        <h4>2) まず「対象範囲」を決める（全部やらない）</h4>
+                        <p class="mb-3 text-slate-300 text-base">いきなり全製品をSBOM化すると止まります。最初は次のいずれかで対象を絞るのが現実的です。</p>
+                        <ul class="m-0 text-base text-slate-300">
+                            <li>OEM照会が多い製品（炎上しやすい製品）</li>
+                            <li>売上上位の製品（影響範囲が大きい製品）</li>
+                            <li>外部IF（通信/アップデート）を持つ製品（攻撃面が広い製品）</li>
+                        </ul>
+                    </div>
+
+                    <div class="point-box">
+                        <h4>3) “製品バージョン”と“コンポーネントバージョン”を分けて持つ</h4>
+                        <p class="m-0 text-slate-300 text-base">SBOM運用で一番多い事故は「対象版が分からない」ことです。製品の版（例：v2.3.1）と、OSSの版（例：OpenSSL 3.0.13）は別物なので、必ず分けて管理します。</p>
+                    </div>
+
+                    <div class="point-box">
+                        <h4>4) 機密を守るために「社内版／提出版」を分ける</h4>
+                        <p class="mb-3 text-slate-300 text-base">SBOMは設計情報に近いので、何でも外に出すのは危険です。おすすめはこの3段階です。</p>
+                        <ul class="m-0 text-base text-slate-300">
+                            <li><strong>社内完全版：</strong>搭載箇所・備考・設定差分まで含む</li>
+                            <li><strong>OEM提出版：</strong>必要範囲（コンポーネントと版数）に絞る</li>
+                            <li><strong>照会回答版：</strong>当該CVEに関係する部分だけ抜粋</li>
+                        </ul>
+                    </div>
+
+                    <div class="point-box">
+                        <h4>5) 更新責任者と更新タイミングを決める（ここがないと腐る）</h4>
+                        <p class="mb-3 text-slate-300 text-base">SBOMは“作成”より“更新”が本番です。最低限、次のタイミングをルール化します。</p>
+                        <ul class="m-0 text-base text-slate-300">
+                            <li>リリース/パッチ適用時</li>
+                            <li>OSS更新時</li>
+                            <li>OEM提出前</li>
+                            <li>重大CVE発生時（影響調査後の追記）</li>
+                        </ul>
+                    </div>
+
+                    <h2>最小SBOMに入れる項目（ExcelでもOK）</h2>
+                    <p>最初から難しい標準フォーマットに寄せるより、まずは <strong>答えられる形</strong> を作るのが先です。</p>
+                    <p>Excelで始める場合、最低限この項目があると脆弱性対応につながります。</p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2 bg-navy-800 p-6 rounded-lg border border-white/10 my-6">
+                        <div class="flex items-center gap-2"><i data-lucide="tag" class="w-4 h-4 text-slate-400"></i> 製品名</div>
+                        <div class="flex items-center gap-2"><i data-lucide="tags" class="w-4 h-4 text-slate-400"></i> 製品バージョン</div>
+                        <div class="flex items-center gap-2"><i data-lucide="box" class="w-4 h-4 text-slate-400"></i> コンポーネント名</div>
+                        <div class="flex items-center gap-2"><i data-lucide="hash" class="w-4 h-4 text-slate-400"></i> コンポーネントバージョン</div>
+                        <div class="flex items-center gap-2"><i data-lucide="folder-tree" class="w-4 h-4 text-slate-400"></i> 区分（OSS/商用/自社）</div>
+                        <div class="flex items-center gap-2"><i data-lucide="download" class="w-4 h-4 text-slate-400"></i> 取得元（供給元/リポジトリ等）</div>
+                        <div class="flex items-center gap-2"><i data-lucide="map-pin" class="w-4 h-4 text-emerald-400"></i> 搭載箇所（ECU/機能/モジュール）</div>
+                        <div class="flex items-center gap-2"><i data-lucide="file-text" class="w-4 h-4 text-emerald-400"></i> 備考（機能無効、外部IFなし 等）</div>
+                        <div class="flex items-center gap-2 sm:col-span-2"><i data-lucide="calendar-clock" class="w-4 h-4 text-slate-400"></i> 更新日／更新担当</div>
+                    </div>
+
+                    <!-- 内部リンク②：Excelテンプレ -->
+                    <div class="related-box">
+                        <div class="text-sm font-bold text-emerald-400 mb-2 flex items-center gap-2"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> すぐ使う</div>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="#" class="!text-emerald-400 hover:!text-emerald-300">SBOM Excelテンプレ（最小項目版）</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-navy-800/80 border-l-4 border-yellow-500 p-5 rounded-r my-8">
+                        <h4 class="text-yellow-400 font-bold mt-0 mb-2 flex items-center gap-2">
+                            <i data-lucide="lightbulb" class="w-5 h-5"></i> ミニ豆知識：SPDX/CycloneDXは「後から選んでも間に合う」
+                        </h4>
+                        <p class="text-sm text-slate-300 mb-4">
+                            SBOMには代表的な標準フォーマット（例：SPDX、CycloneDX）があります。ただし、部品メーカーの立上げ段階では「まずExcelで運用が回るか」を優先して問題ありません。運用が固まった後に標準化しても遅くありません。
+                        </p>
+                        
+                        <!-- 内部リンク①：SBOM完全ガイド -->
+                        <div class="pt-4 border-t border-white/10">
+                            <a href="/psirt/sbom-complete-guide/" class="text-sm font-bold text-brand-light hover:text-brand flex items-center gap-1">
+                                <i data-lucide="book-open" class="w-4 h-4"></i> 詳しいフォーマット比較や運用設計は「SBOM完全ガイド」へ
+                            </a>
+                        </div>
+                    </div>
+
+                    <h2>OEMからSBOMを求められたときの“返し方”（最短ルート）</h2>
+                    <p>SBOM提出・照会で重要なのは、完璧さより <strong>スピードと再現性</strong> です。</p>
+                    
+                    <ol>
+                        <li><strong>受領確認</strong>（いつまでに一次回答するかを返す）</li>
+                        <li><strong>対象範囲の確認</strong>（製品名・版数・出荷範囲）</li>
+                        <li><strong>SBOM（または簡易部品表）で該当有無を確認</strong></li>
+                        <li><strong>「影響あり／なし／調査中」を一次回答</strong></li>
+                        <li><strong>根拠（搭載箇所、到達性、設定差分）を短く添付</strong></li>
+                        <li><strong>次回更新日（最終回答日）を宣言する</strong></li>
+                    </ol>
+                    <p>“調査中”は悪ではありません。次回更新日までセットで返せば、期限を守りながら品質も担保できます。</p>
+
+                    <h2>よくある落とし穴（ここだけ先に潰す）</h2>
+                    <ul class="space-y-2">
+                        <li><strong>コンポーネント名が曖昧</strong>（別名/派生版で突合できない）</li>
+                        <li><strong>製品版数が抜けていて</strong>、対象製品を特定できない</li>
+                        <li><strong>更新担当がいなくて</strong>、SBOMが放置される</li>
+                        <li><strong>提出版と社内版の区別がなく</strong>、機密で止まる</li>
+                        <li><strong>「影響なし」の根拠が残らず</strong>、追加質問で炎上する</li>
+                    </ul>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2>FAQ：SBOMとはでよくある質問</h2>
+                    <div class="space-y-6 mt-6">
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q1. SBOMとは何ですか？</strong>
+                            <p class="m-0 text-slate-300">ソフトウェアを構成するコンポーネント（OSS/商用/自社）と、そのバージョン等を一覧化した“ソフト部品表”です。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q2. SBOMとBOMの違いは？</strong>
+                            <p class="m-0 text-slate-300">BOMは製品全体（物理部品含む）の部品表、SBOMはソフトウェア構成要素に特化した部品表です。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q3. 部品メーカーでもSBOMは必要ですか？</strong>
+                            <p class="m-0 text-slate-300">必要になるケースが増えています。理由は、OEMからの脆弱性照会・監査・調査依頼に対し、対象版や影響有無を説明できる前提情報になるためです。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q4. 最初からSPDX/CycloneDXで作らないといけませんか？</strong>
+                            <p class="m-0 text-slate-300">必須ではありません。最初はExcelで運用を立ち上げ、後から標準フォーマットへ移行する方が現実的な場合が多いです。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q5. どこまでSBOMを開示すべきですか？</strong>
+                            <p class="m-0 text-slate-300">社内版／提出版／照会回答版のように粒度を分けるのがおすすめです。機密を守りつつ、必要な説明責任を果たせます。</p>
+                        </div>
+                    </div>
+
+                    <!-- 内部リンク③：SBOMとは（概念編） -->
+                    <div class="related-box border-l-brand mt-12">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="book-open" class="w-4 h-4"></i> 次に読む</div>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/what-is-sbom/" class="!text-brand-light hover:!text-brand">SBOMとは（提出物ではなく運用資産として理解する）</a></li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- CTA Section -->
+            <div class="glass-card rounded-3xl p-8 md:p-12 text-center border-t-4 border-t-emerald-500 bg-navy-800/80 shadow-[0_0_40px_-10px_rgba(16,185,129,0.2)]">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">自社のSBOM、どこから手をつけるべきか迷っていませんか？</h2>
+                <p class="text-slate-300 mb-8 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+                    SBOM整備・運用設計を「どこから」「どの粒度で」「どう更新するか」まで整理して、OEM提出用レポートに落とすところまで進めたい方は、まずはご相談ください。<br><br>
+                    <strong>Auto PSIRT Cloud</strong>なら、既存のExcel部品表からでもすぐに運用をスタートできます。
+                </p>
+                <div class="flex justify-center">
+                    <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-navy-900 bg-white hover:bg-slate-200 transition-all duration-300 shadow-xl shadow-white/10 w-full sm:w-auto hover:-translate-y-1">
+                        <i data-lucide="message-square" class="w-5 h-5 text-emerald-600"></i>
+                        【無料】オンライン相談を予約する
+                    </a>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/5 text-center text-sm text-slate-500 mt-auto bg-navy-900/80">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span class="font-bold text-slate-400">Auto PSIRT Cloud</span>
+            </div>
+            <p>&copy; 2026 Unimobilities株式会社. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
