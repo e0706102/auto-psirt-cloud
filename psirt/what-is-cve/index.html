@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEOメタタグ -->
+    <title>CVEとは？番号の意味と読み方｜自動車サプライヤー向け | Auto PSIRT Cloud</title>
+    <meta name="description" content="CVEとは何かを自動車サプライヤー向けに解説。CVE-YYYY-NNNNの年と番号の意味、読み方、CVEとCVSS/CWEの違い、CVEが出たときの初動（SBOM確認→トリアージ→OEM回答）までを短くまとめます。">
+    <meta name="keywords" content="CVEとは, CVE">
+    <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/psirt/what-is-cve/">
+    
+    <!-- OGPタグ (SNSシェア用) -->
+    <meta property="og:title" content="CVEとは？番号の意味と読み方｜自動車サプライヤー向け">
+    <meta property="og:description" content="CVEとは何か？番号の意味や読み方、CVSSとの違い、初動対応まで短くまとめます。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/psirt/what-is-cve/">
+    <meta property="og:site_name" content="Auto PSIRT Cloud">
+
+    <!-- ファビコン -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%233b82f6%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z%22/><path d=%22m9 12 2 2 4-4%22/></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0a0f1c',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        brand: {
+                            light: '#60a5fa',
+                            DEFAULT: '#3b82f6',
+                            dark: '#2563eb',
+                        },
+                        accent: {
+                            DEFAULT: '#06b6d4',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #60a5fa, #06b6d4);
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* 記事用カスタムスタイル */
+        .prose h2 {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-top: 3rem;
+            color: #f8fafc;
+        }
+        .prose h3 {
+            color: #e2e8f0;
+            margin-top: 2rem;
+            border-left: 3px solid #3b82f6;
+            padding-left: 0.75rem;
+        }
+        .prose a {
+            color: #60a5fa;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .prose a:hover {
+            border-bottom-color: #60a5fa;
+        }
+        .prose strong {
+            color: #f8fafc;
+            background: linear-gradient(transparent 60%, rgba(59, 130, 246, 0.3) 40%);
+        }
+        .related-box {
+            background: rgba(30, 41, 59, 0.6);
+            border-left: 4px solid #a855f7; /* 紫系でアクセント */
+            padding: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-brand selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-brand/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-purple-500/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-accent flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="/news.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        ニュース一覧へ戻る
+                    </a>
+                    <a href="/demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                        相談 or デモ予約
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <article class="max-w-4xl mx-auto">
+            
+            <!-- パンくずリスト -->
+            <nav class="flex text-sm text-slate-400 mb-8" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/index.html" class="hover:text-white transition-colors">ホーム</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <a href="/news.html" class="hover:text-white transition-colors">ニュース・インサイト</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <span class="text-slate-500 truncate max-w-[200px] sm:max-w-none">CVEとは</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- 記事ヘッダー -->
+            <header class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-purple-500/20 border border-purple-500/30 text-purple-400 text-xs font-bold px-3 py-1 rounded-full">入門解説</span>
+                    <time class="text-slate-400 text-sm flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> 2026.03.06
+                    </time>
+                </div>
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
+                    CVEとは（番号の意味と読み方）
+                </h1>
+                
+                <!-- 導入文 -->
+                <div class="text-lg text-slate-300 leading-relaxed p-6 bg-navy-800/50 rounded-2xl border border-white/5">
+                    <p>CVEは、公開された脆弱性に付く<strong>共通の番号（識別子）</strong>です。</p>
+                    <p class="mt-4">社内・取引先・OEM・ツールベンダーなど、立場が違っても「同じ脆弱性を同じ番号で指せる」ようにするために使われます。</p>
+                    <p class="mt-4 text-brand-light font-medium">注意点として、CVEは“危険度そのもの”ではありません。危険度（深刻度）は別の指標（例：CVSS）で判断します。</p>
+                </div>
+            </header>
+
+            <!-- 記事本文 -->
+            <div class="glass-card p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl bg-navy-900/80 mb-16">
+                <div class="prose prose-invert prose-slate prose-lg max-w-none">
+
+                    <h2>CVE番号の見方（CVE-YYYY-NNNN）</h2>
+                    <p>CVEは一般的に次の形式で表されます。</p>
+                    
+                    <div class="bg-navy-800 p-6 rounded-lg border border-white/10 my-6 text-center">
+                        <span class="text-2xl font-bold font-mono tracking-wider">CVE-YYYY-NNNN</span><br>
+                        <span class="text-sm text-slate-400">（またはNNNNN以上）</span>
+                    </div>
+
+                    <p>意味はシンプルです。</p>
+                    <ul>
+                        <li><strong>YYYY：年</strong>（※「発見した年」ではなく、IDが付与された／公開された年として扱われることがあります）</li>
+                        <li><strong>NNNN…：通し番号</strong>（桁数は4桁固定ではなく、5桁以上になることもあります）</li>
+                    </ul>
+                    
+                    <p><strong>例：</strong></p>
+                    <ul>
+                        <li class="font-mono">CVE-2024-12345</li>
+                        <li class="font-mono">CVE-2023-0001</li>
+                    </ul>
+
+                    <h2>CVEの読み方（日本語でどう読む？）</h2>
+                    <p>CVEは日本語では一般に次のように読みます。</p>
+                    
+                    <p class="text-xl font-bold text-center my-6 text-brand-light">
+                        「シーヴィーイー」（または「シーブイイー」）
+                    </p>
+
+                    <p>番号の部分はそのまま読み上げればOKです。</p>
+                    <p class="bg-navy-800 p-4 rounded border-l-4 border-brand text-sm">
+                        例：CVE-2024-12345 → 「シーヴィーイー にーぜろによん いちにーさんよんご」
+                    </p>
+
+                    <h2>CVEと似た用語の違い（混同しやすい3つ）</h2>
+                    <p>現場でまず必要なのは、「CVE＝番号」「CVSS＝危険度の目安」と分けて理解することです。</p>
+                    
+                    <div class="space-y-4 my-6">
+                        <div class="flex items-center gap-4 border-b border-white/5 pb-4">
+                            <div class="w-16 font-bold text-purple-400 text-lg">CVE</div>
+                            <div>脆弱性の<strong>“番号”</strong>（識別子）</div>
+                        </div>
+                        <div class="flex items-center gap-4 border-b border-white/5 pb-4">
+                            <div class="w-16 font-bold text-orange-400 text-lg">CVSS</div>
+                            <div>脆弱性の<strong>“深刻度スコア”</strong>（点数）</div>
+                        </div>
+                        <div class="flex items-center gap-4 pb-4">
+                            <div class="w-16 font-bold text-blue-400 text-lg">CWE</div>
+                            <div>脆弱性の<strong>“種類”</strong>（弱点の分類）</div>
+                        </div>
+                    </div>
+
+                    <h2>CVEが出たときに、サプライヤーが最初にやること</h2>
+                    <p>CVEが公開されたら、最初の一手はこの順番が崩れにくいです。</p>
+                    <ol>
+                        <li><strong>自社製品に入っているか確認</strong>（SBOM／部品表／利用OSS一覧）</li>
+                        <li><strong>対象バージョンか確認</strong>（どの製品版まで影響するか）</li>
+                        <li><strong>優先度を決める</strong>（対応必須／要確認／対応不要）</li>
+                        <li><strong>OEMに返す情報を整える</strong>（結論・根拠・対応方針）</li>
+                        <li><strong>判断の証跡を残す</strong>（後で監査・照会に耐えるため）</li>
+                    </ol>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2>FAQ：CVEとはでよくある質問</h2>
+                    <div class="space-y-6 mt-6">
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q1. CVEは何の略ですか？</strong>
+                            <p class="m-0 text-slate-300">Common Vulnerabilities and Exposures の略として使われ、公開脆弱性を共通の番号で扱うための仕組みです。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q2. CVEの「年（YYYY）」は発見年ですか？</strong>
+                            <p class="m-0 text-slate-300">発見年とは限りません。公開・付与の扱いと混同しないよう注意が必要です。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q3. CVEの末尾の数字は4桁固定ですか？</strong>
+                            <p class="m-0 text-slate-300">固定ではありません。4桁以上（5桁、7桁…）になることがあります。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q4. CVEがあれば危険度も分かりますか？</strong>
+                            <p class="m-0 text-slate-300">CVEは番号なので危険度は直接は分かりません。危険度の目安はCVSS等で確認します。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q5. CVEが出たら、まず何を見ればいいですか？</strong>
+                            <p class="m-0 text-slate-300">まずは「自社製品に入っているか（SBOM/部品表）」と「対象バージョンか」を確認し、次にトリアージ（優先度付け）へ進むのが定石です。</p>
+                        </div>
+                    </div>
+
+                    <!-- 内部リンク領域 -->
+                    <div class="mt-12 space-y-6">
+                        <div class="related-box border-l-purple-500 my-0">
+                            <div class="text-sm font-bold text-purple-400 mb-2 flex items-center gap-2"><i data-lucide="arrow-right-circle" class="w-4 h-4"></i> 次に読む</div>
+                            <p class="text-sm text-slate-300 mb-2">CVEの番号を確認したあと、自社で対応すべき優先度をどうやって決めるか（トリアージ）を詳しく知りたい方はこちら。</p>
+                            <ul class="text-base m-0 list-none pl-0">
+                                <li><a href="/psirt/cve-triage-vex-guide/" class="!text-purple-400 hover:!text-purple-300">CVEトリアージ＆VEX実務 完全ガイド</a></li>
+                            </ul>
+                        </div>
+
+                        <div class="related-box border-l-emerald-500 my-0">
+                            <div class="text-sm font-bold text-emerald-400 mb-2 flex items-center gap-2"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> 実務テンプレ</div>
+                            <ul class="text-base m-0 list-none pl-0">
+                                <li><a href="#" class="!text-emerald-400 hover:!text-emerald-300">トリアージ決定シートテンプレ</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- CTA Section -->
+            <div class="glass-card rounded-3xl p-8 md:p-12 text-center border-t-4 border-t-brand bg-navy-800/80 shadow-[0_0_40px_-10px_rgba(59,130,246,0.3)]">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">毎日のCVEチェックに疲弊していませんか？</h2>
+                <p class="text-slate-300 mb-8 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+                    CVEが多すぎて「どれをトリアージ対象にするか」を自社向けに整理したい方、日々の脆弱性チェックを自動化したい方は、無料相談をご利用ください。
+                </p>
+                <div class="flex justify-center">
+                    <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-white bg-brand hover:bg-brand-dark transition-all duration-300 shadow-lg shadow-brand/20 w-full sm:w-auto hover:-translate-y-1">
+                        <i data-lucide="message-square" class="w-5 h-5"></i>
+                        【無料】オンライン相談を予約する
+                    </a>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/5 text-center text-sm text-slate-500 mt-auto bg-navy-900/80">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span class="font-bold text-slate-400">Auto PSIRT Cloud</span>
+            </div>
+            <p>&copy; 2026 Unimobilities株式会社. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
