@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEOメタタグ -->
+    <title>SUMSとは？ソフトウェア更新管理システムの要点（真正性・改ざん防止・証跡） | Auto PSIRT Cloud</title>
+    <meta name="description" content="SUMS（Software Update Management System）とは何かをサプライヤー向けに解説。ソフト更新の真正性・改ざん防止・トレーサビリティを“運用と証跡”で示す仕組み。OEM監査で見られるポイントと最小の準備も整理します。">
+    <meta name="keywords" content="SUMSとは, SUMS, ソフトウェア更新管理システム, UN-R156, OTA, 自動車セキュリティ">
+    <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/psirt/what-is-sums/">
+    
+    <!-- OGPタグ (SNSシェア用) -->
+    <meta property="og:title" content="SUMSとは？ソフトウェア更新管理システムの要点（真正性・改ざん防止・証跡）">
+    <meta property="og:description" content="SUMSとは何か？ソフト更新の真正性・改ざん防止を“運用と証跡”で示す仕組みと、OEM監査で見られるポイントを解説。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/psirt/what-is-sums/">
+    <meta property="og:site_name" content="Auto PSIRT Cloud">
+
+    <!-- ファビコン -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%233b82f6%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z%22/><path d=%22m9 12 2 2 4-4%22/></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0a0f1c',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        brand: {
+                            light: '#60a5fa',
+                            DEFAULT: '#3b82f6',
+                            dark: '#2563eb',
+                        },
+                        accent: {
+                            DEFAULT: '#06b6d4',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #60a5fa, #06b6d4);
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* 記事用カスタムスタイル */
+        .prose h2 {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-top: 3.5rem;
+            color: #f8fafc;
+        }
+        .prose h3 {
+            color: #e2e8f0;
+            margin-top: 2.5rem;
+            border-left: 3px solid #3b82f6; /* Blue系アクセント */
+            padding-left: 0.75rem;
+            font-size: 1.25rem;
+        }
+        .prose a {
+            color: #60a5fa;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .prose a:hover {
+            border-bottom-color: #60a5fa;
+        }
+        .prose strong {
+            color: #f8fafc;
+            background: linear-gradient(transparent 60%, rgba(59, 130, 246, 0.3) 40%);
+        }
+        .related-box {
+            background: rgba(30, 41, 59, 0.6);
+            border-left: 4px solid #3b82f6;
+            padding: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-brand selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-brand/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-blue-500/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-accent flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="/news.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        ニュース一覧へ戻る
+                    </a>
+                    <a href="/demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                        相談 or デモ予約
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <article class="max-w-4xl mx-auto">
+            
+            <!-- パンくずリスト -->
+            <nav class="flex text-sm text-slate-400 mb-8" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/index.html" class="hover:text-white transition-colors">ホーム</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <a href="/news.html" class="hover:text-white transition-colors">ニュース・インサイト</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <span class="text-slate-500 truncate max-w-[200px] sm:max-w-none">SUMSとは</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- 記事ヘッダー -->
+            <header class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-blue-500/20 border border-blue-500/30 text-blue-400 text-xs font-bold px-3 py-1 rounded-full">入門解説</span>
+                    <time class="text-slate-400 text-sm flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> 2026.03.06
+                    </time>
+                </div>
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
+                    SUMSとは<br/>
+                    <span class="text-2xl md:text-3xl text-slate-300 font-medium">（ソフトウェア更新管理・真正性/改ざん防止対応の肝）</span>
+                </h1>
+                
+                <!-- 導入文 -->
+                <div class="text-lg text-slate-300 leading-relaxed p-6 bg-navy-800/50 rounded-2xl border border-white/5 space-y-4">
+                    <p>SUMSは Software Update Management System の略で、ひとことで言うと<br>
+                    <strong>「車載ソフトの更新を、正しく・安全に・追跡可能な形で回し続けるための運用（仕組み）」</strong> です。</p>
+                    
+                    <p>ポイントは“OTAの技術”ではなく、更新の計画・承認・配布・検証・記録まで含めて、OEMや監査に対して <strong>「更新が適切に管理されている」ことを説明できる状態（証跡）</strong> を作ることにあります。</p>
+                </div>
+            </header>
+
+            <!-- 記事本文 -->
+            <div class="glass-card p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl bg-navy-900/80 mb-16">
+                <div class="prose prose-invert prose-slate prose-lg max-w-none">
+
+                    <h2>SUMSで問われるのは「更新の中身」より「更新の回し方」</h2>
+                    <p>SUMSが実務で効くのは、次のような問いに“迷わず答える”ためです。</p>
+
+                    <div class="bg-navy-800 p-6 rounded-lg border border-white/10 my-6">
+                        <ul class="m-0 space-y-3 pl-0 list-none font-medium">
+                            <li class="flex items-start gap-3"><i data-lucide="check-circle-2" class="w-5 h-5 text-brand-light shrink-0 mt-0.5"></i> <div>どの製品／どの版数に、どんな更新を出したのか？</div></li>
+                            <li class="flex items-start gap-3"><i data-lucide="check-circle-2" class="w-5 h-5 text-brand-light shrink-0 mt-0.5"></i> <div>その更新は <strong>正当なもの（真正性）</strong> で、<strong>改ざんされていない（完全性）</strong> と言えるか？</div></li>
+                            <li class="flex items-start gap-3"><i data-lucide="check-circle-2" class="w-5 h-5 text-brand-light shrink-0 mt-0.5"></i> <div>更新失敗時の戻し（ロールバック）や、追跡（ログ）ができるか？</div></li>
+                            <li class="flex items-start gap-3"><i data-lucide="check-circle-2" class="w-5 h-5 text-brand-light shrink-0 mt-0.5"></i> <div>期限のあるOEM照会に、根拠付きで回答できるか？</div></li>
+                        </ul>
+                    </div>
+
+                    <p>つまりSUMSは、サプライヤー視点では<br>
+                    <strong>「アップデートを出せる」ではなく「アップデートを“管理できる”」</strong> を示す枠組みです。</p>
+
+                    <h2>SUMSがPSIRT/脆弱性対応とセットになる理由</h2>
+                    <p>脆弱性対応の現実は、ざっくり次の流れです。</p>
+
+                    <ol>
+                        <li>影響判定（どの製品・どの版数が対象か）</li>
+                        <li>対策方針（修正/緩和/受容）</li>
+                        <li><strong>修正版の配布（いつ・どこへ・どう適用したか）</strong></li>
+                        <li><strong>証跡（OEM/監査に説明できる形で残す）</strong></li>
+                    </ol>
+
+                    <p>ここで <strong>③〜④を“運用として回す仕組み” がSUMS</strong>です。</p>
+                    <p>「影響なし」でも「更新で有効化される可能性」「将来の再評価」などが絡むため、更新のトレーサビリティがあるだけで説明が強くなります。</p>
+
+                    <h2>OEM監査で見られやすい“SUMSの観点”（最小チェック）</h2>
+                    <p>SUMSといっても、いきなり大掛かりな仕組みは不要です。まずは監査で刺さりやすい観点を押さえます。</p>
+
+                    <ul class="space-y-3 my-6">
+                        <li><strong>対象範囲：</strong> どの製品/ECUが更新対象か（版数管理があるか）</li>
+                        <li><strong>承認：</strong> 更新を誰が判断・承認するか（責任の所在）</li>
+                        <li><strong>配布：</strong> 配布経路（工場/現地/OTA等）と適用手順</li>
+                        <li><strong>検証：</strong> 更新後に正しく入ったことの確認方法</li>
+                        <li><strong>記録：</strong> いつ何を配ったか、失敗時にどうしたか（ログ/履歴）</li>
+                        <li><strong>真正性/改ざん防止：</strong> 正規の更新であることを示す手段（例：署名・ハッシュなど“説明できる要素”）</li>
+                    </ul>
+
+                    <!-- 内部リンク①：全体像 -->
+                    <div class="related-box border-l-brand mt-8">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="map" class="w-4 h-4"></i> 監査対応の全体像</div>
+                        <p class="text-sm text-slate-300 mb-2">監査・照会対応の全体像（初動→証跡→提出まで）を先に押さえたい方はこちらをご覧ください。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/audit-investigation-response-guide/" class="!text-brand-light hover:!text-brand">OEM調査依頼・監査対応 完全ガイド</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>SUMSとOTAの違い（よく混同されるポイント）</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-6">
+                        <div class="bg-navy-800/80 p-4 rounded-lg border-l-4 border-l-orange-500">
+                            <strong class="text-orange-400 block mb-1">OTA（Over-The-Air）</strong>
+                            <span class="text-sm text-slate-300">更新を“届ける方法”（手段）</span>
+                        </div>
+                        <div class="bg-navy-800/80 p-4 rounded-lg border-l-4 border-l-blue-400">
+                            <strong class="text-blue-400 block mb-1">SUMS</strong>
+                            <span class="text-sm text-slate-300">更新を“管理する仕組み”（運用・体制・証跡）</span>
+                        </div>
+                    </div>
+                    
+                    <p>OTAを使っていてもSUMSが弱い（承認・記録・追跡がない）と、監査・照会で詰みます。<br>
+                    逆にOTAがなくても、<strong>工場/現地更新でも SUMSは成立します。</strong></p>
+
+                    <h2>兼務でもできる「SUMSの最小セット」</h2>
+                    <p>専任が置けない現場ほど、最初は“型”に寄せるのが近道です。</p>
+                    
+                    <ul class="space-y-2">
+                        <li>更新対象の一覧（製品名・版数・更新経路）</li>
+                        <li>更新の承認フロー（誰がGOを出すか）</li>
+                        <li>更新の履歴（何を、いつ、どこへ）</li>
+                        <li>更新失敗時の手順（戻し・停止判断）</li>
+                        <li>OEM照会向けの回答の型（結論→根拠→対応方針→証跡）</li>
+                    </ul>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2>FAQ：SUMSとは</h2>
+                    <div class="space-y-6 mt-6">
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q1. SUMSとは何ですか？</strong>
+                            <p class="m-0 text-slate-300">車載ソフトウェア更新を、正しく・安全に・追跡可能な形で回し続けるための「更新管理の仕組み（運用・体制・証跡）」です。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q2. SUMSがあると何が嬉しいのですか？</strong>
+                            <p class="m-0 text-slate-300">更新の真正性・改ざん防止・履歴（トレーサビリティ）を説明でき、OEM照会や監査で「更新が管理されている」ことを示しやすくなります。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q3. SUMSとOTAは同じですか？</strong>
+                            <p class="m-0 text-slate-300">違います。OTAは手段、SUMSは更新管理の仕組みです。OTAがあっても、承認・記録・追跡がなければSUMSとして弱くなります。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q4. サプライヤーもSUMS対応が必要ですか？</strong>
+                            <p class="m-0 text-slate-300">規則の主語はOEM側で語られることが多いですが、実務ではサプライチェーンにも「更新手順・履歴・証跡」を求める動きがあり、準備しておくと照会対応が楽になります。</p>
+                        </div>
+                    </div>
+
+                    <!-- 内部リンク②：回答の型へ -->
+                    <div class="related-box border-l-emerald-500 mt-12">
+                        <div class="text-sm font-bold text-emerald-400 mb-2 flex items-center gap-2"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> 次に読む</div>
+                        <p class="text-sm text-slate-300 mb-2">SUMSを含む“提出物の書き方（結論→根拠→証跡）”の型は、こちらで解説しています。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="#" class="!text-emerald-400 hover:!text-emerald-300">要点でわかる「OEMに答えるテンプレ」（作成中）</a></li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- CTA Section -->
+            <div class="glass-card rounded-3xl p-8 md:p-12 text-center border-t-4 border-t-blue-500 bg-navy-800/80 shadow-[0_0_40px_-10px_rgba(59,130,246,0.2)]">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">アップデート運用や監査対応、自社向けに整理しませんか？</h2>
+                <p class="text-slate-300 mb-8 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+                    脆弱性対応〜アップデート運用（SUMSまわり）の体制や証跡の残し方を、自社の状況に合わせて整備したい方はご相談ください。
+                </p>
+                <div class="flex justify-center">
+                    <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-navy-900 bg-white hover:bg-slate-200 transition-all duration-300 shadow-xl shadow-white/10 w-full sm:w-auto hover:-translate-y-1">
+                        <i data-lucide="message-square" class="w-5 h-5 text-blue-600"></i>
+                        【無料】オンライン相談を予約する
+                    </a>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/5 text-center text-sm text-slate-500 mt-auto bg-navy-900/80">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span class="font-bold text-slate-400">Auto PSIRT Cloud</span>
+            </div>
+            <p>&copy; 2026 Unimobilities株式会社. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
