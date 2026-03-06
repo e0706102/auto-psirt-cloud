@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEOメタタグ -->
+    <title>兼務で回るPSIRT最小体制（1〜3人）｜役割分担と回し方 | Auto PSIRT Cloud</title>
+    <meta name="description" content="兼務で回るPSIRT最小体制を、自動車サプライヤー向けに解説。1〜3人で回す役割分担（受付/技術評価/対外回答/承認）と、初動・SLA・チケット化・証跡整理の具体手順、すぐ使えるテンプレまでまとめます。">
+    <meta name="keywords" content="兼務で回るPSIRT, PSIRT">
+    <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/psirt/minimum-team-1-3/">
+    
+    <!-- OGPタグ (SNSシェア用) -->
+    <meta property="og:title" content="兼務で回るPSIRT最小体制（1〜3人）｜役割分担と回し方">
+    <meta property="og:description" content="1〜3人の兼務体制で破綻しないPSIRTの作り方と回し方を具体化します。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/psirt/minimum-team-1-3/">
+    <meta property="og:site_name" content="Auto PSIRT Cloud">
+
+    <!-- ファビコン -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%233b82f6%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z%22/><path d=%22m9 12 2 2 4-4%22/></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0a0f1c',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        brand: {
+                            light: '#60a5fa',
+                            DEFAULT: '#3b82f6',
+                            dark: '#2563eb',
+                        },
+                        accent: {
+                            DEFAULT: '#06b6d4',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #60a5fa, #06b6d4);
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* 記事用カスタムスタイル */
+        .prose h2 {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-top: 3.5rem;
+            color: #f8fafc;
+        }
+        .prose h3 {
+            color: #e2e8f0;
+            margin-top: 2.5rem;
+            border-left: 3px solid #0ea5e9; /* Sky系アクセント */
+            padding-left: 0.75rem;
+            font-size: 1.25rem;
+        }
+        .prose a {
+            color: #60a5fa;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .prose a:hover {
+            border-bottom-color: #60a5fa;
+        }
+        .prose strong {
+            color: #f8fafc;
+            background: linear-gradient(transparent 60%, rgba(14, 165, 233, 0.3) 40%);
+        }
+        .related-box {
+            background: rgba(30, 41, 59, 0.6);
+            border-left: 4px solid #0ea5e9;
+            padding: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-brand selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-brand/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-sky-500/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-accent flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="/news.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        ニュース一覧へ戻る
+                    </a>
+                    <a href="/demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                        相談 or デモ予約
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <article class="max-w-4xl mx-auto">
+            
+            <!-- パンくずリスト -->
+            <nav class="flex text-sm text-slate-400 mb-8" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/index.html" class="hover:text-white transition-colors">ホーム</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <a href="/news.html" class="hover:text-white transition-colors">ニュース・インサイト</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <span class="text-slate-500 truncate max-w-[200px] sm:max-w-none">PSIRT最小体制</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- 記事ヘッダー -->
+            <header class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-sky-500/20 border border-sky-500/30 text-sky-400 text-xs font-bold px-3 py-1 rounded-full">実務ガイド</span>
+                    <time class="text-slate-400 text-sm flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> 2026.03.06
+                    </time>
+                </div>
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
+                    兼務で回るPSIRT最小体制<br/>
+                    <span class="text-2xl md:text-3xl text-slate-300 font-medium">（1〜3人兼務・役割分担）</span>
+                </h1>
+                
+                <!-- 導入文 -->
+                <div class="text-lg text-slate-300 leading-relaxed p-6 bg-navy-800/50 rounded-2xl border border-white/5 space-y-4">
+                    <p>「PSIRT体制を作れ」「脆弱性の影響有無を報告しろ」——OEMからの要求が強まる一方、Tier2〜Tier4の現場では専任のセキュリティ担当を置けないのが普通です。</p>
+                    
+                    <p>結論から言うと、PSIRTは“人を増やす”より先に、役割と手順を固定すれば、<strong>1〜3人の兼務でも回ります。</strong></p>
+                    
+                    <p>この記事では、兼務前提で破綻しない「最小体制」と「回し方」を具体化します。</p>
+                </div>
+            </header>
+
+            <!-- 記事本文 -->
+            <div class="glass-card p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl bg-navy-900/80 mb-16">
+                <div class="prose prose-invert prose-slate prose-lg max-w-none">
+                    
+                    <!-- 内部リンク① -->
+                    <div class="related-box mt-0 border-l-brand">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="map" class="w-4 h-4"></i> 全体像を先に知りたい方へ</div>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/automotive-supplier-guide/" class="!text-brand-light hover:!text-brand">自動車サプライヤーのPSIRT完全ガイド</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>最小PSIRTは「4役」で考える（人数ではない）</h2>
+                    <p>PSIRTを“チーム”として考えると重くなります。まずは<strong>役割（ロール）</strong>に分解します。最小構成はこの4役です。</p>
+
+                    <div class="bg-navy-800 p-6 rounded-lg border border-white/10 my-6">
+                        <ul class="m-0 space-y-3 pl-0 list-none">
+                            <li><strong class="text-sky-400">受付（窓口）：</strong> OEM照会・脆弱性報告を受け、期限と対象を管理する</li>
+                            <li><strong class="text-brand-light">技術評価：</strong> 影響有無（どの製品・どの版数・到達性）を判断する</li>
+                            <li><strong class="text-emerald-400">対外回答：</strong> 回答書を「結論→根拠→対応方針」で整形する</li>
+                            <li><strong class="text-purple-400">承認：</strong> 社外に出す最終判断を承認する（品質/管理職）</li>
+                        </ul>
+                    </div>
+
+                    <p>重要なのは「4人必要」ではなく、1人が複数役を兼ねてもよいが、<strong>役割の切り替えは曖昧にしないこと</strong>です。</p>
+                    <p class="text-sm text-slate-400">（例：受付の人が“自分で影響あり/なしを決めてしまう”と、後で説明が崩れます。技術評価は一言でもよいので、必ず技術根拠を残します）</p>
+
+                    <h2>1人・2人・3人の役割分担（推奨パターン）</h2>
+                    
+                    <!-- 画像の代わりに見やすい表を実装 -->
+                    <div class="overflow-x-auto my-8">
+                        <table class="w-full text-sm text-left border-collapse min-w-[600px]">
+                            <thead>
+                                <tr class="bg-navy-800/80 border-b-2 border-sky-500">
+                                    <th class="p-4 font-bold text-white">人数</th>
+                                    <th class="p-4 font-bold text-sky-400">受付</th>
+                                    <th class="p-4 font-bold text-brand-light">技術評価</th>
+                                    <th class="p-4 font-bold text-emerald-400">対外回答 / 証跡</th>
+                                    <th class="p-4 font-bold text-purple-400">承認</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-white/5">
+                                <tr class="hover:bg-white/5 transition-colors">
+                                    <td class="p-4 font-bold text-slate-200">1人</td>
+                                    <td class="p-4 text-slate-300">兼務</td>
+                                    <td class="p-4 text-slate-300">兼務（一次）</td>
+                                    <td class="p-4 text-slate-300">兼務</td>
+                                    <td class="p-4 text-slate-300">上長（最終だけ）</td>
+                                </tr>
+                                <tr class="hover:bg-white/5 transition-colors">
+                                    <td class="p-4 font-bold text-slate-200">2人</td>
+                                    <td class="p-4 text-slate-300 font-medium">人A</td>
+                                    <td class="p-4 text-slate-300 font-medium">人B</td>
+                                    <td class="p-4 text-slate-300 font-medium">人A</td>
+                                    <td class="p-4 text-slate-300">上長</td>
+                                </tr>
+                                <tr class="hover:bg-white/5 transition-colors">
+                                    <td class="p-4 font-bold text-slate-200">3人</td>
+                                    <td class="p-4 text-slate-300 font-medium">人A</td>
+                                    <td class="p-4 text-slate-300 font-medium">人B</td>
+                                    <td class="p-4 text-slate-300 font-medium">人C</td>
+                                    <td class="p-4 text-slate-300 font-medium">上長 or 人C</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <p class="text-brand-light font-bold p-4 bg-brand/10 rounded-lg border border-brand/20">
+                        ポイント：人数が増えるほど「対外回答＋証跡」を独立させると、監査で強くなります。
+                    </p>
+
+                    <h2>まず最初に決める3つ（これがないと必ず止まる）</h2>
+
+                    <h3>1) 窓口を1つにする（入口の統一）</h3>
+                    <ul>
+                        <li>専用メール（例：psirt@）かフォームを1本化</li>
+                        <li>個人メール転送は禁止（引継ぎ不能になる）</li>
+                    </ul>
+
+                    <h3>2) 期限の“社内SLA”を置く（厳密でなくてOK）</h3>
+                    <p>兼務でも置ける最小SLA例：</p>
+                    <ul>
+                        <li><strong>受領確認：</strong> 1営業日以内</li>
+                        <li><strong>一次回答：</strong> 影響あり/なし/調査中を3〜5営業日以内</li>
+                        <li><strong>最終回答：</strong> 証跡込みで10営業日以内（案件で調整）</li>
+                    </ul>
+
+                    <h3>3) 「調査中」を許可する（一次回答の文化）</h3>
+                    <p>期限内に100%確定できない案件は普通にあります。そのときは「調査中＋次回更新日」を返す型を作るだけで、炎上が減ります。</p>
+
+                    <h2>1人兼務で回す（最小モデル）</h2>
+                    <p>1人の場合、現実には「受付＝対外回答＝技術評価（一次）」になります。破綻させないコツは、<strong>“決めることを減らす”</strong>ことです。</p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 my-6">
+                        <div class="bg-navy-800/50 p-5 rounded border border-white/10">
+                            <h4 class="text-sky-400 font-bold mt-0 mb-3">やること（週次ルーチン）</h4>
+                            <ul class="text-sm m-0 space-y-2 pl-4">
+                                <li>週1回、脆弱性/照会を一覧で確認（30分）</li>
+                                <li>影響判定を「対応必須／要確認／対応不要」の3段階で仮置き（30分）</li>
+                                <li>要確認だけを設計担当に聞く（テンプレで質問）（随時）</li>
+                                <li>回答は「調査中＋次回更新日」を先に返す（一次回答）</li>
+                            </ul>
+                        </div>
+                        <div class="bg-navy-800/50 p-5 rounded border border-white/10">
+                            <h4 class="text-red-400 font-bold mt-0 mb-3">1人モデルの必須ルール</h4>
+                            <ul class="text-sm m-0 space-y-2 pl-4">
+                                <li>チケット化（案件ID・期限・対象版数・結論・根拠）</li>
+                                <li>承認者を必ず1人立てる（最後だけ上長に通す）</li>
+                                <li>証跡の保存先を固定（フォルダ構成だけ先に作る）</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="bg-navy-800 p-6 rounded-lg border border-white/10 my-6">
+                        <h4 class="text-white mt-0 mb-4 flex items-center gap-2"><i data-lucide="copy" class="w-5 h-5 text-sky-400"></i> すぐ使える：一次回答テンプレ</h4>
+                        <div class="text-sm text-slate-300 font-mono whitespace-pre-wrap">件名：［案件名］受領のご連絡（一次回答予定）
+
+本文：受領しました。現時点は調査中です。対象範囲は［製品名/版数（暫定）］。［日付］までに影響有無を更新回答します。</div>
+                    </div>
+
+                    <h2>2人兼務で回す（実務で一番多い）</h2>
+                    <p>2人になったら、役割を分けて“ボトルネック”を消します。</p>
+                    <ul>
+                        <li><strong>人A：</strong> 受付＋対外回答（品質/情シス兼務）</li>
+                        <li><strong>人B：</strong> 技術評価（設計/ソフト）</li>
+                    </ul>
+
+                    <div class="bg-navy-800/50 p-5 rounded border border-white/10 my-6">
+                        <h4 class="text-brand-light font-bold mt-0 mb-3">2人モデルの運用ポイント</h4>
+                        <ul class="m-0 space-y-2 pl-4">
+                            <li>週1の“15分定例”を固定（期限と要確認だけ確認）</li>
+                            <li>技術評価は「影響あり/なし」と「根拠の一言」だけ返す（長文禁止）</li>
+                            <li>回答書はAがテンプレに流し込む（形式の標準化）</li>
+                            <li>Aは証跡を“集める”のではなく“置き場所を決める”（保管先URLを回答書に書けるように）</li>
+                        </ul>
+                    </div>
+
+                    <h2>3人兼務で回す（監査・是正まで安定）</h2>
+                    <p>3人確保できるなら、対外回答を品質に寄せると監査で強くなります。</p>
+                    <ul>
+                        <li><strong>人A：</strong> 受付（期限・範囲・提出形式）</li>
+                        <li><strong>人B：</strong> 技術評価（影響有無・対策方針）</li>
+                        <li><strong>人C：</strong> 対外回答＋証跡（回答書・添付・保存先管理）</li>
+                        <li><strong>承認：</strong> 部長/課長（AまたはCに承認権限）</li>
+                    </ul>
+
+                    <div class="bg-navy-800/50 p-5 rounded border border-white/10 my-6">
+                        <h4 class="text-emerald-400 font-bold mt-0 mb-3">3人モデルの強み</h4>
+                        <ul class="m-0 space-y-2 pl-4">
+                            <li>技術評価（B）が“判断だけ”に集中できる</li>
+                            <li>証跡（C）が散らばらず、監査に耐える</li>
+                            <li>追加質問が来ても、回答書と証跡が同じ場所にあるため再炎上しにくい</li>
+                        </ul>
+                    </div>
+
+                    <h2>兼務でも事故らない「5つの成果物」（最小セット）</h2>
+                    <p>人数より、最初に“型”を作る方が効きます。最低限、次の5つを用意してください。</p>
+                    <ol>
+                        <li><strong>PSIRT窓口</strong>（メール/フォーム、受付テンプレ）</li>
+                        <li><strong>対象製品と版数の一覧</strong>（どこまでが対象か即答できる）</li>
+                        <li><strong>影響判定テンプレ</strong>（結論・根拠・次回更新日）</li>
+                        <li><strong>回答書テンプレ</strong>（OEM向け：結論→根拠→対応方針→証跡）</li>
+                        <li><strong>証跡フォルダ構成</strong>（依頼原本/調査/回答書/提出履歴）</li>
+                    </ol>
+
+                    <div class="bg-navy-800/80 p-6 rounded-lg border border-sky-500/30 my-8 shadow-inner">
+                        <h4 class="text-sky-400 font-bold mt-0 mb-4 flex items-center gap-2">
+                            <i data-lucide="check-square" class="w-5 h-5"></i> 立ち上げ初週のチェックリスト（まずはここまで）
+                        </h4>
+                        <ul class="m-0 space-y-3 pl-0 list-none">
+                            <li class="flex items-start gap-3"><i data-lucide="square" class="w-5 h-5 text-slate-500 mt-0.5 shrink-0"></i> <span class="text-slate-300">窓口メール/フォームを作る</span></li>
+                            <li class="flex items-start gap-3"><i data-lucide="square" class="w-5 h-5 text-slate-500 mt-0.5 shrink-0"></i> <span class="text-slate-300">上長の承認ルート（A）を決める</span></li>
+                            <li class="flex items-start gap-3"><i data-lucide="square" class="w-5 h-5 text-slate-500 mt-0.5 shrink-0"></i> <span class="text-slate-300">受領確認・一次回答のSLAを決める</span></li>
+                            <li class="flex items-start gap-3"><i data-lucide="square" class="w-5 h-5 text-slate-500 mt-0.5 shrink-0"></i> <span class="text-slate-300">チケット（案件台帳）の必須項目を決める</span></li>
+                            <li class="flex items-start gap-3"><i data-lucide="square" class="w-5 h-5 text-slate-500 mt-0.5 shrink-0"></i> <span class="text-slate-300">証跡フォルダの雛形を作る</span></li>
+                            <li class="flex items-start gap-3"><i data-lucide="square" class="w-5 h-5 text-slate-500 mt-0.5 shrink-0"></i> <span class="text-slate-300">一次回答テンプレを共有する</span></li>
+                        </ul>
+                    </div>
+
+                    <!-- 途中CTA -->
+                    <div class="bg-navy-800/50 p-6 rounded-xl border border-white/10 text-center my-10">
+                        <p class="text-slate-300 mb-4 font-medium">自社に必要なPSIRT立ち上げ・運用設計を整理したい方はご相談ください。</p>
+                        <a href="/demo_form.html" class="inline-flex items-center gap-2 px-6 py-2.5 bg-brand hover:bg-brand-dark text-white rounded-lg font-bold transition-colors shadow-lg shadow-brand/20">
+                            <i data-lucide="message-square" class="w-4 h-4"></i> 無料オンライン相談
+                        </a>
+                    </div>
+
+                    <h2>よくある失敗（兼務PSIRTが止まる原因）</h2>
+                    <ul>
+                        <li>受付が個人メールで、引継ぎ不能になる</li>
+                        <li>対象版数が毎回揺れて手戻りする</li>
+                        <li>「影響なし」を根拠なしで返し、追加質問で炎上する</li>
+                        <li>調査中を出せず、期限を超える</li>
+                        <li>証跡が散らばり、監査で再現できない</li>
+                    </ul>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2>FAQ：兼務PSIRTのやり方</h2>
+                    <div class="space-y-6 mt-6">
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q1. PSIRTは専任がいないと回りませんか？</strong>
+                            <p class="m-0 text-slate-300">回ります。まずは「4役」を決め、1〜3人で兼務しても役割が混ざらないようにすれば成立します。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q2. 1人でも“影響なし”を言い切っていいですか？</strong>
+                            <p class="m-0 text-slate-300">言い切る前に、根拠（対象外、実行経路にない、到達不能など）を一言で残してください。根拠が残らない“影響なし”は後で必ず崩れます。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q3. OEMからの期限が短すぎる場合は？</strong>
+                            <p class="m-0 text-slate-300">一次回答として「調査中＋次回更新日」を先に返すのが現実解です。黙るより、状態と更新予定を示す方が信頼を落としにくいです。</p>
+                        </div>
+                    </div>
+
+                    <!-- 内部リンク（次に読む＆テンプレ） -->
+                    <div class="mt-12 space-y-6">
+                        <div class="related-box border-l-brand my-0">
+                            <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="book-open" class="w-4 h-4"></i> 次に読む</div>
+                            <ul class="text-base m-0 list-none pl-0">
+                                <li><a href="/psirt/what-is-psirt/" class="!text-brand-light hover:!text-brand">PSIRTとは（自動車サプライヤー版）</a></li>
+                            </ul>
+                        </div>
+
+                        <div class="related-box border-l-emerald-500 my-0">
+                            <div class="text-sm font-bold text-emerald-400 mb-2 flex items-center gap-2"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> テンプレ</div>
+                            <ul class="text-base m-0 list-none pl-0">
+                                <li><a href="#" class="!text-emerald-400 hover:!text-emerald-300">PSIRT運用テンプレ／チェックリスト</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- CTA Section -->
+            <div class="glass-card rounded-3xl p-8 md:p-12 text-center border-t-4 border-t-sky-500 bg-navy-800/80 shadow-[0_0_40px_-10px_rgba(14,165,233,0.2)]">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">専任担当がいなくても、PSIRTは回せます</h2>
+                <p class="text-slate-300 mb-8 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+                    <strong>Auto PSIRT Cloud</strong>なら、ウィザードに答えるだけで専門知識がなくても的確な影響判定と回答書作成が可能です。<br><br>
+                    兼務体制でも回るPSIRT運用のイメージを、実際の画面デモで確認してみませんか？
+                </p>
+                <div class="flex justify-center">
+                    <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-navy-900 bg-white hover:bg-slate-200 transition-all duration-300 shadow-xl shadow-white/10 w-full sm:w-auto hover:-translate-y-1">
+                        <i class="w-5 h-5 text-sky-500" data-lucide="monitor-play"></i>
+                        Auto PSIRT Cloudのデモを見る
+                    </a>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/5 text-center text-sm text-slate-500 mt-auto bg-navy-900/80">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span class="font-bold text-slate-400">Auto PSIRT Cloud</span>
+            </div>
+            <p>&copy; 2026 Unimobilities株式会社. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
