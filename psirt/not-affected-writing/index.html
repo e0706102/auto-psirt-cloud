@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEOメタタグ -->
+    <title>OEM調査依頼への回答である「影響なし」の書き方：逃げない文章の作り方｜OEM調査依頼に通る「根拠の型」 | Auto PSIRT Cloud</title>
+    <meta name="description" content="「影響なし」と回答したのに追加質問で炎上…を防ぐ書き方を解説。OEM調査依頼・監査対応で通る“逃げない文章”は、結論→対象範囲→根拠（証跡）→条件→次回更新日（SLA）の順で書きます。すぐ使える文例とテンプレ付き。">
+    <meta name="keywords" content="影響なしの書き方：逃げない文章の作り方, OEM調査依頼, 証跡, SLA, PSIRT, 脆弱性管理">
+    <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/psirt/not-affected-writing/">
+    
+    <!-- OGPタグ (SNSシェア用) -->
+    <meta property="og:title" content="影響なしの書き方：逃げない文章の作り方｜OEM調査依頼に通る「根拠の型」">
+    <meta property="og:description" content="OEM調査依頼で一番地雷になる「影響なし」の回答。追加質問を防ぐ“逃げない文章”の型と文例を公開します。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/psirt/not-affected-writing/">
+    <meta property="og:site_name" content="Auto PSIRT Cloud">
+
+    <!-- ファビコン -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%233b82f6%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z%22/><path d=%22m9 12 2 2 4-4%22/></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0a0f1c',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        brand: {
+                            light: '#60a5fa',
+                            DEFAULT: '#3b82f6',
+                            dark: '#2563eb',
+                        },
+                        accent: {
+                            DEFAULT: '#06b6d4',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #60a5fa, #06b6d4);
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* 記事用カスタムスタイル */
+        .prose h2 {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-top: 3.5rem;
+            color: #f8fafc;
+        }
+        .prose h3 {
+            color: #e2e8f0;
+            margin-top: 2.5rem;
+            border-left: 3px solid #06b6d4; /* Cyan系アクセント */
+            padding-left: 0.75rem;
+            font-size: 1.25rem;
+        }
+        .prose a {
+            color: #60a5fa;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .prose a:hover {
+            border-bottom-color: #60a5fa;
+        }
+        .prose strong {
+            color: #f8fafc;
+            background: linear-gradient(transparent 60%, rgba(6, 182, 212, 0.3) 40%);
+        }
+        .related-box {
+            background: rgba(30, 41, 59, 0.6);
+            border-left: 4px solid #06b6d4;
+            padding: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 2rem 0;
+        }
+        
+        /* 文例ボックス用スタイル */
+        .example-box {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        .example-box h4 {
+            color: #22d3ee;
+            margin-top: 0;
+            margin-bottom: 1rem;
+            border-bottom: 1px dashed rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .template-content {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 0.5rem;
+            padding: 1.25rem;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-size: 0.875rem;
+            line-height: 1.6;
+            color: #cbd5e1;
+            white-space: pre-wrap;
+            margin-top: 1rem;
+        }
+        .highlight-text {
+            color: #f8fafc;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-brand selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-brand/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-cyan-500/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-accent flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="/news.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        ニュース一覧へ戻る
+                    </a>
+                    <a href="/demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                        相談 or デモ予約
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <article class="max-w-4xl mx-auto">
+            
+            <!-- パンくずリスト -->
+            <nav class="flex text-sm text-slate-400 mb-8" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/index.html" class="hover:text-white transition-colors">ホーム</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <a href="/news.html" class="hover:text-white transition-colors">ニュース・インサイト</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <span class="text-slate-500 truncate max-w-[200px] sm:max-w-none">影響なしの書き方</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- 記事ヘッダー -->
+            <header class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-cyan-500/20 border border-cyan-500/30 text-cyan-400 text-xs font-bold px-3 py-1 rounded-full">実務テンプレ</span>
+                    <time class="text-slate-400 text-sm flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> 2026.03.06
+                    </time>
+                </div>
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
+                    OEM調査依頼への回答である「影響なし」の書き方：逃げない文章の作り方<br/>
+                    <span class="text-2xl md:text-3xl text-slate-300 font-medium">（OEM調査依頼に通る「根拠の型」）</span>
+                </h1>
+                
+                <!-- 導入文 -->
+                <div class="text-lg text-slate-300 leading-relaxed p-6 bg-navy-800/50 rounded-2xl border border-white/5 space-y-4">
+                    <p>OEMからの調査依頼や監査で、いちばん地雷になりやすい回答が <strong>「影響なし」</strong> です。</p>
+                    
+                    <p>なぜなら「影響なし」は、相手にとっては “本当？根拠は？どの版数の話？” という追加質問の起点になりやすいからです。<br>
+                    現場でよくあるのが、このパターンです。</p>
+                    
+                    <div class="bg-navy-900 p-4 rounded-lg border border-red-500/30 my-4 text-base">
+                        <div class="mb-2"><span class="text-slate-400">こちら：</span>「影響なしです」（短く返す）</div>
+                        <div class="mb-2"><span class="text-red-400">OEM：</span>「対象範囲（版数）と根拠（証跡）を提示してください」（追加質問）</div>
+                        <div><span class="text-slate-400">こちら：</span>証跡探しで時間が溶け、SLAが崩れる…</div>
+                    </div>
+                    
+                    <p>この記事では、「影響なし」を <strong>逃げずに・短く・監査に耐える形で返すための 書き方（型）</strong> をまとめます。目的は“美文”ではなく、追加質問を減らし、期限（SLA）を守ることです。</p>
+                </div>
+            </header>
+
+            <!-- 記事本文 -->
+            <div class="glass-card p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl bg-navy-900/80 mb-16">
+                <div class="prose prose-invert prose-slate prose-lg max-w-none">
+
+                    <!-- 内部リンク①：全体フロー -->
+                    <div class="related-box mt-0 border-l-brand">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="map" class="w-4 h-4"></i> 全体像を先に見直す</div>
+                        <p class="text-sm text-slate-300 mb-2">この記事は「影響なしの書き方」に特化しています。初動から回答書提出までの全体フローを押さえたい方はこちらへ。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/audit-investigation-response-guide/" class="!text-brand-light hover:!text-brand">OEM調査依頼・監査対応 完全ガイド</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>先に結論：「逃げない文章」は5点セットでできている</h2>
+                    <p>“逃げない影響なし”は、必ず次の5点を含みます。</p>
+
+                    <div class="bg-navy-800 p-6 rounded-lg border border-white/10 my-6">
+                        <ul class="m-0 space-y-3 pl-0 list-none font-medium">
+                            <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-5 h-5 text-cyan-400 shrink-0 mt-0.5"></i> <div><strong>結論：</strong> 影響なし（Yes/Noを先に）</div></li>
+                            <li class="flex items-start gap-3"><i data-lucide="target" class="w-5 h-5 text-cyan-400 shrink-0 mt-0.5"></i> <div><strong>対象範囲：</strong> 製品名・版数・出荷範囲（どこまでの話か）</div></li>
+                            <li class="flex items-start gap-3"><i data-lucide="search" class="w-5 h-5 text-cyan-400 shrink-0 mt-0.5"></i> <div><strong>根拠：</strong> 何を確認したか（SBOM/構成/設定/試験/ログ 等）</div></li>
+                            <li class="flex items-start gap-3"><i data-lucide="settings" class="w-5 h-5 text-cyan-400 shrink-0 mt-0.5"></i> <div><strong>条件：</strong> 影響なしが成立する前提（設定無効、外部IFなし等）</div></li>
+                            <li class="flex items-start gap-3"><i data-lucide="clock" class="w-5 h-5 text-cyan-400 shrink-0 mt-0.5"></i> <div><strong>次回更新日：</strong> 必要なら再確認タイミング（SLA管理）</div></li>
+                        </ul>
+                    </div>
+
+                    <p>この5点があると、OEM側は「読むだけで判断」できるので、追加質問が減ります。逆に、どれかが欠けると “確認依頼”が飛んできて炎上します。</p>
+
+                    <h2>まず整理：「影響なし」には4種類ある（理由コード化すると速い）</h2>
+                    <p>“影響なし”が弱くなる理由は、理由が曖昧だからです。最初から理由を4類型に分け、<strong>理由コード（根拠の型）</strong>を作ると運用が安定します。</p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-6">
+                        <div class="bg-navy-800/80 p-4 rounded-lg border-l-4 border-l-slate-400">
+                            <strong class="text-slate-300 block mb-1">NA-1：非搭載</strong>
+                            <span class="text-sm text-slate-400">コンポーネントが入っていない</span>
+                        </div>
+                        <div class="bg-navy-800/80 p-4 rounded-lg border-l-4 border-l-blue-400">
+                            <strong class="text-blue-400 block mb-1">NA-2：脆弱範囲外</strong>
+                            <span class="text-sm text-slate-400">搭載しているが、影響を受けない版／パッチ適用済み</span>
+                        </div>
+                        <div class="bg-navy-800/80 p-4 rounded-lg border-l-4 border-l-emerald-400">
+                            <strong class="text-emerald-400 block mb-1">NA-3：成立条件不在</strong>
+                            <span class="text-sm text-slate-400">到達性なし・実行経路なし・外部IFなし 等</span>
+                        </div>
+                        <div class="bg-navy-800/80 p-4 rounded-lg border-l-4 border-l-orange-400">
+                            <strong class="text-orange-400 block mb-1">NA-4：緩和済み</strong>
+                            <span class="text-sm text-slate-400">設定無効／機能封じ／運用対策で成立しない</span>
+                        </div>
+                    </div>
+                    <p class="text-sm font-bold text-center text-brand-light">「影響なし（NA-3）」のように ラベル＋一言根拠で返すと、相手の理解が速くなります。</p>
+
+                    <h2>OEMが納得する「影響なし」文章の基本形（コピペ用）</h2>
+                    <p>まずはこの基本形だけ覚えてください。Excel質問票でもメールでも、同じ構造で通ります。</p>
+
+                    <div class="template-content">
+<span class="text-slate-400">結論：</span><span class="highlight-text">当該事象は対象製品に影響しません（影響なし）。</span>
+<span class="text-slate-400">対象範囲：</span>対象製品【　】／版数【　】（出荷範囲【　】）。
+<span class="text-slate-400">根拠：</span>確認情報【SBOM/構成表/設定/試験結果】により【NA-1〜4の理由】を確認。
+<span class="text-slate-400">条件：</span>本結論は【条件（設定・構成）】を前提とします。
+<span class="text-slate-400">証跡：</span>証跡ID【　】（保管場所【___】）を参照。
+<span class="text-slate-400">次回更新：</span>追加情報が出た場合は【日付】までに再評価し更新回答します。
+                    </div>
+                    <p class="text-center font-bold text-cyan-400 mt-4 mb-10">この「結論→範囲→根拠→条件→証跡→次回更新」が<br class="hidden sm:block">逃げない文章の骨格です。</p>
+
+                    <h2 class="border-b-2 border-cyan-500 pb-2 mb-8">理由別の文例（そのまま使える）</h2>
+
+                    <div class="example-box">
+                        <h4><i data-lucide="box" class="w-5 h-5"></i> NA-1：非搭載（最強だが、証跡がないと疑われる）</h4>
+                        <div class="text-sm bg-navy-900 p-4 rounded border border-white/5 mb-3 whitespace-pre-wrap leading-relaxed">結論：影響なし。
+対象範囲：製品【X】／版数【v1.2.3】。
+根拠：当該製品のSBOM/部品表に【ライブラリ名】の搭載がないことを確認（NA-1）。
+証跡：SBOM【ID:】（保管場所【】）。</div>
+                        <p class="text-sm text-cyan-300 m-0"><i data-lucide="check" class="w-4 h-4 inline"></i> <strong>ポイント：</strong>「入っていない」を言うなら、SBOM/部品表の証跡が必須です。</p>
+                    </div>
+
+                    <div class="example-box">
+                        <h4><i data-lucide="git-branch" class="w-5 h-5"></i> NA-2：脆弱範囲外（版数の書き方が命）</h4>
+                        <div class="text-sm bg-navy-900 p-4 rounded border border-white/5 mb-3 whitespace-pre-wrap leading-relaxed">結論：影響なし。
+対象範囲：製品【X】／版数【v1.2.3】。
+根拠：当該脆弱性の影響対象は【A〜B】であり、当社搭載版【C】は対象外（NA-2）。
+証跡：構成情報【ID:】、ベンダー公告【ID:】。</div>
+                        <p class="text-sm text-cyan-300 m-0"><i data-lucide="check" class="w-4 h-4 inline"></i> <strong>ポイント：</strong>「対象外」は必ず “対象範囲（A〜B）”と“自社版数（C）” を並べます。</p>
+                    </div>
+
+                    <div class="example-box">
+                        <h4><i data-lucide="shield-alert" class="w-5 h-5"></i> NA-3：成立条件不在（いちばん刺されやすい＝条件を明示）</h4>
+                        <div class="text-sm bg-navy-900 p-4 rounded border border-white/5 mb-3 whitespace-pre-wrap leading-relaxed">結論：影響なし（成立条件不在）。
+対象範囲：製品【X】／版数【v1.2.3】。
+根拠：CVSS条件【AV/PR/UI】に対し、当該製品は【外部IFなし／当該機能無効】のため入力経路が成立しない（NA-3）。
+条件：本結論は【設定Yが無効のまま】を前提。変更がある場合は再評価。
+証跡：IF仕様【ID:】、設定値【ID:】。</div>
+                        <p class="text-sm text-cyan-300 m-0"><i data-lucide="check" class="w-4 h-4 inline"></i> <strong>ポイント：</strong>“到達性なし”は強いですが、<strong>前提（条件）</strong>を書かないと「逃げ」に見えます。</p>
+                    </div>
+
+                    <div class="example-box">
+                        <h4><i data-lucide="wrench" class="w-5 h-5"></i> NA-4：緩和済み（暫定措置は“いつまで/何を”まで書く）</h4>
+                        <div class="text-sm bg-navy-900 p-4 rounded border border-white/5 mb-3 whitespace-pre-wrap leading-relaxed">結論：現状は影響なし（緩和済み）。
+対象範囲：製品【X】／版数【v1.2.3】。
+根拠：当該攻撃経路に対し、暫定措置として【設定変更/機能封じ】を適用済み（NA-4）。
+条件：恒久対策は【YYYY-MM-DD】リリース予定。
+証跡：変更記録【ID:】、試験結果【ID:】。</div>
+                        <p class="text-sm text-cyan-300 m-0"><i data-lucide="check" class="w-4 h-4 inline"></i> <strong>ポイント：</strong>緩和策は“影響なし”ではなく <strong>「現状は影響が成立しない」</strong>の表現が安全です。</p>
+                    </div>
+
+                    <h2>監査で刺さる「証跡（エビデンス）」の出し方</h2>
+                    <p>添付できるなら添付、できないなら <strong>参照可能な形</strong>にします。最低限この3点は揃えます。</p>
+                    <ul class="font-medium text-slate-200">
+                        <li>証跡ID（ファイル名、チケット番号、コミットIDなど）</li>
+                        <li>保管場所（フォルダ、台帳の行、管理システムのリンク）</li>
+                        <li>対象版数（どの版の証跡か）</li>
+                    </ul>
+                    <p class="text-brand-light font-bold">「影響なし」は結論よりも、証跡の参照設計で勝負が決まります。</p>
+
+                    <h2>OTA/更新が絡むときの一言（追加質問を先回り）</h2>
+                    <p>OEMの追加質問で多いのが「更新はどうする？」です。影響なしでも、更新経路があると“運用上の懸念”として聞かれます。</p>
+                    
+                    <div class="bg-navy-800 p-4 rounded-lg border-l-4 border-slate-500 my-4 space-y-3">
+                        <div class="italic text-slate-300">「当該機能は出荷時点で無効。更新で有効化する場合は再評価する」</div>
+                        <div class="italic text-slate-300">「恒久対策は次回リリースに反映。配布は工場更新／現地更新／OTA（該当するもの）」</div>
+                    </div>
+
+                    <!-- 内部リンク③：OTA関連 -->
+                    <div class="related-box border-l-purple-500">
+                        <div class="text-sm font-bold text-purple-400 mb-2 flex items-center gap-2"><i data-lucide="help-circle" class="w-4 h-4"></i> 関連記事</div>
+                        <p class="text-sm text-slate-300 mb-2">OTAなどの更新方法について聞かれた場合の整理はこちら。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="#" class="!text-purple-400 hover:!text-purple-300">OTAが「？」な担当者向け解説（作成中）</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>すぐ使える：Excel質問票の“1セル影響なし”テンプレ（短文）</h2>
+                    <p>Excelの備考欄など、短文で返す必要がある場合はこれで十分です。</p>
+
+                    <div class="template-content">影響なし（NA-3）。対象：製品【X】v【1.2.3】。根拠：外部IFなし／当該機能無効。証跡：ID【___】。前提条件変更時は再評価（次回更新：YYYY-MM-DD）。</div>
+                    <p class="mt-2 text-sm text-slate-400">短文でも、範囲・根拠・証跡・次回更新が入ると逃げない文章になります。</p>
+
+                    <!-- 途中CTA（主CTA） -->
+                    <div class="bg-navy-800/50 p-6 md:p-8 rounded-2xl border border-cyan-500/30 text-center my-10 shadow-[0_0_20px_rgba(6,182,212,0.1)]">
+                        <p class="text-slate-200 mb-6 font-medium text-lg">自社に合った条件・根拠の型（回答フォーマット）を整備したい方はご相談ください。</p>
+                        <a href="/demo_form.html" class="inline-flex items-center gap-2 px-8 py-3.5 bg-brand hover:bg-brand-dark text-white rounded-full font-bold transition-all hover:-translate-y-1 shadow-lg shadow-brand/20">
+                            <i data-lucide="calendar" class="w-5 h-5"></i> 【無料】オンライン相談を予約する
+                        </a>
+                    </div>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2>FAQ：影響なしの書き方</h2>
+                    <div class="space-y-6 mt-6">
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q1. 「現時点では影響ありません」は書いてもいいですか？</strong>
+                            <p class="m-0 text-slate-300">書けますが、範囲（版数）と次回更新日がないと“逃げ”に見えます。「調査中＋更新日」または「影響なし（前提条件つき）」として条件を明示するのがおすすめです。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q2. 影響なしの根拠は、最低限なにが必要ですか？</strong>
+                            <p class="m-0 text-slate-300">最低限は <strong>対象範囲（製品・版数）</strong>と、根拠の種類（SBOM/構成/設定/試験など）です。添付が難しい場合でも「証跡ID／保管場所／対象版数」を残してください。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q3. 証跡が機密で添付できません。どうすれば？</strong>
+                            <p class="m-0 text-slate-300">添付しなくて構いません。その代わり、回答書に 証跡IDと参照先を記載し、監査時に提示できる状態にします（“存在”と“再現性”が重要です）。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q4. 影響なしでもOEMから追加質問が来るのはなぜ？</strong>
+                            <p class="m-0 text-slate-300">多くは「対象版数が曖昧」「成立条件（到達性）の説明不足」「証跡がない」のどれかです。結論を短くする代わりに、5点セット（結論/範囲/根拠/条件/次回更新）で返すと減ります。</p>
+                        </div>
+                    </div>
+
+                    <!-- 内部リンク②：回答書全体の型 -->
+                    <div class="related-box border-l-emerald-500 mt-12">
+                        <div class="text-sm font-bold text-emerald-400 mb-2 flex items-center gap-2"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> 次に読む</div>
+                        <p class="text-sm text-slate-300 mb-2">「影響なし」を含む、OEM回答書全体の網羅的な書き方や項目はこちらで解説しています。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/response-report-must-have-items/" class="!text-emerald-400 hover:!text-emerald-300">回答書に必ず入れるべき項目｜OEM調査依頼・監査対応で通る書き方</a></li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- CTA Section -->
+            <div class="glass-card rounded-3xl p-8 md:p-12 text-center border-t-4 border-t-cyan-500 bg-navy-800/80 shadow-[0_0_40px_-10px_rgba(6,182,212,0.2)]">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">この「逃げない文章」を、AIで自動生成しませんか？</h2>
+                <p class="text-slate-300 mb-8 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+                    毎回悩んで文章を考える必要はありません。<br>
+                    <strong>Auto PSIRT Cloud</strong>なら、ウィザードに答えるだけで、この5点セットを満たした「影響なし」の根拠付き回答をAIが自動生成し、レポート出力まで完了します。
+                </p>
+                <div class="flex justify-center">
+                    <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-navy-900 bg-white hover:bg-slate-200 transition-all duration-300 shadow-xl shadow-white/10 w-full sm:w-auto hover:-translate-y-1">
+                        <i data-lucide="monitor-play" class="w-5 h-5 text-cyan-600"></i>
+                        Auto PSIRT Cloudの運用を画面デモで確認する
+                    </a>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/5 text-center text-sm text-slate-500 mt-auto bg-navy-900/80">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span class="font-bold text-slate-400">Auto PSIRT Cloud</span>
+            </div>
+            <p>&copy; 2026 Unimobilities株式会社. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
