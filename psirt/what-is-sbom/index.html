@@ -236,11 +236,11 @@
                     <p>SBOMというと、最初からSPDXやCycloneDXで厳密に管理しないと意味がないと思われがちです。ですが、実務では<strong>最初はExcelで始めても問題ありません。</strong>重要なのは、完璧なフォーマットよりも、自社の製品バージョンとコンポーネントバージョンの関係を説明できることです。</p>
                     <p>特に中小サプライヤーでは、いきなり標準フォーマットを完璧に回そうとすると、棚卸しが進まず止まりやすいです。現実的には、まず主要製品だけでも一覧化し、更新責任者を決め、CVEが出たときに見返せる状態を作る方が先です。その後でSPDXやCycloneDXへ寄せる方が、運用としては成功しやすいです。</p>
 
-                    <!-- 内部リンク③：Excel運用の詳細（未作成） -->
+                    <!-- 内部リンク③：Excel運用の詳細（リンク修正済） -->
                     <div class="related-box border-l-emerald-500">
                         <div class="text-sm font-bold text-emerald-400 mb-2 flex items-center gap-2"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Excel運用のポイント</div>
                         <ul class="text-base m-0 list-none pl-0">
-                            <li><a href="#" class="!text-emerald-400 hover:!text-emerald-300">SBOMをExcelから始める（最小テンプレと運用ルール）</a></li>
+                            <li><a href="/psirt/sbom-excel-template-minimum/" class="!text-emerald-400 hover:!text-emerald-300">SBOMをExcelから始める（最小テンプレと運用ルール）</a></li>
                         </ul>
                     </div>
 
@@ -274,7 +274,7 @@
                         </div>
                         <div>
                             <strong class="text-brand-light block mb-2">Q3. SBOMとBOMの違いは何ですか？</strong>
-                            <p class="m-0 text-slate-300">通常のBOMは部材や製品全体の部品表ですが、SBOMはソフトウェア構成要素に特化した部品表です。脆弱性管理やライセンス管理につながる点が大きな違いです。</p>
+                            <p class="m-0 text-slate-300">通常のBOMは部材や製品全体の部品表ですが、SBOMはソフトウェア構成要素に特化した部品表です。脆弱性管理やライセンス管理までつながる点が大きな違いです。</p>
                         </div>
                         <div>
                             <strong class="text-brand-light block mb-2">Q4. SPDXとCycloneDXの違いは何ですか？</strong>
@@ -291,15 +291,17 @@
                     </div>
 
                     <h2>まとめ</h2>
-                    <p>SBOMとは、ソフトウェアの部品表です。ただし、自動車サプライヤーの実務では、それ以上の意味を持ちます。</p>
-                    <p>SBOMは、自社製品の構成を可視化し、脆弱性対応を速くし、OEMや監査に説明できる状態を作るための運用資産です。CISAがSBOMをソフトウェアセキュリティとサプライチェーンリスク管理の重要な構成要素と位置づけ、CycloneDXが脆弱性管理との統合を強調していることを踏まえても、SBOMは単なる提出ファイルではなく、継続的に使う前提の情報基盤だと言えます。</p>
+                    <p>SBOMは、フォーマットを選ぶことが目的ではありません。</p>
+                    <p>本質は、自社製品に何が入っているかを把握し、脆弱性が出たときに素早く影響確認できる状態を作ることです。SPDXかCycloneDXか、Excelから始めるか、どこまで開示するか。これらはすべて大事ですが、最終的に問われるのは1つです。</p>
+                    <p class="text-xl font-bold text-white my-6">そのSBOMが、OEM照会・監査・脆弱性対応で本当に使われるか。</p>
+                    <p>その問いに答えられるなら、そのSBOMは生きています。答えられないなら、どれだけ立派な形式でも、まだ実務資産にはなっていません。自動車サプライヤーにとってのSBOMは、提出物ではなく、説明責任を回すための基盤です。</p>
 
-                    <!-- 内部リンク④：Excelテンプレ（未作成） -->
+                    <!-- 内部リンク④：Excelテンプレ（リンク修正済） -->
                     <div class="related-box border-l-emerald-500 mt-8">
                         <div class="text-sm font-bold text-emerald-400 mb-2 flex items-center gap-2"><i data-lucide="download" class="w-4 h-4"></i> すぐ使う</div>
                         <p class="text-sm text-slate-300 mb-2">まずはExcelで始めてみたいという方向けに、最小限の項目をまとめたテンプレートをご用意しています。</p>
                         <ul class="text-base m-0 list-none pl-0">
-                            <li><a href="#" class="!text-emerald-400 hover:!text-emerald-300">SBOM Excelテンプレ（最小項目版）</a></li>
+                            <li><a href="/psirt/sbom-excel-template-minimum/" class="!text-emerald-400 hover:!text-emerald-300">SBOM Excelテンプレ（最小項目版）</a></li>
                         </ul>
                     </div>
 
@@ -311,10 +313,10 @@
                 <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">SBOMの整備、何から手をつけるべきか迷っていませんか？</h2>
                 <p class="text-slate-300 mb-8 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
                     自社でSBOMをどこから整備すべきか整理したい方は、無料相談をご利用ください。<br><br>
-                    「Excelで始めるべきか」「SPDX / CycloneDXへ寄せるべきか」といったご相談はもちろん、<strong>Auto PSIRT Cloud</strong>を使ってSBOMの取り込みから脆弱性突合までを自動化する流れを実際の画面（デモ）でご確認いただけます。
+                    また、<strong>Auto PSIRT Cloud</strong>なら、Excelの部品表を読み込ませるだけで日々の脆弱性チェックを自動化できます。SBOM取り込みから脆弱性突合までの流れを実際の画面で確認したい方は、オンライン相談＆デモをご予約ください。
                 </p>
                 <div class="flex flex-col sm:flex-row justify-center gap-4">
-                    <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-navy-900 bg-white hover:bg-slate-200 transition-all duration-300 shadow-xl shadow-white/10 w-full sm:w-auto hover:-translate-y-1">
+                    <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-white bg-brand hover:bg-brand-dark transition-all duration-300 shadow-lg shadow-brand/20 w-full sm:w-auto hover:-translate-y-1">
                         <i data-lucide="calendar" class="w-5 h-5 text-brand"></i>
                         【無料】オンライン相談を予約する
                     </a>
