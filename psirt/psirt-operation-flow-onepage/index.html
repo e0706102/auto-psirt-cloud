@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEOメタタグ -->
+    <title>PSIRT運用フロー図解｜受付→トリアージ→対外回答を1枚にする方法 | Auto PSIRT Cloud</title>
+    <meta name="description" content="PSIRT運用フロー（受付→トリアージ→対外回答）を1枚に図解し、兼務でも迷わず回せる手順に落とし込みます。入口（フォーム/窓口）の統一、SLA、チケット項目、証跡（エビデンス）設計、一次回答テンプレまで“そのまま使える型”で解説。">
+    <meta name="keywords" content="PSIRT運用フロー図解, PSIRT, 脆弱性管理, トリアージ">
+    <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/psirt/psirt-operation-flow-onepage/">
+    
+    <!-- OGPタグ (SNSシェア用) -->
+    <meta property="og:title" content="PSIRT運用フロー図解｜受付→トリアージ→対外回答を1枚にする方法">
+    <meta property="og:description" content="PSIRT運用フローを1枚に図解。入口の統一、SLA、チケット項目、証跡設計まで“そのまま使える型”で解説します。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/psirt/psirt-operation-flow-onepage/">
+    <meta property="og:site_name" content="Auto PSIRT Cloud">
+
+    <!-- ファビコン -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%233b82f6%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z%22/><path d=%22m9 12 2 2 4-4%22/></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0a0f1c',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        brand: {
+                            light: '#60a5fa',
+                            DEFAULT: '#3b82f6',
+                            dark: '#2563eb',
+                        },
+                        accent: {
+                            DEFAULT: '#06b6d4',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #60a5fa, #06b6d4);
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* 記事用カスタムスタイル */
+        .prose h2 {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-top: 3.5rem;
+            color: #f8fafc;
+        }
+        .prose h3 {
+            color: #e2e8f0;
+            margin-top: 2.5rem;
+            border-left: 3px solid #3b82f6; /* Brand Blue */
+            padding-left: 0.75rem;
+            font-size: 1.25rem;
+        }
+        .prose a {
+            color: #60a5fa;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .prose a:hover {
+            border-bottom-color: #60a5fa;
+        }
+        .prose strong {
+            color: #f8fafc;
+            background: linear-gradient(transparent 60%, rgba(59, 130, 246, 0.3) 40%);
+        }
+        .related-box {
+            background: rgba(30, 41, 59, 0.6);
+            border-left: 4px solid #3b82f6;
+            padding: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 2rem 0;
+        }
+        
+        /* フロー図用のスタイル */
+        .flow-node {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            border-left: 4px solid #3b82f6;
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            position: relative;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .flow-node h4 {
+            color: #60a5fa;
+            margin-top: 0;
+            margin-bottom: 0.75rem;
+            font-size: 1.125rem;
+        }
+        .flow-node ul {
+            margin: 0;
+            padding-left: 1.25rem;
+            color: #cbd5e1;
+            font-size: 0.875rem;
+        }
+        .flow-arrow {
+            display: flex;
+            justify-content: center;
+            padding: 0.5rem 0;
+            color: #60a5fa;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-brand selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-brand/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-sky-500/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-accent flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="/news.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        ニュース一覧へ戻る
+                    </a>
+                    <a href="/demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                        相談 or デモ予約
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <article class="max-w-4xl mx-auto">
+            
+            <!-- パンくずリスト -->
+            <nav class="flex text-sm text-slate-400 mb-8" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/index.html" class="hover:text-white transition-colors">ホーム</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <a href="/news.html" class="hover:text-white transition-colors">ニュース・インサイト</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <span class="text-slate-500 truncate max-w-[200px] sm:max-w-none">PSIRT運用フロー図解</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- 記事ヘッダー -->
+            <header class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-blue-500/20 border border-blue-500/30 text-blue-400 text-xs font-bold px-3 py-1 rounded-full">実務ガイド</span>
+                    <time class="text-slate-400 text-sm flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> 2026.03.06
+                    </time>
+                </div>
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
+                    PSIRT運用フロー図解<br/>
+                    <span class="text-2xl md:text-3xl text-slate-300 font-medium">（受付→トリアージ→対外回答を1枚にする）</span>
+                </h1>
+                
+                <!-- 導入文 -->
+                <div class="text-lg text-slate-300 leading-relaxed p-6 bg-navy-800/50 rounded-2xl border border-white/5 space-y-4">
+                    <p>PSIRT運用が止まる典型は「担当者の能力不足」ではありません。<br>
+                    <strong>フロー（手順）が1枚で共有されていないこと</strong>が原因です。</p>
+                    
+                    <ul class="m-0 list-disc list-inside">
+                        <li>入口がバラバラ（個人メール、営業経由、OEMポータル…）</li>
+                        <li>期限（SLA）が曖昧で、一次回答が遅れる</li>
+                        <li>トリアージ基準が属人化し、「影響なし」が根拠なしで出てしまう</li>
+                        <li>証跡（エビデンス）が散らばって監査で再現できない</li>
+                    </ul>
+                    
+                    <p>そこでこの記事では、Tier2〜Tier4の兼務体制でも回るように、<strong>「受付→トリアージ→対外回答」を 1枚にまとめたPSIRT運用フロー</strong> と、そのまま実装できる手順を提示します。</p>
+                </div>
+            </header>
+
+            <!-- 記事本文 -->
+            <div class="glass-card p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl bg-navy-900/80 mb-16">
+                <div class="prose prose-invert prose-slate prose-lg max-w-none">
+
+                    <!-- 内部リンク①：全体像の俯瞰 -->
+                    <div class="related-box mt-0 border-l-brand">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="map" class="w-4 h-4"></i> 全体像を先に見直す</div>
+                        <p class="text-sm text-slate-300 mb-2">PSIRT全体の体制やSBOM・CVE対応までの俯瞰が必要な方は、こちらのガイドを先にご覧ください。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/automotive-supplier-guide/" class="!text-brand-light hover:!text-brand">参考ガイド：『PSIRT完全ガイド』</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>図解：PSIRT運用フロー（1枚版）</h2>
+                    <p>まずは、運用を「入口→判断→返す→残す」に割り切ります。以下が <strong>1枚で共有するための最小フロー</strong> です。</p>
+
+                    <!-- CSSを活用したフロー図 -->
+                    <div class="my-10 max-w-2xl mx-auto font-sans">
+                        <!-- 入口 -->
+                        <div class="bg-navy-800 p-4 rounded-xl border border-white/20 text-center shadow-lg">
+                            <span class="text-slate-400 font-bold text-sm block mb-1">【入口】</span>
+                            <span class="text-white font-medium">OEM照会 ／ CVE通知 ／ 社内検知 ／ 研究者報告</span>
+                        </div>
+                        
+                        <div class="flow-arrow"><i data-lucide="arrow-down" class="w-6 h-6"></i></div>
+                        
+                        <!-- Step 1 -->
+                        <div class="flow-node">
+                            <h4>① 受付（Intake）</h4>
+                            <ul>
+                                <li>案件ID採番／期限（受付・一次・最終）記録／対象範囲を仮固定</li>
+                                <li>証跡フォルダ作成（依頼原本・調査・回答書・提出履歴）</li>
+                                <li>受領確認（1営業日以内目標）</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="flow-arrow"><i data-lucide="arrow-down" class="w-6 h-6"></i></div>
+                        
+                        <!-- Step 2 -->
+                        <div class="flow-node border-l-orange-500">
+                            <h4 class="!text-orange-400">② 一次トリアージ（Triage）</h4>
+                            <ul>
+                                <li>3分類：対応必須／要確認／対応不要</li>
+                                <li><strong class="text-white bg-white/10 px-1 rounded">“調査中＋次回更新日”</strong> を許可（一次回答）</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="flow-arrow"><i data-lucide="arrow-down" class="w-6 h-6"></i></div>
+                        
+                        <!-- Step 3 -->
+                        <div class="flow-node border-l-yellow-500">
+                            <h4 class="!text-yellow-400">③ 技術評価（Investigation）</h4>
+                            <ul>
+                                <li>対象製品・対象版数の確定</li>
+                                <li>到達性（外部IF/実行経路）と影響範囲の確認</li>
+                                <li>対策方針（修正/緩和/受容）決定</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="flow-arrow"><i data-lucide="arrow-down" class="w-6 h-6"></i></div>
+                        
+                        <!-- Step 4 -->
+                        <div class="flow-node border-l-emerald-500">
+                            <h4 class="!text-emerald-400">④ 対外回答（External Response）</h4>
+                            <ul>
+                                <li>結論→根拠→対応方針→証跡（参照先）で回答書を作成</li>
+                                <li>承認（上長/品質）を通して提出</li>
+                            </ul>
+                        </div>
+
+                        <div class="flow-arrow"><i data-lucide="arrow-down" class="w-6 h-6"></i></div>
+                        
+                        <!-- Step 5 -->
+                        <div class="flow-node border-l-slate-500 bg-navy-800/60">
+                            <h4 class="!text-slate-300">⑤ クローズ（Close）</h4>
+                            <ul>
+                                <li>提出履歴を保存／追加質問をチケットに集約</li>
+                                <li>ナレッジ化（次回の再利用）</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <p>このフローを1枚にすると、担当が変わっても「次に何をするか」がブレません。また、<strong>“一次回答”と“最終回答”を分けるだけ</strong>で、期限超過が激減します。</p>
+
+                    <h2 class="border-b-2 border-brand pb-2 mt-12 mb-6">実装手順：このフローを「今日から回る形」に落とす</h2>
+                    <p>図は描けても、現場で回らないのは「ルールと成果物」がないからです。以下の順番で、最小セットを揃えてください。</p>
+
+                    <h3>Step1：入口を1本にする（受付の統一）</h3>
+                    <p>入口が散らばると、漏れます。まずはこのどちらかに固定します。</p>
+                    <ul>
+                        <li><strong>共有メール</strong>（例：psirt@）</li>
+                        <li><strong>受付フォーム</strong>（問い合わせ/照会の入力項目を統一）</li>
+                    </ul>
+
+                    <!-- 内部リンク②：フォームの雛形 -->
+                    <div class="related-box border-l-emerald-500">
+                        <div class="text-sm font-bold text-emerald-400 mb-2 flex items-center gap-2"><i data-lucide="check-square" class="w-4 h-4"></i> 入口（フォーム）を揃える</div>
+                        <p class="text-sm text-slate-300 mb-2">フォームで受ける場合の「入力項目の雛形」はこちらで参照できます。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="#" class="!text-emerald-400 hover:!text-emerald-300">はじめに：フォーム・テンプレ</a></li>
+                        </ul>
+                    </div>
+
+                    <h3>Step2：SLA（社内目標時間）を仮で置く</h3>
+                    <p>厳密な数値は不要です。兼務でも置ける最小例：</p>
+                    <div class="bg-navy-800 p-5 rounded-lg border border-white/10 my-4">
+                        <ul class="m-0 space-y-1">
+                            <li><strong>受領確認：</strong> 1営業日以内</li>
+                            <li><strong>一次回答（影響あり/なし/調査中＋更新日）：</strong> 3〜5営業日以内</li>
+                            <li><strong>最終回答（根拠・証跡込み）：</strong> 10営業日以内（案件で調整）</li>
+                        </ul>
+                    </div>
+                    <p>ポイントは<strong>「一次回答＝調査中」を運用として許可すること</strong>です。“黙る”より“調査中＋更新日”の方が、OEM側の不信感が減ります。</p>
+
+                    <h3>Step3：チケット（案件台帳）の必須項目を固定する</h3>
+                    <p>ツールは何でもOKです（スプレッドシートでも始められます）。ただし、項目を固定しないと属人化します。</p>
+                    <div class="bg-navy-800/50 p-6 rounded-xl border border-white/10 my-4 shadow-inner">
+                        <h4 class="text-white font-bold mt-0 mb-3">必須項目（最小）</h4>
+                        <ul class="m-0 space-y-1 text-sm text-slate-300">
+                            <li>案件ID（自社）／OEM案件番号（ある場合）</li>
+                            <li>期限（受付・一次・最終）</li>
+                            <li>対象製品・対象版数（暫定→確定の履歴を残す）</li>
+                            <li>一次トリアージ（3分類）</li>
+                            <li>結論（影響あり/なし/調査中）</li>
+                            <li>根拠メモ（1〜3行でOK）</li>
+                            <li>証跡の参照先（フォルダURL/証跡ID）</li>
+                            <li>次回更新日（調査中のとき必須）</li>
+                            <li>承認者／提出日／提出方法（メール/ポータル）</li>
+                        </ul>
+                    </div>
+
+                    <h3>Step4：証跡（エビデンス）を“後から集めない”仕組みにする</h3>
+                    <p>監査で詰むのは、「影響なし」と言った根拠が消えることです。初動（受付）の時点でフォルダを作り、そこに集約します。</p>
+                    
+                    <div class="bg-navy-800/50 p-6 rounded-xl border border-white/10 my-4 shadow-inner">
+                        <h4 class="text-white font-bold mt-0 mb-3">推奨フォルダ（そのまま使える）</h4>
+                        <ul class="m-0 space-y-1 text-sm font-mono text-slate-300 list-none pl-0">
+                            <li>00_依頼原本（メールPDF、質問票、ポータル画面）</li>
+                            <li>01_範囲（対象製品・版数の確定メモ）</li>
+                            <li>02_調査（SBOM/部品表、設定、IF仕様、確認手順）</li>
+                            <li>03_回答書（社内ドラフト／提出版）</li>
+                            <li>04_提出履歴（送付メール、受付証跡、再提出）</li>
+                            <li>05_追加質問・是正（Q&A、是正計画）</li>
+                        </ul>
+                    </div>
+                    <p>“添付できない証跡”が多いほど、回答書に <strong>証跡ID／保管場所／対象版数</strong> を書ける形にしておくと強いです。</p>
+
+                    <h3>Step5：対外回答は「結論→根拠→対応方針」で固定する</h3>
+                    <p>回答書の型は、どのOEMでも通りやすい順番に寄せます。</p>
+                    <ol>
+                        <li><strong>結論</strong>（影響あり/なし/調査中）</li>
+                        <li><strong>対象範囲</strong>（製品名・版数）</li>
+                        <li><strong>根拠</strong>（何を確認したか）</li>
+                        <li><strong>対応方針</strong>（暫定策・恒久策・次回更新日）</li>
+                        <li><strong>証跡</strong>（添付 or 参照先）</li>
+                    </ol>
+
+                    <p class="text-xl font-bold text-center text-brand-light mt-10 mb-6">
+                        ここまで揃うと、PSIRT運用は<br class="hidden sm:block">「職人芸」ではなく「業務」になります。
+                    </p>
+
+                    <!-- 途中CTA（主CTA） -->
+                    <div class="bg-navy-800/50 p-6 md:p-8 rounded-2xl border border-brand/30 text-center my-10 shadow-[0_0_20px_rgba(59,130,246,0.15)]">
+                        <p class="text-slate-200 mb-6 font-medium text-lg">脆弱性トリアージの体制や手順を自社向けに整理したい方はご相談ください。</p>
+                        <a href="/demo_form.html" class="inline-flex items-center gap-2 px-8 py-3.5 bg-brand hover:bg-brand-dark text-white rounded-full font-bold transition-all hover:-translate-y-1 shadow-lg shadow-brand/20">
+                            <i data-lucide="calendar" class="w-5 h-5"></i> 【無料】オンライン相談を予約する
+                        </a>
+                    </div>
+
+                    <h2>よくある失敗（この3つを潰すだけで安定します）</h2>
+                    <ul class="space-y-3 my-6 list-none pl-0">
+                        <li class="flex items-start gap-3"><i data-lucide="alert-triangle" class="w-5 h-5 text-yellow-500 mt-0.5 shrink-0"></i> <div>入口が複数で、案件IDが振られず漏れる</div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="alert-triangle" class="w-5 h-5 text-yellow-500 mt-0.5 shrink-0"></i> <div>一次回答の文化がなく、最終回答だけを狙って期限超過する</div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="alert-triangle" class="w-5 h-5 text-yellow-500 mt-0.5 shrink-0"></i> <div>“影響なし”の根拠が残らず、追加質問・監査で再炎上する</div></li>
+                    </ul>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2>FAQ：PSIRT運用フローのやり方</h2>
+                    <div class="space-y-6 mt-6">
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q1. PSIRT運用フローは、最小で何を決めれば回りますか？</strong>
+                            <p class="m-0 text-slate-300">最小は「入口（窓口）」「SLA（受領/一次/最終）」「3段階トリアージ」「証跡フォルダ」「回答書の型（結論→根拠→対応方針）」の5つです。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q2. “調査中”で返すのはまずいですか？</strong>
+                            <p class="m-0 text-slate-300">まずくありません。一次回答として「調査中＋次回更新日」を返す方が、黙って期限を超えるより信頼を落としにくいです。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q3. トリアージは何段階にすべきですか？</strong>
+                            <p class="m-0 text-slate-300">兼務体制なら、まずは3段階（対応必須／要確認／対応不要）で十分です。判断根拠を1行でも残せる形にすることが重要です。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q4. 証跡（エビデンス）は全部添付しないといけませんか？</strong>
+                            <p class="m-0 text-slate-300">状況によります。添付できない場合でも「証跡ID／保管場所／対象版数」を回答書に書けるようにしておくと、監査・追加質問に耐えやすくなります。</p>
+                        </div>
+                    </div>
+
+                    <!-- 内部リンク③：PSIRT用語 -->
+                    <div class="related-box border-l-brand mt-12">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="book-open" class="w-4 h-4"></i> 次に読む</div>
+                        <p class="text-sm text-slate-300 mb-2">そもそもPSIRTの定義やOEMの期待値をおさらいしたい方はこちら。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/what-is-psirt/" class="!text-brand-light hover:!text-brand">PSIRTとは（自動車サプライヤー版）：OEM要求にどう答えるか</a></li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- CTA Section -->
+            <div class="glass-card rounded-3xl p-8 md:p-12 text-center border-t-4 border-t-brand bg-navy-800/80 shadow-[0_0_40px_-10px_rgba(59,130,246,0.2)]">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">この運用フロー、システムで自動化しませんか？</h2>
+                <p class="text-slate-300 mb-8 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+                    <strong>Auto PSIRT Cloud</strong>なら、ここで図解した「受付→トリアージ→対外回答」のフローがそのままシステムとして組み込まれています。
+                </p>
+                <div class="flex justify-center">
+                    <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-navy-900 bg-white hover:bg-slate-200 transition-all duration-300 shadow-xl shadow-white/10 w-full sm:w-auto hover:-translate-y-1">
+                        <i data-lucide="monitor-play" class="w-5 h-5 text-brand"></i>
+                        CVEトリアージ・業務フローのデモを見る
+                    </a>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/5 text-center text-sm text-slate-500 mt-auto bg-navy-900/80">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span class="font-bold text-slate-400">Auto PSIRT Cloud</span>
+            </div>
+            <p>&copy; 2026 Unimobilities株式会社. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
