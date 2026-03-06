@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEOメタタグ -->
+    <title>PSIRTとは？役割と“やるべきこと”を一言で（サプライヤー向け） | Auto PSIRT Cloud</title>
+    <meta name="description" content="PSIRTとは何かをサプライヤー向けに解説。脆弱性の受付・影響判定・対外回答（OEM照会）・証跡管理を“迷わず回す”ための最小セット（窓口、役割、SLA、台帳）を短く整理します。">
+    <meta name="keywords" content="PSIRTとは, PSIRT, 自動車セキュリティ, 脆弱性対応, UN-R155">
+    <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/psirt/what-is-psirt-role-minimum/">
+    
+    <!-- OGPタグ (SNSシェア用) -->
+    <meta property="og:title" content="PSIRTとは？役割と“やるべきこと”を一言で（サプライヤー向け）">
+    <meta property="og:description" content="PSIRTの役割と、兼務体制でも回すための「最小セット」を分かりやすく解説します。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/psirt/what-is-psirt-role-minimum/">
+    <meta property="og:site_name" content="Auto PSIRT Cloud">
+
+    <!-- ファビコン -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%233b82f6%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z%22/><path d=%22m9 12 2 2 4-4%22/></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0a0f1c',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        brand: {
+                            light: '#60a5fa',
+                            DEFAULT: '#3b82f6',
+                            dark: '#2563eb',
+                        },
+                        accent: {
+                            DEFAULT: '#06b6d4',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #60a5fa, #06b6d4);
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* 記事用カスタムスタイル */
+        .prose h2 {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-top: 3.5rem;
+            color: #f8fafc;
+        }
+        .prose h3 {
+            color: #e2e8f0;
+            margin-top: 2.5rem;
+            border-left: 3px solid #3b82f6; /* Blue系アクセント */
+            padding-left: 0.75rem;
+            font-size: 1.25rem;
+        }
+        .prose a {
+            color: #60a5fa;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .prose a:hover {
+            border-bottom-color: #60a5fa;
+        }
+        .prose strong {
+            color: #f8fafc;
+            background: linear-gradient(transparent 60%, rgba(59, 130, 246, 0.3) 40%);
+        }
+        .related-box {
+            background: rgba(30, 41, 59, 0.6);
+            border-left: 4px solid #3b82f6;
+            padding: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-brand selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-brand/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-blue-500/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-accent flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="/news.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        ニュース一覧へ戻る
+                    </a>
+                    <a href="/demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                        相談 or デモ予約
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <article class="max-w-4xl mx-auto">
+            
+            <!-- パンくずリスト -->
+            <nav class="flex text-sm text-slate-400 mb-8" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/index.html" class="hover:text-white transition-colors">ホーム</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <a href="/news.html" class="hover:text-white transition-colors">ニュース・インサイト</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <span class="text-slate-500 truncate max-w-[200px] sm:max-w-none">PSIRTとは（役割・一言編）</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- 記事ヘッダー -->
+            <header class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-blue-500/20 border border-blue-500/30 text-blue-400 text-xs font-bold px-3 py-1 rounded-full">入門解説</span>
+                    <time class="text-slate-400 text-sm flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> 2026.03.07
+                    </time>
+                </div>
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
+                    PSIRTとは<br/>
+                    <span class="text-2xl md:text-3xl text-slate-300 font-medium">（役割・やるべきことを一言で）</span>
+                </h1>
+                
+                <!-- 導入文 -->
+                <div class="text-lg text-slate-300 leading-relaxed p-6 bg-navy-800/50 rounded-2xl border border-white/5 space-y-4">
+                    <p>PSIRTとは Product Security Incident Response Team の略で、ひとことで言うと<br>
+                    <strong>「製品に関する脆弱性・セキュリティ問題を“受けて、判断して、期限内に返す”ための窓口と運用の仕組み」</strong>です。</p>
+                    
+                    <p>自動車サプライヤーの現場では、PSIRTは“専門部署”というより、OEMからの照会（CVE影響有無の確認）や監査要求に、根拠付きで回答するための業務フローとして機能します。</p>
+                    
+                    <p>UN-R155/ISO/SAE 21434の流れで「運用が回る体制」が求められ、PSIRTがその中心に置かれやすくなっています。</p>
+                </div>
+            </header>
+
+            <!-- 記事本文 -->
+            <div class="glass-card p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl bg-navy-900/80 mb-16">
+                <div class="prose prose-invert prose-slate prose-lg max-w-none">
+
+                    <!-- 内部リンク①：全体像の設計へ -->
+                    <div class="related-box mt-0 border-l-brand">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="map" class="w-4 h-4"></i> さらに詳しく知る</div>
+                        <p class="text-sm text-slate-300 mb-2">PSIRTを“体制・SLA・証跡・OEM回答”まで一気通貫で設計する場合はこちらのガイドをご覧ください。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/automotive-supplier-guide/" class="!text-brand-light hover:!text-brand">自動車サプライヤーのPSIRT完全ガイド</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>PSIRTがやること（3つだけ覚えればOK）</h2>
+                    <p>PSIRTがやることは、大きく分けて次の3つです。</p>
+
+                    <div class="space-y-4 my-6">
+                        <div class="bg-navy-800/80 p-5 rounded-xl border border-white/5 flex items-start gap-4">
+                            <div class="p-2 bg-blue-500/10 rounded shrink-0 mt-0.5"><i data-lucide="inbox" class="w-5 h-5 text-blue-400"></i></div>
+                            <div>
+                                <strong class="text-slate-200 block mb-1">受付（入口の統一）</strong>
+                                <span class="text-sm text-slate-300">脆弱性情報・OEM照会・社内検知を「必ずここに集める」</span>
+                            </div>
+                        </div>
+                        <div class="bg-navy-800/80 p-5 rounded-xl border border-white/5 flex items-start gap-4">
+                            <div class="p-2 bg-emerald-500/10 rounded shrink-0 mt-0.5"><i data-lucide="filter" class="w-5 h-5 text-emerald-400"></i></div>
+                            <div>
+                                <strong class="text-slate-200 block mb-1">影響判定（トリアージ）</strong>
+                                <span class="text-sm text-slate-300">対象製品・対象版数を切り、影響あり/なし/調査中を決める</span>
+                            </div>
+                        </div>
+                        <div class="bg-navy-800/80 p-5 rounded-xl border border-white/5 flex items-start gap-4">
+                            <div class="p-2 bg-purple-500/10 rounded shrink-0 mt-0.5"><i data-lucide="file-output" class="w-5 h-5 text-purple-400"></i></div>
+                            <div>
+                                <strong class="text-slate-200 block mb-1">対外回答（期限内に根拠付きで返す）</strong>
+                                <span class="text-sm text-slate-300">結論→根拠→対応方針→証跡（参照先）で、監査に耐える回答を出す</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <p class="text-center font-bold text-brand-light my-6">ここが回れば、PSIRTは“立ち上がっています”。</p>
+
+                    <h2>PSIRTとSOC/CSIRTの違い（混同ポイント）</h2>
+                    
+                    <div class="overflow-x-auto my-6">
+                        <table class="w-full text-sm text-left border-collapse min-w-[500px]">
+                            <thead>
+                                <tr class="bg-navy-800 border-b border-white/10">
+                                    <th class="p-3 font-bold text-white">組織名</th>
+                                    <th class="p-3 font-bold text-white">対象と役割の違い</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-white/5 text-slate-300">
+                                <tr>
+                                    <td class="p-3 font-bold text-brand-light">PSIRT</td>
+                                    <td class="p-3"><strong>製品</strong>の脆弱性・セキュリティ問題の受付と対応（製品起点）</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 font-bold text-orange-400">SOC / VSOC</td>
+                                    <td class="p-3">監視・検知（ログやアラート起点）</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 font-bold text-emerald-400">CSIRT</td>
+                                    <td class="p-3">組織<strong>全体</strong>のインシデント対応（社内IT/業務影響も含む）</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>サプライヤーでは、SOCまで持てないケースが多い一方、<strong>PSIRT（窓口と回答の型）だけはOEM要求で必要になる</strong>ことが増えています。</p>
+
+                    <h2>兼務でも回る「PSIRT最小セット」（これだけ整えればOK）</h2>
+                    <p>PSIRTは大掛かりに作る必要はありません。最小セットはこれです。</p>
+
+                    <div class="bg-navy-800 p-6 rounded-lg border border-white/10 my-6">
+                        <ul class="m-0 space-y-3 pl-0 list-none text-slate-200">
+                            <li class="flex items-start gap-3"><i data-lucide="mail" class="w-5 h-5 text-slate-400 shrink-0 mt-0.5"></i> <div><strong>窓口：</strong> 共有メール（例：psirt@）または受付フォーム</div></li>
+                            <li class="flex items-start gap-3"><i data-lucide="users" class="w-5 h-5 text-slate-400 shrink-0 mt-0.5"></i> <div><strong>役割：</strong> 受付／技術評価／対外回答／承認<br><span class="text-sm text-slate-400">（兼務可、承認だけは別が安全）</span></div></li>
+                            <li class="flex items-start gap-3"><i data-lucide="clock" class="w-5 h-5 text-slate-400 shrink-0 mt-0.5"></i> <div><strong>SLA目安：</strong> 受領確認（1営業日）／一次回答（3〜5営業日）／最終回答（10営業日等）</div></li>
+                            <li class="flex items-start gap-3"><i data-lucide="table" class="w-5 h-5 text-slate-400 shrink-0 mt-0.5"></i> <div><strong>台帳（チケット）：</strong> 案件ID、期限、対象版数、結論、根拠、次回更新日、証跡参照先</div></li>
+                            <li class="flex items-start gap-3"><i data-lucide="folder-search" class="w-5 h-5 text-slate-400 shrink-0 mt-0.5"></i> <div><strong>証跡の置き場：</strong> 依頼原本・調査メモ・回答書・提出履歴を1案件に集約</div></li>
+                        </ul>
+                    </div>
+                    <p class="font-bold text-red-400">“完璧な結論”より、一次回答（調査中＋次回更新日）を返せることが実務では重要です。</p>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2>FAQ：PSIRTとは</h2>
+                    <div class="space-y-6 mt-6">
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q1. PSIRTとは何ですか？</strong>
+                            <p class="m-0 text-slate-300">製品に関する脆弱性・セキュリティ問題を、受付→影響判定→対外回答まで回すための窓口と運用の仕組み（体制）です。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q2. PSIRTがないと何が困りますか？</strong>
+                            <p class="m-0 text-slate-300">OEM照会や監査で「窓口は？期限内に返せる？証跡は？」に答えられず、回答遅延・手戻り・追加質問の増加につながります。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q3. PSIRTは専任チームが必要ですか？</strong>
+                            <p class="m-0 text-slate-300">必須ではありません。Tier2〜Tier4では兼務で始めるケースが一般的です。まずは窓口・役割・SLA・台帳・証跡の最小セットを固定するのが近道です。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q4. PSIRTとCSIRTの違いは？</strong>
+                            <p class="m-0 text-slate-300">PSIRTは製品起点（脆弱性・製品セキュリティ）、CSIRTは組織起点（社内インシデント全般）です。両者は重なる部分もありますが、役割の主語が違います。</p>
+                        </div>
+                    </div>
+
+                    <!-- 内部リンク②：テンプレへ -->
+                    <div class="related-box border-l-emerald-500 mt-12">
+                        <div class="text-sm font-bold text-emerald-400 mb-2 flex items-center gap-2"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> 次に読む</div>
+                        <p class="text-sm text-slate-300 mb-2">立上げ・受付・一次回答・証跡の“型”をそのまま使いたい方はこちらのチェックリストへ。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/launch-checklist/" class="!text-emerald-400 hover:!text-emerald-300">PSIRTテンプレ・チェックリスト</a></li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- CTA Section (相談のみ) -->
+            <div class="glass-card rounded-3xl p-8 md:p-12 text-center border-t-4 border-t-brand bg-navy-800/80 shadow-[0_0_40px_-10px_rgba(59,130,246,0.3)]">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">自社のPSIRT運用、どう形にするか迷っていませんか？</h2>
+                <p class="text-slate-300 mb-8 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+                    はじめに、Auto PSIRT CloudでPSIRT運用を「空回りしない形」に整えたい方はご相談ください。兼務体制でも回る業務フローの設計からサポートします。
+                </p>
+                <div class="flex justify-center">
+                    <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-white bg-brand hover:bg-brand-dark transition-all duration-300 shadow-lg shadow-brand/20 w-full sm:w-auto hover:-translate-y-1">
+                        <i data-lucide="message-square" class="w-5 h-5"></i>
+                        【無料】オンライン相談を予約する
+                    </a>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/5 text-center text-sm text-slate-500 mt-auto bg-navy-900/80">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span class="font-bold text-slate-400">Auto PSIRT Cloud</span>
+            </div>
+            <p>&copy; 2026 Unimobilities株式会社. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
