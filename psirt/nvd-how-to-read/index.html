@@ -8,13 +8,15 @@
     <title>NVDの見方：何を信じて、何を捨てるか｜CVEトリアージで迷わない読み順 | Auto PSIRT Cloud</title>
     <meta name="description" content="NVDの見方を「何を信じて、何を捨てるか」で整理。CVEトリアージで迷わないために、CVSSの読み順、CPE（対象製品）の扱い方、参照リンクの選別、更新履歴の見方までを実務手順＋テンプレ付きで解説します。">
     <meta name="keywords" content="NVDの見方, NVD, CVEトリアージ, 脆弱性管理, PSIRT">
-    <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/cve/nvd-how-to-read/">
+    <!-- URLを /psirt/ に修正 -->
+    <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/psirt/nvd-how-to-read/">
     
     <!-- OGPタグ (SNSシェア用) -->
     <meta property="og:title" content="NVDの見方：何を信じて、何を捨てるか">
     <meta property="og:description" content="NVDには情報が多すぎます。CVEトリアージで迷わないための「読む順番」と「捨てる情報」を解説します。">
     <meta property="og:type" content="article">
-    <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/cve/nvd-how-to-read/">
+    <!-- URLを /psirt/ に修正 -->
+    <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/psirt/nvd-how-to-read/">
     <meta property="og:site_name" content="Auto PSIRT Cloud">
 
     <!-- ファビコン -->
@@ -484,3 +486,19 @@ CPE（候補）：____（※候補、確定ではない）<br>
     </script>
 </body>
 </html>
+```
+
+### 2. 古い `cve` フォルダの削除
+GitHub上で、ルートにある `cve` フォルダとその中身（古い `index.html`）を削除してください。
+
+### 3. `news.html` のリンク修正
+`news.html` を開き、「NVDの見方」の記事へ飛ぶリンク（`<a>`タグの`href`）を以下のように修正して保存してください。
+
+**修正前：**
+```html
+<a href="/cve/nvd-how-to-read/" data-category="実務ガイド" class="article-card glass-card ...
+```
+
+**修正後：**
+```html
+<a href="/psirt/nvd-how-to-read/" data-category="実務ガイド" class="article-card glass-card ...
