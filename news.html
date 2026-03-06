@@ -55,102 +55,114 @@
         }
         .glass-card {
             background: rgba(30, 41, 59, 0.4);
-                backdrop-filter: blur(12px);
-                -webkit-backdrop-filter: blur(12px);
-                border: 1px solid rgba(255, 255, 255, 0.1);
-            }
-            .line-clamp-3 {
-                display: -webkit-box;
-                -webkit-line-clamp: 3;
-                -webkit-box-orient: vertical;  
-                overflow: hidden;
-            }
-            /* AI Chat & Summary Animations */
-            @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-            .ai-animate { animation: fadeIn 0.4s ease-out forwards; }
-            .typing-dot { animation: typing 1.4s infinite ease-in-out both; }
-            .typing-dot:nth-child(1) { animation-delay: -0.32s; }
-            .typing-dot:nth-child(2) { animation-delay: -0.16s; }
-            @keyframes typing { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
-        </style>
-    </head>
-    <body class="antialiased selection:bg-brand selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .line-clamp-3 {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;  
+            overflow: hidden;
+        }
+        /* AI Chat & Summary Animations */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .ai-animate { animation: fadeIn 0.4s ease-out forwards; }
+        .typing-dot { animation: typing 1.4s infinite ease-in-out both; }
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes typing { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+        
+        /* 記事カードのフェードアニメーション用 */
+        .article-card {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-brand selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
 
-        <!-- Background Effects -->
-        <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
-            <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-brand/10 rounded-full blur-[120px]"></div>
-            <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-accent/10 rounded-full blur-[100px]"></div>
-        </div>
+    <!-- Background Effects -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-brand/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-accent/10 rounded-full blur-[100px]"></div>
+    </div>
 
-        <!-- Minimal Navigation -->
-        <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between items-center h-20">
-                    <a href="index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
-                        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-accent flex items-center justify-center">
-                            <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
-                        </div>
-                        <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
-                    </a>
-                    <div class="flex items-center gap-6">
-                        <a href="index.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
-                            <i data-lucide="arrow-left" class="w-4 h-4"></i>
-                            <span class="hidden sm:inline">トップページへ戻る</span>
-                        </a>
-                        <a href="demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
-                            相談 or デモ予約
-                        </a>
+    <!-- Minimal Navigation -->
+    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-accent flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
                     </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="index.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        <span class="hidden sm:inline">トップページへ戻る</span>
+                    </a>
+                    <a href="demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                        相談 or デモ予約
+                    </a>
                 </div>
             </div>
-        </nav>
+        </div>
+    </nav>
 
-        <!-- Main Content -->
-        <main class="flex-grow py-12 px-4 sm:px-6">
-            <div class="max-w-5xl mx-auto">
-                
-                <div class="mb-12 text-center">
-                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-brand/30 bg-brand/10 text-brand-light text-xs font-semibold tracking-wide mb-4">
-                        <i data-lucide="newspaper" class="w-3.5 h-3.5"></i>
-                        News & Insights
-                    </div>
-                    <h1 class="text-3xl md:text-4xl font-bold tracking-tight mb-4">ニュース・インサイト</h1>
-                    <p class="text-slate-400 max-w-2xl mx-auto">
-                        Auto PSIRT Cloudに関する最新情報や、自動車業界のセキュリティ（UN-R155、SBOM、VSOC等）に関する専門的なインサイトをお届けします。
-                    </p>
+    <!-- Main Content -->
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <div class="max-w-5xl mx-auto">
+            
+            <div class="mb-12 text-center">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-brand/30 bg-brand/10 text-brand-light text-xs font-semibold tracking-wide mb-4">
+                    <i data-lucide="newspaper" class="w-3.5 h-3.5"></i>
+                    News & Insights
                 </div>
+                <h1 class="text-3xl md:text-4xl font-bold tracking-tight mb-4">ニュース・インサイト</h1>
+                <p class="text-slate-400 max-w-2xl mx-auto">
+                    Auto PSIRT Cloudに関する最新情報や、自動車業界のセキュリティ（UN-R155、SBOM、VSOC等）に関する実務ナレッジをお届けします。
+                </p>
+            </div>
 
-                <!-- フィルタータブ (見た目のみのモックアップ) -->
-                <div class="flex flex-wrap justify-center gap-2 mb-10">
-                    <button class="px-5 py-2 rounded-full text-sm font-medium bg-brand text-white shadow-lg shadow-brand/20 transition-colors">
-                        すべて
-                    </button>
-                    <button class="px-5 py-2 rounded-full text-sm font-medium bg-navy-800 border border-white/10 text-slate-300 hover:bg-white/5 transition-colors">
-                        入門解説
-                    </button>
-                    <button class="px-5 py-2 rounded-full text-sm font-medium bg-navy-800 border border-white/10 text-slate-300 hover:bg-white/5 transition-colors">
-                        実務ガイド
-                    </button>
-                    <button class="px-5 py-2 rounded-full text-sm font-medium bg-navy-800 border border-white/10 text-slate-300 hover:bg-white/5 transition-colors">
-                        実務テンプレ
-                    </button>
-                    <button class="px-5 py-2 rounded-full text-sm font-medium bg-navy-800 border border-white/10 text-slate-300 hover:bg-white/5 transition-colors">
-                        お知らせ
-                    </button>
-                </div>
+            <!-- フィルタータブ (機能実装版) -->
+            <div class="flex flex-wrap justify-center gap-2 mb-10">
+                <button onclick="filterArticles('すべて', this)" class="filter-btn px-5 py-2 rounded-full text-sm font-medium bg-brand text-white shadow-lg shadow-brand/20 transition-colors">
+                    すべて
+                </button>
+                <button onclick="filterArticles('入門解説', this)" class="filter-btn px-5 py-2 rounded-full text-sm font-medium bg-navy-800 border border-white/10 text-slate-300 hover:bg-white/5 transition-colors">
+                    入門解説
+                </button>
+                <button onclick="filterArticles('実務ガイド', this)" class="filter-btn px-5 py-2 rounded-full text-sm font-medium bg-navy-800 border border-white/10 text-slate-300 hover:bg-white/5 transition-colors">
+                    実務ガイド
+                </button>
+                <button onclick="filterArticles('実務テンプレ', this)" class="filter-btn px-5 py-2 rounded-full text-sm font-medium bg-navy-800 border border-white/10 text-slate-300 hover:bg-white/5 transition-colors">
+                    実務テンプレ
+                </button>
+                <button onclick="filterArticles('お知らせ', this)" class="filter-btn px-5 py-2 rounded-full text-sm font-medium bg-navy-800 border border-white/10 text-slate-300 hover:bg-white/5 transition-colors">
+                    お知らせ
+                </button>
+            </div>
+
+            <!-- 空の状態のメッセージ (非表示) -->
+            <div id="empty-state" class="hidden text-center py-20">
+                <i data-lucide="inbox" class="w-12 h-12 text-slate-600 mx-auto mb-4"></i>
+                <h3 class="text-xl font-bold text-slate-300 mb-2">該当する記事がありません</h3>
+                <p class="text-slate-500">現在、このカテゴリには記事がありません。他のカテゴリをお試しください。</p>
+            </div>
 
             <!-- 記事一覧グリッド -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="article-grid">
                 
-                <!-- 記事カード 1 (PSIRT完全ガイド) -->
-                <a href="/psirt/automotive-supplier-guide/" class="glass-card rounded-2xl overflow-hidden group hover:-translate-y-1 hover:border-brand/50 transition-all duration-300 flex flex-col h-full bg-navy-900/60">
+                <!-- 記事1：PSIRT完全ガイド -->
+                <a href="/psirt/automotive-supplier-guide/" data-category="実務ガイド" class="article-card glass-card rounded-2xl overflow-hidden group hover:-translate-y-1 hover:border-brand/50 transition-all duration-300 flex flex-col h-full bg-navy-900/60">
                     <div class="relative h-48 overflow-hidden bg-navy-800 border-b border-white/5">
                         <div class="absolute inset-0 bg-gradient-to-br from-brand/20 to-accent/20 group-hover:scale-105 transition-transform duration-500"></div>
                         <div class="absolute inset-0 flex items-center justify-center opacity-50 group-hover:opacity-80 transition-opacity">
                             <i data-lucide="book-open" class="w-16 h-16 text-white"></i>
                         </div>
                         <div class="absolute top-3 left-3 flex gap-2">
-                            <span class="bg-accent/80 backdrop-blur-md text-white text-xs font-bold px-2.5 py-1 rounded">インサイト</span>
+                            <span class="bg-accent/80 backdrop-blur-md text-white text-xs font-bold px-2.5 py-1 rounded">実務ガイド</span>
                         </div>
                     </div>
                     <div class="p-6 flex flex-col flex-grow">
@@ -161,7 +173,7 @@
                             自動車サプライヤーのPSIRT完全ガイド：UN-R155/ISO 21434対応を兼務で回す方法
                         </h2>
                         <p class="text-sm text-slate-400 leading-relaxed line-clamp-3 mb-4 flex-grow">
-                            OEMから「PSIRT体制を示してください」「SBOMを提出してください」と言われ困っていませんか？兼務でも回る最小体制や運用フローを実務目線で解説します。
+                            OEMから「PSIRT体制を示してください」と言われ困っていませんか？兼務でも回る最小体制や運用フローを実務目線で解説します。
                         </p>
                         <div class="flex items-center justify-between w-full mt-auto pt-4 border-t border-white/5">
                             <div class="flex items-center text-brand-light text-sm font-bold group-hover:gap-2 transition-all">
@@ -175,15 +187,15 @@
                     </div>
                 </a>
 
-                <!-- 記事カード 2 (PSIRTとは) -->
-                <a href="/psirt/what-is-psirt/" class="glass-card rounded-2xl overflow-hidden group hover:-translate-y-1 hover:border-brand/50 transition-all duration-300 flex flex-col h-full bg-navy-900/60">
+                <!-- 記事2：PSIRTとは -->
+                <a href="/psirt/what-is-psirt/" data-category="入門解説" class="article-card glass-card rounded-2xl overflow-hidden group hover:-translate-y-1 hover:border-brand/50 transition-all duration-300 flex flex-col h-full bg-navy-900/60">
                     <div class="relative h-48 overflow-hidden bg-navy-800 border-b border-white/5">
                         <div class="absolute inset-0 bg-gradient-to-br from-purple-500/20 to-brand/20 group-hover:scale-105 transition-transform duration-500"></div>
                         <div class="absolute inset-0 flex items-center justify-center opacity-50 group-hover:opacity-80 transition-opacity">
                             <i data-lucide="help-circle" class="w-16 h-16 text-white"></i>
                         </div>
                         <div class="absolute top-3 left-3 flex gap-2">
-                            <span class="bg-accent/80 backdrop-blur-md text-white text-xs font-bold px-2.5 py-1 rounded">インサイト</span>
+                            <span class="bg-blue-500/80 backdrop-blur-md text-white text-xs font-bold px-2.5 py-1 rounded">入門解説</span>
                         </div>
                     </div>
                     <div class="p-6 flex flex-col flex-grow">
@@ -208,15 +220,15 @@
                     </div>
                 </a>
 
-                <!-- 記事カード 3 (SBOM完全ガイド) -->
-                <a href="/psirt/sbom-complete-guide/" class="glass-card rounded-2xl overflow-hidden group hover:-translate-y-1 hover:border-brand/50 transition-all duration-300 flex flex-col h-full bg-navy-900/60">
+                <!-- 記事3：SBOM完全ガイド -->
+                <a href="/psirt/sbom-complete-guide/" data-category="実務ガイド" class="article-card glass-card rounded-2xl overflow-hidden group hover:-translate-y-1 hover:border-brand/50 transition-all duration-300 flex flex-col h-full bg-navy-900/60">
                     <div class="relative h-48 overflow-hidden bg-navy-800 border-b border-white/5">
                         <div class="absolute inset-0 bg-gradient-to-br from-brand/20 to-emerald-500/20 group-hover:scale-105 transition-transform duration-500"></div>
                         <div class="absolute inset-0 flex items-center justify-center opacity-50 group-hover:opacity-80 transition-opacity">
                             <i data-lucide="table" class="w-16 h-16 text-white"></i>
                         </div>
                         <div class="absolute top-3 left-3 flex gap-2">
-                            <span class="bg-accent/80 backdrop-blur-md text-white text-xs font-bold px-2.5 py-1 rounded">インサイト</span>
+                            <span class="bg-accent/80 backdrop-blur-md text-white text-xs font-bold px-2.5 py-1 rounded">実務ガイド</span>
                         </div>
                     </div>
                     <div class="p-6 flex flex-col flex-grow">
@@ -241,15 +253,15 @@
                     </div>
                 </a>
 
-                <!-- 記事カード 4 (SBOMとは) -->
-                <a href="/psirt/what-is-sbom/" class="glass-card rounded-2xl overflow-hidden group hover:-translate-y-1 hover:border-brand/50 transition-all duration-300 flex flex-col h-full bg-navy-900/60">
+                <!-- 記事4：SBOMとは -->
+                <a href="/psirt/what-is-sbom/" data-category="入門解説" class="article-card glass-card rounded-2xl overflow-hidden group hover:-translate-y-1 hover:border-brand/50 transition-all duration-300 flex flex-col h-full bg-navy-900/60">
                     <div class="relative h-48 overflow-hidden bg-navy-800 border-b border-white/5">
                         <div class="absolute inset-0 bg-gradient-to-br from-brand/20 to-blue-500/20 group-hover:scale-105 transition-transform duration-500"></div>
                         <div class="absolute inset-0 flex items-center justify-center opacity-50 group-hover:opacity-80 transition-opacity">
                             <i data-lucide="book-open-check" class="w-16 h-16 text-white"></i>
                         </div>
                         <div class="absolute top-3 left-3 flex gap-2">
-                            <span class="bg-accent/80 backdrop-blur-md text-white text-xs font-bold px-2.5 py-1 rounded">入門解説</span>
+                            <span class="bg-blue-500/80 backdrop-blur-md text-white text-xs font-bold px-2.5 py-1 rounded">入門解説</span>
                         </div>
                     </div>
                     <div class="p-6 flex flex-col flex-grow">
@@ -274,15 +286,15 @@
                     </div>
                 </a>
                 
-                <!-- 記事カード 5 (CVEトリアージ＆VEX実務) -->
-                <a href="/psirt/cve-triage-vex-guide/" class="glass-card rounded-2xl overflow-hidden group hover:-translate-y-1 hover:border-brand/50 transition-all duration-300 flex flex-col h-full bg-navy-900/60">
+                <!-- 記事5：CVEトリアージ＆VEX実務 -->
+                <a href="/psirt/cve-triage-vex-guide/" data-category="実務ガイド" class="article-card glass-card rounded-2xl overflow-hidden group hover:-translate-y-1 hover:border-brand/50 transition-all duration-300 flex flex-col h-full bg-navy-900/60">
                     <div class="relative h-48 overflow-hidden bg-navy-800 border-b border-white/5">
                         <div class="absolute inset-0 bg-gradient-to-br from-brand/20 to-orange-500/20 group-hover:scale-105 transition-transform duration-500"></div>
                         <div class="absolute inset-0 flex items-center justify-center opacity-50 group-hover:opacity-80 transition-opacity">
                             <i data-lucide="filter" class="w-16 h-16 text-white"></i>
                         </div>
                         <div class="absolute top-3 left-3 flex gap-2">
-                            <span class="bg-accent/80 backdrop-blur-md text-white text-xs font-bold px-2.5 py-1 rounded">インサイト</span>
+                            <span class="bg-accent/80 backdrop-blur-md text-white text-xs font-bold px-2.5 py-1 rounded">実務ガイド</span>
                         </div>
                     </div>
                     <div class="p-6 flex flex-col flex-grow">
@@ -306,16 +318,16 @@
                         <div class="ai-summary-container hidden mt-4 p-3 bg-navy-800/90 rounded-lg border border-white/10 text-sm text-slate-300 relative z-10 shadow-inner"></div>
                     </div>
                 </a>
-                
-                <!-- 新しい記事カード (CVEとは) -->
-                <a href="/psirt/what-is-cve/" class="glass-card rounded-2xl overflow-hidden group hover:-translate-y-1 hover:border-brand/50 transition-all duration-300 flex flex-col h-full bg-navy-900/60">
+
+                <!-- 記事6：CVEとは -->
+                <a href="/psirt/what-is-cve/" data-category="入門解説" class="article-card glass-card rounded-2xl overflow-hidden group hover:-translate-y-1 hover:border-brand/50 transition-all duration-300 flex flex-col h-full bg-navy-900/60">
                     <div class="relative h-48 overflow-hidden bg-navy-800 border-b border-white/5">
                         <div class="absolute inset-0 bg-gradient-to-br from-brand/20 to-purple-500/20 group-hover:scale-105 transition-transform duration-500"></div>
                         <div class="absolute inset-0 flex items-center justify-center opacity-50 group-hover:opacity-80 transition-opacity">
                             <i data-lucide="hash" class="w-16 h-16 text-white"></i>
                         </div>
                         <div class="absolute top-3 left-3 flex gap-2">
-                            <span class="bg-accent/80 backdrop-blur-md text-white text-xs font-bold px-2.5 py-1 rounded">入門解説</span>
+                            <span class="bg-blue-500/80 backdrop-blur-md text-white text-xs font-bold px-2.5 py-1 rounded">入門解説</span>
                         </div>
                     </div>
                     <div class="p-6 flex flex-col flex-grow">
@@ -340,8 +352,8 @@
                     </div>
                 </a>
                 
-                <!-- 新しい記事カード (OEM調査依頼・監査対応) -->
-                <a href="/psirt/audit-investigation-response-guide/" class="glass-card rounded-2xl overflow-hidden group hover:-translate-y-1 hover:border-brand/50 transition-all duration-300 flex flex-col h-full bg-navy-900/60">
+                <!-- 記事7：OEM調査依頼・監査対応 -->
+                <a href="/psirt/audit-investigation-response-guide/" data-category="実務ガイド" class="article-card glass-card rounded-2xl overflow-hidden group hover:-translate-y-1 hover:border-brand/50 transition-all duration-300 flex flex-col h-full bg-navy-900/60">
                     <div class="relative h-48 overflow-hidden bg-navy-800 border-b border-white/5">
                         <div class="absolute inset-0 bg-gradient-to-br from-brand/20 to-teal-500/20 group-hover:scale-105 transition-transform duration-500"></div>
                         <div class="absolute inset-0 flex items-center justify-center opacity-50 group-hover:opacity-80 transition-opacity">
@@ -373,8 +385,8 @@
                     </div>
                 </a>
 
-                <!-- 新しい記事カード (初動対応2時間) -->
-                <a href="/psirt/first-response-2hours/" class="glass-card rounded-2xl overflow-hidden group hover:-translate-y-1 hover:border-brand/50 transition-all duration-300 flex flex-col h-full bg-navy-900/60">
+                <!-- 記事8：初動対応2時間 -->
+                <a href="/psirt/first-response-2hours/" data-category="実務ガイド" class="article-card glass-card rounded-2xl overflow-hidden group hover:-translate-y-1 hover:border-brand/50 transition-all duration-300 flex flex-col h-full bg-navy-900/60">
                     <div class="relative h-48 overflow-hidden bg-navy-800 border-b border-white/5">
                         <div class="absolute inset-0 bg-gradient-to-br from-brand/20 to-red-500/20 group-hover:scale-105 transition-transform duration-500"></div>
                         <div class="absolute inset-0 flex items-center justify-center opacity-50 group-hover:opacity-80 transition-opacity">
@@ -406,8 +418,8 @@
                     </div>
                 </a>
 
-                <!-- 新しい記事カード (PSIRT最小体制) -->
-                <a href="/psirt/minimum-team-1-3/" class="glass-card rounded-2xl overflow-hidden group hover:-translate-y-1 hover:border-brand/50 transition-all duration-300 flex flex-col h-full bg-navy-900/60">
+                <!-- 記事9：PSIRT最小体制 -->
+                <a href="/psirt/minimum-team-1-3/" data-category="実務ガイド" class="article-card glass-card rounded-2xl overflow-hidden group hover:-translate-y-1 hover:border-brand/50 transition-all duration-300 flex flex-col h-full bg-navy-900/60">
                     <div class="relative h-48 overflow-hidden bg-navy-800 border-b border-white/5">
                         <div class="absolute inset-0 bg-gradient-to-br from-brand/20 to-sky-500/20 group-hover:scale-105 transition-transform duration-500"></div>
                         <div class="absolute inset-0 flex items-center justify-center opacity-50 group-hover:opacity-80 transition-opacity">
@@ -438,15 +450,16 @@
                         <div class="ai-summary-container hidden mt-4 p-3 bg-navy-800/90 rounded-lg border border-white/10 text-sm text-slate-300 relative z-10 shadow-inner"></div>
                     </div>
                 </a>
-                <!-- 新しい記事カード (PSIRT立上げチェックリスト) -->
-                <a href="/psirt/launch-checklist/" class="glass-card rounded-2xl overflow-hidden group hover:-translate-y-1 hover:border-brand/50 transition-all duration-300 flex flex-col h-full bg-navy-900/60">
+
+                <!-- 記事10：PSIRT立上げチェックリスト -->
+                <a href="/psirt/launch-checklist/" data-category="実務テンプレ" class="article-card glass-card rounded-2xl overflow-hidden group hover:-translate-y-1 hover:border-brand/50 transition-all duration-300 flex flex-col h-full bg-navy-900/60">
                     <div class="relative h-48 overflow-hidden bg-navy-800 border-b border-white/5">
                         <div class="absolute inset-0 bg-gradient-to-br from-brand/20 to-emerald-500/20 group-hover:scale-105 transition-transform duration-500"></div>
                         <div class="absolute inset-0 flex items-center justify-center opacity-50 group-hover:opacity-80 transition-opacity">
                             <i data-lucide="list-todo" class="w-16 h-16 text-white"></i>
                         </div>
                         <div class="absolute top-3 left-3 flex gap-2">
-                            <span class="bg-accent/80 backdrop-blur-md text-white text-xs font-bold px-2.5 py-1 rounded">実務テンプレ</span>
+                            <span class="bg-emerald-500/80 backdrop-blur-md text-white text-xs font-bold px-2.5 py-1 rounded">実務テンプレ</span>
                         </div>
                     </div>
                     <div class="p-6 flex flex-col flex-grow">
@@ -471,15 +484,15 @@
                     </div>
                 </a>
                 
-                <!-- 新しい記事カード (SBOMとは サプライヤー版) -->
-                <a href="/psirt/what-is-sbom-supplier/" class="glass-card rounded-2xl overflow-hidden group hover:-translate-y-1 hover:border-brand/50 transition-all duration-300 flex flex-col h-full bg-navy-900/60">
+                <!-- 記事11：SBOMとは（部品メーカー版） -->
+                <a href="/psirt/what-is-sbom-supplier/" data-category="入門解説" class="article-card glass-card rounded-2xl overflow-hidden group hover:-translate-y-1 hover:border-brand/50 transition-all duration-300 flex flex-col h-full bg-navy-900/60">
                     <div class="relative h-48 overflow-hidden bg-navy-800 border-b border-white/5">
                         <div class="absolute inset-0 bg-gradient-to-br from-brand/20 to-emerald-500/20 group-hover:scale-105 transition-transform duration-500"></div>
                         <div class="absolute inset-0 flex items-center justify-center opacity-50 group-hover:opacity-80 transition-opacity">
                             <i data-lucide="package-search" class="w-16 h-16 text-white"></i>
                         </div>
                         <div class="absolute top-3 left-3 flex gap-2">
-                            <span class="bg-accent/80 backdrop-blur-md text-white text-xs font-bold px-2.5 py-1 rounded">入門解説</span>
+                            <span class="bg-blue-500/80 backdrop-blur-md text-white text-xs font-bold px-2.5 py-1 rounded">入門解説</span>
                         </div>
                     </div>
                     <div class="p-6 flex flex-col flex-grow">
@@ -504,15 +517,15 @@
                     </div>
                 </a>
                 
-                <!-- 新しい記事カード (UN-R155とは) -->
-                <a href="/psirt/what-is-un-r155/" class="glass-card rounded-2xl overflow-hidden group hover:-translate-y-1 hover:border-brand/50 transition-all duration-300 flex flex-col h-full bg-navy-900/60">
+                <!-- 記事12：UN-R155とは -->
+                <a href="/psirt/what-is-un-r155/" data-category="入門解説" class="article-card glass-card rounded-2xl overflow-hidden group hover:-translate-y-1 hover:border-brand/50 transition-all duration-300 flex flex-col h-full bg-navy-900/60">
                     <div class="relative h-48 overflow-hidden bg-navy-800 border-b border-white/5">
                         <div class="absolute inset-0 bg-gradient-to-br from-brand/20 to-yellow-500/20 group-hover:scale-105 transition-transform duration-500"></div>
                         <div class="absolute inset-0 flex items-center justify-center opacity-50 group-hover:opacity-80 transition-opacity">
                             <i data-lucide="gavel" class="w-16 h-16 text-white"></i>
                         </div>
                         <div class="absolute top-3 left-3 flex gap-2">
-                            <span class="bg-accent/80 backdrop-blur-md text-white text-xs font-bold px-2.5 py-1 rounded">入門解説</span>
+                            <span class="bg-blue-500/80 backdrop-blur-md text-white text-xs font-bold px-2.5 py-1 rounded">入門解説</span>
                         </div>
                     </div>
                     <div class="p-6 flex flex-col flex-grow">
@@ -537,8 +550,8 @@
                     </div>
                 </a>
                 
-                <!-- 新しい記事カード (CVE/CVSSの読み方) -->
-                <a href="/psirt/how-to-read-cve-cvss/" class="glass-card rounded-2xl overflow-hidden group hover:-translate-y-1 hover:border-brand/50 transition-all duration-300 flex flex-col h-full bg-navy-900/60">
+                <!-- 記事13：CVE/CVSSの読み方 -->
+                <a href="/psirt/how-to-read-cve-cvss/" data-category="実務ガイド" class="article-card glass-card rounded-2xl overflow-hidden group hover:-translate-y-1 hover:border-brand/50 transition-all duration-300 flex flex-col h-full bg-navy-900/60">
                     <div class="relative h-48 overflow-hidden bg-navy-800 border-b border-white/5">
                         <div class="absolute inset-0 bg-gradient-to-br from-brand/20 to-purple-500/20 group-hover:scale-105 transition-transform duration-500"></div>
                         <div class="absolute inset-0 flex items-center justify-center opacity-50 group-hover:opacity-80 transition-opacity">
@@ -570,15 +583,15 @@
                     </div>
                 </a>
                 
-                <!-- 新しい記事カード (PSIRT通知フローSOP（Standard Operating Procedure）テンプレ) -->
-                <a href="/psirt/notification-flow-sop-template/" class="glass-card rounded-2xl overflow-hidden group hover:-translate-y-1 hover:border-brand/50 transition-all duration-300 flex flex-col h-full bg-navy-900/60">
+                <!-- 記事14：PSIRT通知フローSOPテンプレ -->
+                <a href="/psirt/notification-flow-sop-template/" data-category="実務テンプレ" class="article-card glass-card rounded-2xl overflow-hidden group hover:-translate-y-1 hover:border-brand/50 transition-all duration-300 flex flex-col h-full bg-navy-900/60">
                     <div class="relative h-48 overflow-hidden bg-navy-800 border-b border-white/5">
                         <div class="absolute inset-0 bg-gradient-to-br from-brand/20 to-indigo-500/20 group-hover:scale-105 transition-transform duration-500"></div>
                         <div class="absolute inset-0 flex items-center justify-center opacity-50 group-hover:opacity-80 transition-opacity">
                             <i data-lucide="git-merge" class="w-16 h-16 text-white"></i>
                         </div>
                         <div class="absolute top-3 left-3 flex gap-2">
-                            <span class="bg-accent/80 backdrop-blur-md text-white text-xs font-bold px-2.5 py-1 rounded">実務テンプレ</span>
+                            <span class="bg-emerald-500/80 backdrop-blur-md text-white text-xs font-bold px-2.5 py-1 rounded">実務テンプレ</span>
                         </div>
                     </div>
                     <div class="p-6 flex flex-col flex-grow">
@@ -586,7 +599,7 @@
                             <i data-lucide="calendar" class="w-3.5 h-3.5"></i> 2026.03.06
                         </time>
                         <h2 class="text-lg font-bold text-slate-100 mb-3 group-hover:text-brand-light transition-colors line-clamp-2">
-                            PSIRT通知フローSOP（Standard Operating Procedure）テンプレ（受付→トリアージ→公表）｜そのまま使える雛形
+                            PSIRT通知フローSOP（標準作業手順書）テンプレ｜そのまま使える雛形
                         </h2>
                         <p class="text-sm text-slate-400 leading-relaxed line-clamp-3 mb-4 flex-grow">
                             兼務でも回る最小の役割分担、SLA、証跡設計、OEM照会への一次回答テンプレまで網羅。監査で通る“運用の型”をそのまま社内に取り込めます。
@@ -595,7 +608,7 @@
                             <div class="flex items-center text-brand-light text-sm font-bold group-hover:gap-2 transition-all">
                                 続きを読む <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i>
                             </div>
-                            <button onclick="event.preventDefault(); summarizeArticle(this, 'PSIRT通知フローSOPテンプレ（受付→トリアージ→公表）｜そのまま使える雛形')" class="flex items-center gap-1.5 px-3 py-1.5 bg-brand/10 hover:bg-brand/20 text-brand-light border border-brand/30 rounded-lg transition-colors text-xs font-bold z-10 relative">
+                            <button onclick="event.preventDefault(); summarizeArticle(this, 'PSIRT通知フローSOP（標準作業手順書）テンプレ｜そのまま使える雛形')" class="flex items-center gap-1.5 px-3 py-1.5 bg-brand/10 hover:bg-brand/20 text-brand-light border border-brand/30 rounded-lg transition-colors text-xs font-bold z-10 relative">
                                 ✨ AI要約
                             </button>
                         </div>
@@ -603,15 +616,15 @@
                     </div>
                 </a>
                 
-                <!-- 新しい記事カード (回答書に必ず入れるべき項目) -->
-                <a href="/psirt/response-report-must-have-items/" class="glass-card rounded-2xl overflow-hidden group hover:-translate-y-1 hover:border-brand/50 transition-all duration-300 flex flex-col h-full bg-navy-900/60">
+                <!-- 記事15：回答書に必ず入れるべき項目 -->
+                <a href="/psirt/response-report-must-have-items/" data-category="実務テンプレ" class="article-card glass-card rounded-2xl overflow-hidden group hover:-translate-y-1 hover:border-brand/50 transition-all duration-300 flex flex-col h-full bg-navy-900/60">
                     <div class="relative h-48 overflow-hidden bg-navy-800 border-b border-white/5">
                         <div class="absolute inset-0 bg-gradient-to-br from-brand/20 to-teal-500/20 group-hover:scale-105 transition-transform duration-500"></div>
                         <div class="absolute inset-0 flex items-center justify-center opacity-50 group-hover:opacity-80 transition-opacity">
                             <i data-lucide="clipboard-check" class="w-16 h-16 text-white"></i>
                         </div>
                         <div class="absolute top-3 left-3 flex gap-2">
-                            <span class="bg-accent/80 backdrop-blur-md text-white text-xs font-bold px-2.5 py-1 rounded">実務テンプレ</span>
+                            <span class="bg-emerald-500/80 backdrop-blur-md text-white text-xs font-bold px-2.5 py-1 rounded">実務テンプレ</span>
                         </div>
                     </div>
                     <div class="p-6 flex flex-col flex-grow">
@@ -636,7 +649,9 @@
                     </div>
                 </a>
 
-                
+            </div>
+
+        </div>
     </main>
 
     <!-- AI Chat Widget -->
@@ -901,19 +916,46 @@
             processChatRequest(message);
         }
 
+        // --- Feature 3: Article Filtering ---
+        function filterArticles(category, clickedButton) {
+            // Update button styles
+            const buttons = document.querySelectorAll('.filter-btn');
+            buttons.forEach(btn => {
+                btn.className = 'filter-btn px-5 py-2 rounded-full text-sm font-medium bg-navy-800 border border-white/10 text-slate-300 hover:bg-white/5 transition-colors';
+            });
+            clickedButton.className = 'filter-btn px-5 py-2 rounded-full text-sm font-medium bg-brand text-white shadow-lg shadow-brand/20 transition-colors';
+
+            // Filter articles
+            const articles = document.querySelectorAll('.article-card');
+            let visibleCount = 0;
+            
+            articles.forEach(article => {
+                // 'opacity-0' と 'scale-95' でフワッと消すアニメーション
+                article.style.opacity = '0';
+                article.style.transform = 'scale(0.95)';
+                
+                setTimeout(() => {
+                    if (category === 'すべて' || article.dataset.category === category) {
+                        article.style.display = 'flex';
+                        // 少し遅らせて表示アニメーション
+                        setTimeout(() => {
+                            article.style.opacity = '1';
+                            article.style.transform = 'scale(1)';
+                        }, 50);
+                        visibleCount++;
+                    } else {
+                        article.style.display = 'none';
+                    }
+                    
+                    // Show empty state if no articles found
+                    const emptyState = document.getElementById('empty-state');
+                    if (emptyState) {
+                        emptyState.style.display = visibleCount === 0 ? 'block' : 'none';
+                    }
+                }, 300); // CSS transition duration に合わせる
+            });
+        }
+
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
