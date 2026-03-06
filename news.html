@@ -55,86 +55,89 @@
         }
         .glass-card {
             background: rgba(30, 41, 59, 0.4);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .line-clamp-3 {
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;  
-            overflow: hidden;
-        }
-        /* AI Chat & Summary Animations */
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .ai-animate { animation: fadeIn 0.4s ease-out forwards; }
-        .typing-dot { animation: typing 1.4s infinite ease-in-out both; }
-        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
-        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
-        @keyframes typing { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
-    </style>
-</head>
-<body class="antialiased selection:bg-brand selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            }
+            .line-clamp-3 {
+                display: -webkit-box;
+                -webkit-line-clamp: 3;
+                -webkit-box-orient: vertical;  
+                overflow: hidden;
+            }
+            /* AI Chat & Summary Animations */
+            @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+            .ai-animate { animation: fadeIn 0.4s ease-out forwards; }
+            .typing-dot { animation: typing 1.4s infinite ease-in-out both; }
+            .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+            .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+            @keyframes typing { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+        </style>
+    </head>
+    <body class="antialiased selection:bg-brand selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
 
-    <!-- Background Effects -->
-    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
-        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-brand/10 rounded-full blur-[120px]"></div>
-        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-accent/10 rounded-full blur-[100px]"></div>
-    </div>
-
-    <!-- Minimal Navigation -->
-    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-20">
-                <a href="index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
-                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-accent flex items-center justify-center">
-                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
-                    </div>
-                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
-                </a>
-                <div class="flex items-center gap-6">
-                    <a href="index.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
-                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
-                        <span class="hidden sm:inline">トップページへ戻る</span>
-                    </a>
-                    <a href="demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
-                        相談 or デモ予約
-                    </a>
-                </div>
-            </div>
+        <!-- Background Effects -->
+        <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+            <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-brand/10 rounded-full blur-[120px]"></div>
+            <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-accent/10 rounded-full blur-[100px]"></div>
         </div>
-    </nav>
 
-    <!-- Main Content -->
-    <main class="flex-grow py-12 px-4 sm:px-6">
-        <div class="max-w-5xl mx-auto">
-            
-            <div class="mb-12 text-center">
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-brand/30 bg-brand/10 text-brand-light text-xs font-semibold tracking-wide mb-4">
-                    <i data-lucide="newspaper" class="w-3.5 h-3.5"></i>
-                    News & Insights
+        <!-- Minimal Navigation -->
+        <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-20">
+                    <a href="index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-accent flex items-center justify-center">
+                            <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                        </div>
+                        <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                    </a>
+                    <div class="flex items-center gap-6">
+                        <a href="index.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                            <span class="hidden sm:inline">トップページへ戻る</span>
+                        </a>
+                        <a href="demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                            相談 or デモ予約
+                        </a>
+                    </div>
                 </div>
-                <h1 class="text-3xl md:text-4xl font-bold tracking-tight mb-4">ニュース・インサイト</h1>
-                <p class="text-slate-400 max-w-2xl mx-auto">
-                    Auto PSIRT Cloudに関する最新情報や、自動車業界のセキュリティ（UN-R155、SBOM、VSOC等）に関する専門的なインサイトをお届けします。
-                </p>
             </div>
+        </nav>
 
-            <!-- フィルタータブ (見た目のみのモックアップ) -->
-            <div class="flex flex-wrap justify-center gap-2 mb-10">
-                <button class="px-5 py-2 rounded-full text-sm font-medium bg-brand text-white shadow-lg shadow-brand/20 transition-colors">
-                    すべて
-                </button>
-                <button class="px-5 py-2 rounded-full text-sm font-medium bg-navy-800 border border-white/10 text-slate-300 hover:bg-white/5 transition-colors">
-                    お知らせ
-                </button>
-                <button class="px-5 py-2 rounded-full text-sm font-medium bg-navy-800 border border-white/10 text-slate-300 hover:bg-white/5 transition-colors">
-                    インサイト (note)
-                </button>
-                <button class="px-5 py-2 rounded-full text-sm font-medium bg-navy-800 border border-white/10 text-slate-300 hover:bg-white/5 transition-colors">
-                    プレスリリース
-                </button>
-            </div>
+        <!-- Main Content -->
+        <main class="flex-grow py-12 px-4 sm:px-6">
+            <div class="max-w-5xl mx-auto">
+                
+                <div class="mb-12 text-center">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-brand/30 bg-brand/10 text-brand-light text-xs font-semibold tracking-wide mb-4">
+                        <i data-lucide="newspaper" class="w-3.5 h-3.5"></i>
+                        News & Insights
+                    </div>
+                    <h1 class="text-3xl md:text-4xl font-bold tracking-tight mb-4">ニュース・インサイト</h1>
+                    <p class="text-slate-400 max-w-2xl mx-auto">
+                        Auto PSIRT Cloudに関する最新情報や、自動車業界のセキュリティ（UN-R155、SBOM、VSOC等）に関する専門的なインサイトをお届けします。
+                    </p>
+                </div>
+
+                <!-- フィルタータブ (見た目のみのモックアップ) -->
+                <div class="flex flex-wrap justify-center gap-2 mb-10">
+                    <button class="px-5 py-2 rounded-full text-sm font-medium bg-brand text-white shadow-lg shadow-brand/20 transition-colors">
+                        すべて
+                    </button>
+                    <button class="px-5 py-2 rounded-full text-sm font-medium bg-navy-800 border border-white/10 text-slate-300 hover:bg-white/5 transition-colors">
+                        入門解説
+                    </button>
+                    <button class="px-5 py-2 rounded-full text-sm font-medium bg-navy-800 border border-white/10 text-slate-300 hover:bg-white/5 transition-colors">
+                        実務ガイド
+                    </button>
+                    <button class="px-5 py-2 rounded-full text-sm font-medium bg-navy-800 border border-white/10 text-slate-300 hover:bg-white/5 transition-colors">
+                        実務テンプレ
+                    </button>
+                    <button class="px-5 py-2 rounded-full text-sm font-medium bg-navy-800 border border-white/10 text-slate-300 hover:bg-white/5 transition-colors">
+                        お知らせ
+                    </button>
+                </div>
 
             <!-- 記事一覧グリッド -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -901,6 +904,7 @@
     </script>
 </body>
 </html>
+
 
 
 
