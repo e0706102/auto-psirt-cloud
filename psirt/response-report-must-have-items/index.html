@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEOメタタグ -->
+    <title>回答書に必ず入れるべき項目｜OEM調査依頼・監査対応で通る書き方（証跡/SLA） | Auto PSIRT Cloud</title>
+    <meta name="description" content="OEM調査依頼・監査対応で「通る回答書」に必ず入れるべき項目を解説。結論→根拠→対応方針→証跡（エビデンス）→次回更新日の順で漏れなく書くコツ、SLA/期限の扱い、Excel質問票でも崩れないテンプレを紹介します。">
+    <meta name="keywords" content="回答書に必ず入れるべき項目, OEM調査依頼, 監査対応, 証跡, SLA">
+    <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/psirt/response-report-must-have-items/">
+    
+    <!-- OGPタグ (SNSシェア用) -->
+    <meta property="og:title" content="回答書に必ず入れるべき項目｜OEM調査依頼・監査対応で通る書き方">
+    <meta property="og:description" content="結論→根拠→対応方針→証跡の順で漏れなく書くコツと、そのまま使える回答書テンプレを公開。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/psirt/response-report-must-have-items/">
+    <meta property="og:site_name" content="Auto PSIRT Cloud">
+
+    <!-- ファビコン -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%233b82f6%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z%22/><path d=%22m9 12 2 2 4-4%22/></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0a0f1c',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        brand: {
+                            light: '#60a5fa',
+                            DEFAULT: '#3b82f6',
+                            dark: '#2563eb',
+                        },
+                        accent: {
+                            DEFAULT: '#06b6d4',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #60a5fa, #06b6d4);
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* 記事用カスタムスタイル */
+        .prose h2 {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-top: 3.5rem;
+            color: #f8fafc;
+        }
+        .prose h3 {
+            color: #e2e8f0;
+            margin-top: 2.5rem;
+            border-left: 3px solid #14b8a6; /* Teal系アクセント */
+            padding-left: 0.75rem;
+            font-size: 1.25rem;
+        }
+        .prose a {
+            color: #60a5fa;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .prose a:hover {
+            border-bottom-color: #60a5fa;
+        }
+        .prose strong {
+            color: #f8fafc;
+            background: linear-gradient(transparent 60%, rgba(20, 184, 166, 0.3) 40%);
+        }
+        .related-box {
+            background: rgba(30, 41, 59, 0.6);
+            border-left: 4px solid #14b8a6;
+            padding: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 2rem 0;
+        }
+        .list-box {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(20, 184, 166, 0.3);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-brand selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-brand/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-teal-500/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-accent flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="/news.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        ニュース一覧へ戻る
+                    </a>
+                    <a href="/demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                        相談 or デモ予約
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <article class="max-w-4xl mx-auto">
+            
+            <!-- パンくずリスト -->
+            <nav class="flex text-sm text-slate-400 mb-8" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/index.html" class="hover:text-white transition-colors">ホーム</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <a href="/news.html" class="hover:text-white transition-colors">ニュース・インサイト</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <span class="text-slate-500 truncate max-w-[200px] sm:max-w-none">回答書に必ず入れるべき項目</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- 記事ヘッダー -->
+            <header class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-teal-500/20 border border-teal-500/30 text-teal-400 text-xs font-bold px-3 py-1 rounded-full">実務テンプレ</span>
+                    <time class="text-slate-400 text-sm flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> 2026.03.06
+                    </time>
+                </div>
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
+                    回答書に必ず入れるべき項目<br/>
+                    <span class="text-2xl md:text-3xl text-slate-300 font-medium">（調査依頼・監査対応の方）</span>
+                </h1>
+                
+                <!-- 導入文 -->
+                <div class="text-lg text-slate-300 leading-relaxed p-6 bg-navy-800/50 rounded-2xl border border-white/5 space-y-4">
+                    <p>OEMから突然届く「調査依頼（照会・質問票）」や「監査」。</p>
+                    <p>Tier2〜Tier4の現場で一番詰まるのは、技術判断そのものより <strong>“回答書（提出物）の作り方”</strong> です。</p>
+                    <ul class="m-0 list-disc list-inside text-base">
+                        <li>何を書けば「回答したこと」になるのか</li>
+                        <li>影響なしをどう説明すればいいのか</li>
+                        <li>証跡（エビデンス）は何を付ければいいのか</li>
+                        <li>期限（SLA）に間に合う形で、どうまとめるのか</li>
+                    </ul>
+                    <p>結論から言うと、OEMが読みたいのは長文ではなく、<strong>結論と根拠と次のアクション</strong>です。</p>
+                    <p>この記事では、OEM調査依頼・監査対応で通りやすい「回答書に必ず入れるべき項目」を、兼務担当でも漏れない形でテンプレ化します。</p>
+                </div>
+            </header>
+
+            <!-- 記事本文 -->
+            <div class="glass-card p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl bg-navy-900/80 mb-16">
+                <div class="prose prose-invert prose-slate prose-lg max-w-none">
+                    
+                    <!-- 内部リンク①：全体像 -->
+                    <div class="related-box mt-0 border-l-brand">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="map" class="w-4 h-4"></i> 全体像を先に知りたい方へ</div>
+                        <p class="text-sm text-slate-300 mb-2">初動から回答書作成、証跡集めまでの全体フローを先に押さえたい方はこちら。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/audit-investigation-response-guide/" class="!text-brand-light hover:!text-brand">OEM調査依頼・監査対応完全ガイド</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>まず理解：OEMが“回答書”に求めている4点</h2>
+                    <p>OEM側が本当に欲しいのは、だいたいこの4つです。</p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-6">
+                        <div class="bg-navy-800 p-4 rounded-lg border border-white/5">
+                            <strong class="text-brand-light flex items-center gap-2 mb-1"><i data-lucide="check-circle" class="w-4 h-4"></i> 結論</strong>
+                            <span class="text-sm text-slate-300">影響あり / なし / 調査中（一次回答でも可）</span>
+                        </div>
+                        <div class="bg-navy-800 p-4 rounded-lg border border-white/5">
+                            <strong class="text-brand-light flex items-center gap-2 mb-1"><i data-lucide="target" class="w-4 h-4"></i> 対象範囲</strong>
+                            <span class="text-sm text-slate-300">どの製品・どの版数・どの出荷範囲の話か</span>
+                        </div>
+                        <div class="bg-navy-800 p-4 rounded-lg border border-white/5">
+                            <strong class="text-brand-light flex items-center gap-2 mb-1"><i data-lucide="search" class="w-4 h-4"></i> 根拠（証跡）</strong>
+                            <span class="text-sm text-slate-300">何を確認してそう判断したか（再現できる形）</span>
+                        </div>
+                        <div class="bg-navy-800 p-4 rounded-lg border border-white/5">
+                            <strong class="text-brand-light flex items-center gap-2 mb-1"><i data-lucide="arrow-right-circle" class="w-4 h-4"></i> 対応方針</strong>
+                            <span class="text-sm text-slate-300">いつまでに何をするか（次回更新日、暫定策、恒久策）</span>
+                        </div>
+                    </div>
+
+                    <p>逆に言うと、ここが揃っていれば、フォーマットがExcelでもPDFでも「回答として成立」しやすくなります。</p>
+
+                    <h2 class="border-b-2 border-teal-500 pb-2 mb-6 mt-12">回答書に必ず入れるべき項目（最小12項目）</h2>
+                    <p>以下は、OEM質問票（Excel）でも、文章回答（メール/PDF）でも共通で必要になる“骨格”です。迷ったらこの順に並べると、読みやすく・抜けにくくなります。</p>
+
+                    <div class="list-box space-y-6">
+                        <div>
+                            <h4 class="text-white font-bold mt-0 mb-1 flex items-center gap-2">1. 件名・案件ID（管理番号）</h4>
+                            <p class="text-sm text-slate-300 m-0 pl-6">OEM案件名 ／ 依頼番号 ／ 自社管理ID（チケットID）</p>
+                        </div>
+                        <div>
+                            <h4 class="text-white font-bold mt-0 mb-1 flex items-center gap-2">2. 依頼内容（何を聞かれているか）</h4>
+                            <p class="text-sm text-slate-300 m-0 pl-6">依頼の要点を1〜2行で要約<br><span class="text-slate-400">（長文の引用は不要。読む側の負担になる）</span></p>
+                        </div>
+                        <div>
+                            <h4 class="text-white font-bold mt-0 mb-1 flex items-center gap-2">3. 回答ステータス（一次/最終）</h4>
+                            <p class="text-sm text-slate-300 m-0 pl-6">一次回答なのか、最終回答なのか<br>次回更新予定日（調査中の場合は必須）</p>
+                        </div>
+                        <div class="bg-teal-500/10 p-4 rounded-lg border border-teal-500/30">
+                            <h4 class="text-teal-400 font-bold mt-0 mb-1 flex items-center gap-2">4. 結論（最初に書く）</h4>
+                            <p class="text-sm text-slate-300 m-0 pl-6">影響あり / 影響なし / 調査中<br>Yes/No形式なら最初にYes/Noを置く</p>
+                        </div>
+                        <div>
+                            <h4 class="text-white font-bold mt-0 mb-1 flex items-center gap-2">5. 対象範囲（版数が命）</h4>
+                            <p class="text-sm text-slate-300 m-0 pl-6">製品名、型番<br>ソフト版数 ／ ハード版数<br>出荷範囲（該当するなら）</p>
+                        </div>
+                        <div>
+                            <h4 class="text-white font-bold mt-0 mb-1 flex items-center gap-2">6. 影響範囲（どこがどうなる）</h4>
+                            <p class="text-sm text-slate-300 m-0 pl-6">影響が出る機能、構成要素<br>影響が出ない条件（設定無効、未使用など）<br><span class="text-slate-400">※ここは“説明可能な短文”でOK</span></p>
+                        </div>
+                        <div>
+                            <h4 class="text-white font-bold mt-0 mb-1 flex items-center gap-2">7. 根拠（何を見たか）</h4>
+                            <p class="text-sm text-slate-300 m-0 pl-6">SBOM/部品表/構成情報、設計資料（IF仕様、設定値）、テスト結果、変更履歴など<br><span class="text-slate-400">※“根拠の種類”を1行で書くだけでも強い</span></p>
+                        </div>
+                        <div>
+                            <h4 class="text-white font-bold mt-0 mb-1 flex items-center gap-2">8. 証跡（エビデンス）の参照情報</h4>
+                            <p class="text-sm text-slate-300 m-0 pl-6">添付ファイル名、または証跡ID／保管場所（フォルダ）／対象版数<br><span class="text-slate-400">（添付できない時ほど、ここが効きます）</span></p>
+                        </div>
+                        <div>
+                            <h4 class="text-white font-bold mt-0 mb-1 flex items-center gap-2">9. 暫定措置（ある場合）</h4>
+                            <p class="text-sm text-slate-300 m-0 pl-6">回避策、設定変更、運用対策（いつまで有効か）</p>
+                        </div>
+                        <div>
+                            <h4 class="text-white font-bold mt-0 mb-1 flex items-center gap-2">10. 恒久対策（修正方針）</h4>
+                            <p class="text-sm text-slate-300 m-0 pl-6">修正する/しない<br>修正するなら、対象版とリリース予定</p>
+                        </div>
+                        <div>
+                            <h4 class="text-white font-bold mt-0 mb-1 flex items-center gap-2">11. 期限（SLA）と提出日</h4>
+                            <p class="text-sm text-slate-300 m-0 pl-6">OEM提示期限<br>自社の一次/最終の予定（遅れるなら根拠と次回更新日）</p>
+                        </div>
+                        <div>
+                            <h4 class="text-white font-bold mt-0 mb-1 flex items-center gap-2">12. 連絡先・承認</h4>
+                            <p class="text-sm text-slate-300 m-0 pl-6">連絡窓口<br>承認者（監査や追加質問で効きます）</p>
+                        </div>
+                    </div>
+
+                    <p class="text-xl font-bold text-center text-teal-400 my-8">
+                        最重要：「結論→根拠→対応方針→次回更新日」<br class="hidden sm:block">さえ外さなければ、回答書は“通る”確率が上がります。
+                    </p>
+
+                    <h2>OEM指定フォーマット（Excel質問票）でも崩れない書き方</h2>
+                    <p>Excel質問票は、欄が細かく、どこに何を書いていいか迷いがちです。そのときは次の対応で“事故”が減ります。</p>
+
+                    <ul class="space-y-2">
+                        <li><strong>Yes/No欄：</strong> 結論だけを書き、詳細は備考へ</li>
+                        <li><strong>備考欄：</strong> 根拠（何を見たか）＋証跡ID＋次回更新日を短く</li>
+                        <li><strong>添付欄：</strong> 添付できない場合は「参照先（証跡フォルダURL/ID）」を明記</li>
+                        <li><strong>“未確定”の項目：</strong> 空欄にせず <strong>調査中＋更新日</strong> を入れる</li>
+                    </ul>
+
+                    <!-- 内部リンク②：Excelでも使える型 -->
+                    <div class="related-box border-l-brand">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="check-square" class="w-4 h-4"></i> 要点チェック</div>
+                        <p class="text-sm text-slate-300 mb-2">Excelでも文章でも転用できる“型”を短くまとめた記事はこちら。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="#" class="!text-brand-light hover:!text-brand">要点でわかる「OEMに答えるテンプレ」</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>そのまま使える：回答書テンプレ（コピペ用）</h2>
+                    <p>以下をそのまま貼って、<span class="placeholder-text">【 】</span>だけ埋めれば形になります。</p>
+
+                    <div class="bg-navy-900 p-6 md:p-8 rounded-xl border border-white/20 my-6 shadow-inner font-mono text-sm text-slate-300 whitespace-pre-wrap leading-relaxed">件名：<span class="placeholder-text">【OEM名】</span>調査依頼回答（案件ID：____）
+回答ステータス：一次回答／最終回答
+次回更新日：<span class="placeholder-text">【YYYY-MM-DD】</span>（調査中のとき必須）
+
+1. 結論（最初に書く）
+影響：<span class="placeholder-text">【あり／なし／調査中】</span>
+
+2. 対象範囲
+製品名：<span class="placeholder-text">【】</span>
+型番：<span class="placeholder-text">【】</span>
+対象版数：<span class="placeholder-text">【】</span>
+出荷範囲：<span class="placeholder-text">【】</span>（該当する場合）
+
+3. 根拠（何を確認したか）
+確認した情報：<span class="placeholder-text">【SBOM／部品表／設定／テスト／ログ 等】</span>
+判断理由（1〜3行）：<span class="placeholder-text">【】</span>
+
+4. 証跡（エビデンス）
+添付：<span class="placeholder-text">【ファイル名】</span> または
+参照：<span class="placeholder-text">【証跡ID／保管場所／対象版数】</span>
+
+5. 対応方針
+暫定措置：<span class="placeholder-text">【有／無】</span>（内容：____）
+恒久対策：<span class="placeholder-text">【有／無】</span>（計画：____、予定：____）
+
+6. 期限・連絡先
+OEM期限：<span class="placeholder-text">【】</span>
+提出日：<span class="placeholder-text">【】</span>
+連絡窓口：<span class="placeholder-text">【】</span>
+承認：<span class="placeholder-text">【役職・氏名】</span></div>
+
+                    <!-- 途中CTA（主CTA） -->
+                    <div class="bg-navy-800/50 p-6 md:p-8 rounded-2xl border border-teal-500/30 text-center my-10 shadow-[0_0_20px_rgba(20,184,166,0.1)]">
+                        <p class="text-slate-200 mb-6 font-medium text-lg">OEM調査依頼・監査対応のやり方を整理したい方はご相談ください。</p>
+                        <a href="/demo_form.html" class="inline-flex items-center gap-2 px-8 py-3.5 bg-brand hover:bg-brand-dark text-white rounded-full font-bold transition-all hover:-translate-y-1 shadow-lg shadow-brand/20">
+                            <i data-lucide="calendar" class="w-5 h-5"></i> 【無料】オンライン相談を予約する
+                        </a>
+                    </div>
+
+                    <h2>よくあるNG（これだけ避ければ“通る確率”が上がる）</h2>
+                    <ul class="space-y-3 my-6 list-none pl-0">
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>結論が最後まで出てこない</strong><br><span class="text-sm text-slate-400">（読む側が迷子になる）</span></div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>対象版数が書かれていない</strong><br><span class="text-sm text-slate-400">（追加質問で炎上する）</span></div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>「影響なし」だけで根拠がない</strong><br><span class="text-sm text-slate-400">（監査で崩れる）</span></div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>証跡が散らばって参照できない</strong><br><span class="text-sm text-slate-400">（再現性ゼロ）</span></div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>調査中のまま更新日がない</strong><br><span class="text-sm text-slate-400">（信頼が落ちる）</span></div></li>
+                    </ul>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2>FAQ：回答書の書き方について</h2>
+                    <div class="space-y-6 mt-6">
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q1. 回答書は最初に何を書けばいいですか？</strong>
+                            <p class="m-0 text-slate-300">最初に「結論（影響あり/なし/調査中）」を書きます。その次に対象範囲（製品名・版数）を置くと、読み手が理解しやすくなります。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q2. 「影響なし」をどう書けばOEMに通りますか？</strong>
+                            <p class="m-0 text-slate-300">「影響なし」だけでは弱いので、根拠（何を確認したか）と証跡（参照先）をセットで書きます。最低でも“根拠を1行＋証跡ID”を残すのがコツです。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q3. 調査中の場合、回答書はどう書けばいいですか？</strong>
+                            <p class="m-0 text-slate-300">調査中は問題ありません。ただし「次回更新日（いつ最終回答するか）」を必ず書きます。一次回答として状態と予定を返すと炎上しにくくなります。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q4. エビデンス（証跡）は全部添付しないといけませんか？</strong>
+                            <p class="m-0 text-slate-300">状況によります。添付できない場合でも「証跡ID／保管場所／対象版数」を回答書に明記できれば、監査や追加質問に耐えやすくなります。</p>
+                        </div>
+                    </div>
+
+                    <!-- 内部リンク③：更新方法について -->
+                    <div class="related-box border-l-brand mt-12">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="book-open" class="w-4 h-4"></i> 次に読む</div>
+                        <p class="text-sm text-slate-300 mb-2">回答書で“更新方法（OTA/現地/工場）”が問われやすい場合は、こちらの記事も参考にしてください。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="#" class="!text-brand-light hover:!text-brand">OTAが「？」な担当者向け解説</a></li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- CTA Section -->
+            <div class="glass-card rounded-3xl p-8 md:p-12 text-center border-t-4 border-t-teal-500 bg-navy-800/80 shadow-[0_0_40px_-10px_rgba(20,184,166,0.2)]">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">この「回答書の型」を、そのまま自動化しませんか？</h2>
+                <p class="text-slate-300 mb-8 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+                    <strong>Auto PSIRT Cloud</strong>なら、ウィザードに答えるだけで、この12項目を網羅した「OEMが納得する回答書」を自動生成できます。
+                </p>
+                <div class="flex justify-center">
+                    <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-navy-900 bg-white hover:bg-slate-200 transition-all duration-300 shadow-xl shadow-white/10 w-full sm:w-auto hover:-translate-y-1">
+                        <i class="w-5 h-5 text-teal-600" data-lucide="monitor-play"></i>
+                        OEM回答書作成の流れをデモで確認する
+                    </a>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/5 text-center text-sm text-slate-500 mt-auto bg-navy-900/80">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span class="font-bold text-slate-400">Auto PSIRT Cloud</span>
+            </div>
+            <p>&copy; 2026 Unimobilities株式会社. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
