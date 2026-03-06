@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEOメタタグ -->
+    <title>PSIRT通知フローSOPテンプレ（受付→トリアージ→公表）｜そのまま使える雛形 | Auto PSIRT Cloud</title>
+    <meta name="description" content="PSIRT通知フローのSOPテンプレ（受付→トリアージ→公表）を公開。兼務でも回る最小の役割分担、SLA、証跡（エビデンス）設計、OEM照会への一次回答テンプレまで網羅。監査で通る“運用の型”をそのまま社内に取り込めます。">
+    <meta name="keywords" content="PSIRT通知フローSOPテンプレ, PSIRT, 実務テンプレ">
+    <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/psirt/notification-flow-sop-template/">
+    
+    <!-- OGPタグ (SNSシェア用) -->
+    <meta property="og:title" content="PSIRT通知フローSOPテンプレ（受付→トリアージ→公表）">
+    <meta property="og:description" content="兼務体制でも回る、監査対応可能なPSIRT通知フローSOPの雛形を公開。コピペですぐ使えます。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/psirt/notification-flow-sop-template/">
+    <meta property="og:site_name" content="Auto PSIRT Cloud">
+
+    <!-- ファビコン -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%233b82f6%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z%22/><path d=%22m9 12 2 2 4-4%22/></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0a0f1c',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        brand: {
+                            light: '#60a5fa',
+                            DEFAULT: '#3b82f6',
+                            dark: '#2563eb',
+                        },
+                        accent: {
+                            DEFAULT: '#06b6d4',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #60a5fa, #06b6d4);
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* 記事用カスタムスタイル */
+        .prose h2 {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-top: 3.5rem;
+            color: #f8fafc;
+        }
+        .prose h3 {
+            color: #e2e8f0;
+            margin-top: 2.5rem;
+            border-left: 3px solid #6366f1; /* Indigo系アクセント */
+            padding-left: 0.75rem;
+            font-size: 1.25rem;
+        }
+        .prose a {
+            color: #60a5fa;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .prose a:hover {
+            border-bottom-color: #60a5fa;
+        }
+        .prose strong {
+            color: #f8fafc;
+            background: linear-gradient(transparent 60%, rgba(99, 102, 241, 0.3) 40%);
+        }
+        .related-box {
+            background: rgba(30, 41, 59, 0.6);
+            border-left: 4px solid #6366f1;
+            padding: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 2rem 0;
+        }
+        .sop-box {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: inset 0 2px 15px rgba(0,0,0,0.2);
+        }
+        .sop-section {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px dashed rgba(255,255,255,0.1);
+        }
+        .sop-section:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        .placeholder-text {
+            color: #a5b4fc;
+            background: rgba(99, 102, 241, 0.1);
+            padding: 0 0.25rem;
+            border-radius: 0.25rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-brand selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-brand/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-indigo-500/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-accent flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="/news.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        ニュース一覧へ戻る
+                    </a>
+                    <a href="/demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                        相談 or デモ予約
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <article class="max-w-4xl mx-auto">
+            
+            <!-- パンくずリスト -->
+            <nav class="flex text-sm text-slate-400 mb-8" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/index.html" class="hover:text-white transition-colors">ホーム</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <a href="/news.html" class="hover:text-white transition-colors">ニュース・インサイト</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <span class="text-slate-500 truncate max-w-[200px] sm:max-w-none">PSIRT通知フローSOP</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- 記事ヘッダー -->
+            <header class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-indigo-500/20 border border-indigo-500/30 text-indigo-400 text-xs font-bold px-3 py-1 rounded-full">実務テンプレ</span>
+                    <time class="text-slate-400 text-sm flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> 2026.03.06
+                    </time>
+                </div>
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
+                    PSIRT通知フローSOPテンプレ<br/>
+                    <span class="text-2xl md:text-3xl text-slate-300 font-medium">（受付→トリアージ→公表）</span>
+                </h1>
+                
+                <!-- 導入文 -->
+                <div class="text-lg text-slate-300 leading-relaxed p-6 bg-navy-800/50 rounded-2xl border border-white/5 space-y-4">
+                    <p>OEMからの照会、脆弱性（CVE）通知、研究者からの連絡――。<br>
+                    PSIRTの仕事は「来たものを正しく受け、期限内に、根拠付きで返す」ことに尽きます。</p>
+                    
+                    <p>ところが現場では、受付の入口が散らかる／トリアージが属人化する／“影響なし”の根拠が残らない／回答期限に追われる という形で破綻しがちです。</p>
+                    
+                    <p>そこで本記事では、そのまま社内運用に取り込める<strong>「PSIRT通知フローSOPテンプレ（受付→トリアージ→公表）」</strong> を提示します。兼務体制でも回るように、最小の役割分担・SLA・証跡（エビデンス）まで含めています。</p>
+                </div>
+            </header>
+
+            <!-- 記事本文 -->
+            <div class="glass-card p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl bg-navy-900/80 mb-16">
+                <div class="prose prose-invert prose-slate prose-lg max-w-none">
+                    
+                    <!-- 内部リンク①＆②：事前知識 -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-0 mb-10">
+                        <div class="bg-navy-800/50 p-5 rounded-xl border border-white/10">
+                            <h4 class="text-brand-light font-bold mt-0 mb-3 flex items-center gap-2"><i data-lucide="help-circle" class="w-5 h-5"></i> 用語の補足</h4>
+                            <p class="text-sm text-slate-300 mb-2">「PSIRTって結局なに？」を短く確認したい方はこちら。</p>
+                            <a href="/psirt/what-is-psirt/" class="text-sm font-bold !text-brand-light hover:!text-brand flex items-center gap-1"><i data-lucide="arrow-right" class="w-3 h-3"></i> PSIRTとは</a>
+                        </div>
+                        <div class="bg-navy-800/50 p-5 rounded-xl border border-white/10">
+                            <h4 class="text-indigo-400 font-bold mt-0 mb-3 flex items-center gap-2"><i data-lucide="map" class="w-5 h-5"></i> 全体像の把握</h4>
+                            <p class="text-sm text-slate-300 mb-2">PSIRT全体設計（体制、SBOM、CVE対応等）を先に押さえたい方はこちら。</p>
+                            <a href="/psirt/automotive-supplier-guide/" class="text-sm font-bold !text-indigo-400 hover:!text-indigo-300 flex items-center gap-1"><i data-lucide="arrow-right" class="w-3 h-3"></i> 参考ガイド：『PSIRT完全ガイド』</a>
+                        </div>
+                    </div>
+
+                    <h2>使い方（最短5分）</h2>
+                    <ol>
+                        <li>下のSOPテンプレを、社内のConfluence / Notion / Wordなどにコピペする</li>
+                        <li><span class="placeholder-text">【 】</span> の部分だけ埋める（窓口、役割、SLA、証跡フォルダ）</li>
+                        <li>まずは「受付→一次回答（調査中＋次回更新日）」まで運用開始する</li>
+                        <li>慣れたら「公表（外部通知）」パートを“必要な範囲だけ”有効化する</li>
+                    </ol>
+
+                    <h2 class="border-b-2 border-indigo-500 pb-2 mt-12 mb-6">PSIRT通知フローSOPテンプレ（雛形）</h2>
+
+                    <div class="sop-box">
+                        <div class="sop-section">
+                            <h4 class="text-white font-bold text-lg mb-4 flex items-center gap-2"><i data-lucide="file-text" class="w-5 h-5 text-indigo-400"></i> 0. 文書情報</h4>
+                            <ul class="m-0 list-none pl-0 space-y-1.5 text-slate-300 text-base">
+                                <li>文書名：PSIRT通知フローSOP</li>
+                                <li>版数：v<span class="placeholder-text">【1.0】</span></li>
+                                <li>作成：<span class="placeholder-text">【部署/氏名】</span></li>
+                                <li>承認：<span class="placeholder-text">【役職/氏名】</span></li>
+                                <li>適用開始日：<span class="placeholder-text">【YYYY-MM-DD】</span></li>
+                                <li>次回見直し：<span class="placeholder-text">【YYYY-MM-DD】</span>（最低 年1回）</li>
+                            </ul>
+                        </div>
+
+                        <div class="sop-section">
+                            <h4 class="text-white font-bold text-lg mb-4 flex items-center gap-2"><i data-lucide="target" class="w-5 h-5 text-indigo-400"></i> 1. 目的・適用範囲</h4>
+                            <p class="m-0 text-slate-300 text-base mb-2"><strong>目的：</strong>脆弱性/インシデントに関する通知を、期限内に根拠付きで処理し、OEM照会・監査に耐える証跡を残す</p>
+                            <p class="m-0 text-slate-300 text-base"><strong>対象：</strong>当社製品<span class="placeholder-text">【製品群A/B…】</span>、および当社が供給するソフトウェア/電子部品に関する脆弱性通知</p>
+                        </div>
+
+                        <div class="sop-section">
+                            <h4 class="text-white font-bold text-lg mb-4 flex items-center gap-2"><i data-lucide="users" class="w-5 h-5 text-indigo-400"></i> 2. 役割（最小の4役）</h4>
+                            <ul class="m-0 list-none pl-0 space-y-2 text-slate-300 text-base">
+                                <li><strong>受付（窓口）：</strong> <span class="placeholder-text">【品質保証 or 情シス】</span></li>
+                                <li><strong>技術評価（影響判定）：</strong> <span class="placeholder-text">【設計/ソフト】</span></li>
+                                <li><strong>対外回答（文書化・提出物）：</strong> <span class="placeholder-text">【品質保証】</span></li>
+                                <li><strong>承認（最終判断）：</strong> <span class="placeholder-text">【課長/部長】</span></li>
+                            </ul>
+                            <p class="text-sm text-slate-400 mt-2">※1〜3人兼務でも可。ただし「承認」だけは必ず別に置く。</p>
+                        </div>
+
+                        <div class="sop-section">
+                            <h4 class="text-white font-bold text-lg mb-4 flex items-center gap-2"><i data-lucide="inbox" class="w-5 h-5 text-indigo-400"></i> 3. 受付チャネル（入口の統一）</h4>
+                            <ul class="m-0 list-none pl-0 space-y-2 text-slate-300 text-base">
+                                <li><strong>受付メール：</strong> <span class="placeholder-text">【psirt@xxx.co.jp】</span></li>
+                                <li><strong>代替（OEMポータル/調達窓口）：</strong> <span class="placeholder-text">【窓口】</span></li>
+                                <li class="text-red-400"><strong>禁止事項：</strong> 個人メールに直接届いたまま放置（必ず窓口へ転送し、台帳化する）</li>
+                            </ul>
+                        </div>
+
+                        <div class="sop-section">
+                            <h4 class="text-white font-bold text-lg mb-4 flex items-center gap-2"><i data-lucide="clock" class="w-5 h-5 text-indigo-400"></i> 4. 処理SLA（社内目標：最小）</h4>
+                            <ul class="m-0 list-none pl-0 space-y-2 text-slate-300 text-base">
+                                <li><strong>受領確認（受付返信）：</strong> <span class="placeholder-text">【1営業日以内】</span></li>
+                                <li><strong>一次回答（影響あり/なし/調査中＋次回更新日）：</strong> <span class="placeholder-text">【3〜5営業日以内】</span></li>
+                                <li><strong>最終回答（根拠・証跡込み）：</strong> <span class="placeholder-text">【10営業日以内】</span> ※案件により調整</li>
+                            </ul>
+                            <p class="text-sm text-brand-light mt-2 font-bold">例外運用：期限が無理な場合は「調査中＋次回更新日」を必ず返す</p>
+                        </div>
+
+                        <div class="sop-section">
+                            <h4 class="text-white font-bold text-lg mb-4 flex items-center gap-2"><i data-lucide="workflow" class="w-5 h-5 text-indigo-400"></i> 5. フロー（受付→トリアージ→公表）</h4>
+                            
+                            <div class="space-y-6 pl-4 border-l-2 border-indigo-500/30 ml-2">
+                                <div class="relative">
+                                    <div class="absolute -left-[27px] top-1 w-4 h-4 rounded-full bg-indigo-500 border-4 border-navy-900"></div>
+                                    <h5 class="text-indigo-300 font-bold mt-0 mb-2">Step1：受付（Intake）</h5>
+                                    <p class="text-sm text-slate-300 m-0"><strong>実施者：</strong> 受付（窓口）</p>
+                                    <p class="text-sm text-slate-300 mt-1 mb-1"><strong>やること：</strong></p>
+                                    <ul class="text-sm text-slate-300 m-0 pl-4 space-y-0.5">
+                                        <li>案件を台帳/チケット化（案件ID採番）</li>
+                                        <li>期限（受付/一次/最終）と提出形式を記録</li>
+                                        <li>対象（製品名/型番/版数/出荷範囲）を“暫定”で仮固定</li>
+                                        <li>受領確認を返信</li>
+                                    </ul>
+                                    <p class="text-sm text-slate-300 mt-2 m-0"><strong>アウトプット：</strong> チケット、受領返信ログ</p>
+                                </div>
+
+                                <div class="relative">
+                                    <div class="absolute -left-[27px] top-1 w-4 h-4 rounded-full bg-indigo-500 border-4 border-navy-900"></div>
+                                    <h5 class="text-indigo-300 font-bold mt-0 mb-2">Step2：トリアージ（Triage）</h5>
+                                    <p class="text-sm text-slate-300 m-0"><strong>実施者：</strong> 技術評価 ＋ 対外回答</p>
+                                    <p class="text-sm text-slate-300 mt-1 mb-1"><strong>判定（3段階）：</strong></p>
+                                    <ul class="text-sm text-slate-300 m-0 pl-4 space-y-0.5">
+                                        <li><span class="text-red-400 font-medium">対応必須：</span> 対象に該当し、外部から成立し得る／OEM照会が厳しい</li>
+                                        <li><span class="text-yellow-400 font-medium">要確認：</span> 該当可能性あり（到達性・実行経路が未確認）</li>
+                                        <li><span class="text-emerald-400 font-medium">対応不要：</span> 非該当（搭載なし等）※根拠を一言残す</li>
+                                    </ul>
+                                    <p class="text-sm text-slate-300 mt-2 m-0"><strong>アウトプット：</strong> 一次結論、根拠メモ、次回更新日</p>
+                                </div>
+
+                                <div class="relative">
+                                    <div class="absolute -left-[27px] top-1 w-4 h-4 rounded-full bg-indigo-500 border-4 border-navy-900"></div>
+                                    <h5 class="text-indigo-300 font-bold mt-0 mb-2">Step3：調査・是正（Investigation/Remediation）</h5>
+                                    <p class="text-sm text-slate-300 m-0"><strong>実施者：</strong> 技術評価</p>
+                                    <p class="text-sm text-slate-300 mt-1 mb-1"><strong>やること：</strong></p>
+                                    <ul class="text-sm text-slate-300 m-0 pl-4 space-y-0.5">
+                                        <li>対象版数の確定（どこまで影響するか）</li>
+                                        <li>回避策/緩和策/修正方針を決定</li>
+                                        <li>必要に応じてリリース計画に落とす</li>
+                                    </ul>
+                                    <p class="text-sm text-slate-300 mt-2 m-0"><strong>アウトプット：</strong> 最終結論、対策方針、証跡（設定、構成、テスト結果等）</p>
+                                </div>
+
+                                <div class="relative">
+                                    <div class="absolute -left-[27px] top-1 w-4 h-4 rounded-full bg-indigo-500 border-4 border-navy-900"></div>
+                                    <h5 class="text-indigo-300 font-bold mt-0 mb-2">Step4：通知・公表（Notification/Disclosure）</h5>
+                                    <p class="text-sm text-slate-300 m-0"><strong>実施者：</strong> 対外回答 ＋ 承認</p>
+                                    <p class="text-sm text-slate-300 mt-1 mb-1"><strong>やること：</strong></p>
+                                    <ul class="text-sm text-slate-300 m-0 pl-4 space-y-0.5">
+                                        <li>OEMへ提出（結論→根拠→対応方針→証跡）</li>
+                                        <li>追加質問の窓口を固定（チケットに集約）</li>
+                                        <li>（必要な場合のみ）社外向けアドバイザリ文案を作成し、承認のうえ公開</li>
+                                    </ul>
+                                    <p class="text-xs text-red-400 mt-1">※注意：公表はOEM/取引条件により扱いが変わるため、必ず社内承認と事前合意を取る</p>
+                                    <p class="text-sm text-slate-300 mt-2 m-0"><strong>アウトプット：</strong> 提出版回答書、公表文（必要な場合）、提出履歴</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="sop-section">
+                            <h4 class="text-white font-bold text-lg mb-4 flex items-center gap-2"><i data-lucide="folder-check" class="w-5 h-5 text-indigo-400"></i> 6. 証跡（エビデンス）最低限の保存ルール</h4>
+                            <p class="text-base text-slate-300 m-0 mb-2"><strong>保存場所：</strong> <span class="placeholder-text">【共通フォルダURL】</span>（案件IDごとにフォルダを作成）</p>
+                            <p class="text-base text-slate-300 m-0 mb-2"><strong>推奨フォルダ構成：</strong><br>
+                            00_依頼原本 ／ 01_範囲 ／ 02_調査 ／ 03_回答書 ／ 04_提出履歴 ／ 05_是正</p>
+                            <p class="text-sm text-brand-light mt-2 font-medium">※回答書には、添付できない場合でも「証跡ID/保存場所/対象版数」を書ける形にする</p>
+                        </div>
+                    </div>
+
+                    <h2>コピペで使える：一次回答（受領＋調査中）テンプレ</h2>
+                    
+                    <div class="bg-navy-800 p-6 rounded-lg border border-white/10 my-6 shadow-inner font-mono text-sm text-slate-300 whitespace-pre-wrap">件名：<span class="placeholder-text">【案件名】</span>受領のご連絡（一次回答予定）
+
+本文：
+ご依頼を受領しました。
+現時点は調査中です（一次回答）。
+対象範囲（暫定）：<span class="placeholder-text">【製品名／版数】</span>
+次回更新：<span class="placeholder-text">【YYYY-MM-DD】</span>までに影響有無（影響あり/なし/継続調査）を更新回答します。
+追加確認：<span class="placeholder-text">【提出形式・対象範囲など最小限】</span></div>
+
+                    <h2>よくあるNG例（監査で刺さるポイント）</h2>
+                    <ul class="space-y-2">
+                        <li><strong class="text-red-400">受付が個人メール</strong>で、案件IDも履歴も残らない</li>
+                        <li><strong class="text-red-400">「影響なし」とだけ返して</strong>、根拠・証跡がない</li>
+                        <li><strong class="text-red-400">期限を“最終期限”だと思い込み</strong>、一次回答が遅れる</li>
+                        <li><strong class="text-red-400">対象版数が揺れ続け</strong>、手戻りが止まらない</li>
+                        <li><strong class="text-red-400">公表の判断が曖昧</strong>で、社外発信が事故る（承認なしで出す等）</li>
+                    </ul>
+
+                    <!-- 途中CTA（主CTA） -->
+                    <div class="bg-navy-800/50 p-6 md:p-8 rounded-2xl border border-indigo-500/30 text-center my-10 shadow-[0_0_20px_rgba(99,102,241,0.1)]">
+                        <p class="text-slate-200 mb-6 font-medium text-lg">このままのテンプレを自社向けに整備し、少ない人数で回る状態にしたい方はご相談ください。</p>
+                        <a href="/demo_form.html" class="inline-flex items-center gap-2 px-8 py-3.5 bg-brand hover:bg-brand-dark text-white rounded-full font-bold transition-all hover:-translate-y-1 shadow-lg shadow-brand/20">
+                            <i data-lucide="calendar" class="w-5 h-5"></i> 【無料】オンライン相談を予約する
+                        </a>
+                    </div>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2>FAQ：運用テンプレに関するよくある質問</h2>
+                    <div class="space-y-6 mt-6">
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q1. SOPと手順書の違いは何ですか？</strong>
+                            <p class="m-0 text-slate-300">SOPは「誰が何をいつまでにやるか」を固定して再現性を出すための運用手順です。手順書より“役割・期限・証跡”が中心になります。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q2. 兼務でもこのPSIRT通知フローは回せますか？</strong>
+                            <p class="m-0 text-slate-300">回せます。最小は「受付・技術評価・対外回答・承認」の4役で、1〜3人で兼務しても成立します。承認だけは必ず別に置くのがコツです。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q3. “調査中”で返すのは失礼ではありませんか？</strong>
+                            <p class="m-0 text-slate-300">失礼ではありません。むしろ期限内に「調査中＋次回更新日」を返す方が信頼を落としにくいです。放置が一番危険です。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q4. 公表（外部公開）は必ず必要ですか？</strong>
+                            <p class="m-0 text-slate-300">必ずではありません。OEMや契約条件により扱いが変わるため、必要な場合のみ“承認と事前合意”を前提に実施します。</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- CTA Section -->
+            <div class="glass-card rounded-3xl p-8 md:p-12 text-center border-t-4 border-t-indigo-500 bg-navy-800/80 shadow-[0_0_40px_-10px_rgba(99,102,241,0.2)]">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">SOPをシステムに組み込んで自動化しませんか？</h2>
+                <p class="text-slate-300 mb-8 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+                    <strong>Auto PSIRT Cloud</strong>なら、このSOPで定義した「チケット化」「一次回答の自動生成」「証跡の紐付け」「SLA管理」をすべてシステム上で迷わず実行できます。
+                </p>
+                <div class="flex justify-center">
+                    <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-navy-900 bg-white hover:bg-slate-200 transition-all duration-300 shadow-xl shadow-white/10 w-full sm:w-auto hover:-translate-y-1">
+                        <i class="w-5 h-5 text-indigo-600" data-lucide="monitor-play"></i>
+                        フロー自動化のデモを見る
+                    </a>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/5 text-center text-sm text-slate-500 mt-auto bg-navy-900/80">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span class="font-bold text-slate-400">Auto PSIRT Cloud</span>
+            </div>
+            <p>&copy; 2026 Unimobilities株式会社. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
