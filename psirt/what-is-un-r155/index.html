@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEOメタタグ -->
+    <title>UN-R155とは？サプライヤーに降りてくる要求を整理（PSIRT/監査の前提） | Auto PSIRT Cloud</title>
+    <meta name="description" content="UN-R155とは何かをサプライヤー向けに解説。CSMS（サイバーセキュリティ管理）要求の概要と、OEMから降りてくる監査・証跡・PSIRT整備・脆弱性対応の実務負荷を短く整理。まず整えるべき最小セットも提示します。">
+    <meta name="keywords" content="UN-R155とは, UN-R155, 自動車セキュリティ, CSMS, PSIRT, 監査">
+    <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/psirt/what-is-un-r155/">
+    
+    <!-- OGPタグ (SNSシェア用) -->
+    <meta property="og:title" content="UN-R155とは？サプライヤーに降りてくる要求を整理">
+    <meta property="og:description" content="UN-R155とは何か？OEMから降りてくる監査やPSIRT整備の実務負荷と、整えるべき最小セットを解説。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/psirt/what-is-un-r155/">
+    <meta property="og:site_name" content="Auto PSIRT Cloud">
+
+    <!-- ファビコン -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%233b82f6%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z%22/><path d=%22m9 12 2 2 4-4%22/></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0a0f1c',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        brand: {
+                            light: '#60a5fa',
+                            DEFAULT: '#3b82f6',
+                            dark: '#2563eb',
+                        },
+                        accent: {
+                            DEFAULT: '#06b6d4',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #60a5fa, #06b6d4);
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* 記事用カスタムスタイル */
+        .prose h2 {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-top: 3.5rem;
+            color: #f8fafc;
+        }
+        .prose h3 {
+            color: #e2e8f0;
+            margin-top: 2.5rem;
+            border-left: 3px solid #eab308; /* UN-R155系の記事はYellow/Gold系アクセント */
+            padding-left: 0.75rem;
+            font-size: 1.25rem;
+        }
+        .prose a {
+            color: #60a5fa;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .prose a:hover {
+            border-bottom-color: #60a5fa;
+        }
+        .prose strong {
+            color: #f8fafc;
+            background: linear-gradient(transparent 60%, rgba(234, 179, 8, 0.3) 40%);
+        }
+        .related-box {
+            background: rgba(30, 41, 59, 0.6);
+            border-left: 4px solid #eab308;
+            padding: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-brand selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-brand/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-yellow-500/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-accent flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="/news.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        ニュース一覧へ戻る
+                    </a>
+                    <a href="/demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                        相談 or デモ予約
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <article class="max-w-4xl mx-auto">
+            
+            <!-- パンくずリスト -->
+            <nav class="flex text-sm text-slate-400 mb-8" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/index.html" class="hover:text-white transition-colors">ホーム</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <a href="/news.html" class="hover:text-white transition-colors">ニュース・インサイト</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <span class="text-slate-500 truncate max-w-[200px] sm:max-w-none">UN-R155とは</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- 記事ヘッダー -->
+            <header class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-yellow-500/20 border border-yellow-500/30 text-yellow-400 text-xs font-bold px-3 py-1 rounded-full">入門解説</span>
+                    <time class="text-slate-400 text-sm flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> 2026.03.06
+                    </time>
+                </div>
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
+                    UN-R155とは<br/>
+                    <span class="text-2xl md:text-3xl text-slate-300 font-medium">（サプライヤーに降りてくる苦労を理解するために）</span>
+                </h1>
+                
+                <!-- 導入文 -->
+                <div class="text-lg text-slate-300 leading-relaxed p-6 bg-navy-800/50 rounded-2xl border border-white/5 space-y-4">
+                    <p>UN-R155は、車両のサイバーセキュリティに関する国連（UNECE/WP.29）由来の規則で、ざっくり言うと <strong>「メーカーは車両のサイバーリスクを継続的に管理できる体制（CSMS）を持ち、設計〜運用まで回し続けなければならない」</strong> という要求です。</p>
+                    <p>ポイントは“製品の一点検査”ではなく、<strong>運用を含むマネジメント（仕組み）</strong>が問われることです。</p>
+                </div>
+            </header>
+
+            <!-- 記事本文 -->
+            <div class="glass-card p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl bg-navy-900/80 mb-16">
+                <div class="prose prose-invert prose-slate prose-lg max-w-none">
+
+                    <h2>UN-R155がサプライヤーに効いてくる理由</h2>
+                    <p>規則そのものの主語は主に車両メーカー（OEM）側ですが、OEMはCSMSの説明責任を負うため、部品・ソフトを供給するサプライヤーにも次のような要求が降りてきます。</p>
+
+                    <div class="bg-navy-800 p-6 rounded-lg border border-white/10 my-6">
+                        <ul class="m-0 space-y-3 pl-0 list-none text-slate-200 font-medium">
+                            <li class="flex items-start gap-3"><i data-lucide="message-square-warning" class="w-6 h-6 text-yellow-500 shrink-0"></i> 「脆弱性が出たら、影響有無と根拠を期限内に返して」</li>
+                            <li class="flex items-start gap-3"><i data-lucide="users" class="w-6 h-6 text-yellow-500 shrink-0"></i> 「PSIRT（窓口・手順・責任者）を整備して」</li>
+                            <li class="flex items-start gap-3"><i data-lucide="table" class="w-6 h-6 text-yellow-500 shrink-0"></i> 「SBOM/部品表を提出して（または照会に答えられるようにして）」</li>
+                            <li class="flex items-start gap-3"><i data-lucide="file-search" class="w-6 h-6 text-yellow-500 shrink-0"></i> 「監査で“証跡（エビデンス）”を出して」</li>
+                            <li class="flex items-start gap-3"><i data-lucide="alert-triangle" class="w-6 h-6 text-yellow-500 shrink-0"></i> 「インシデント時の連絡体制・初動・復旧方針を示して」</li>
+                        </ul>
+                    </div>
+
+                    <p>つまりUN-R155は、サプライヤー視点では <strong>“監査と照会が増える規則”</strong> として体感されがちです。</p>
+
+                    <h2>サプライヤーがまず整えるべき「最小セット」</h2>
+                    <p>兼務体制でも、ここだけ押さえると“止まりにくく”なります。</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-8">
+                        <div class="bg-navy-800/50 p-5 rounded border border-white/10">
+                            <h4 class="text-brand-light font-bold mt-0 mb-3 flex items-center gap-2"><i data-lucide="users" class="w-5 h-5"></i> PSIRT最小体制</h4>
+                            <ul class="text-sm m-0 space-y-2 pl-4">
+                                <li>窓口（共有メール等）</li>
+                                <li>一次回答テンプレ（調査中＋次回更新日）</li>
+                                <li>役割（受付／技術評価／対外回答／承認）</li>
+                            </ul>
+                        </div>
+                        <div class="bg-navy-800/50 p-5 rounded border border-white/10">
+                            <h4 class="text-emerald-400 font-bold mt-0 mb-3 flex items-center gap-2"><i data-lucide="database" class="w-5 h-5"></i> 対象範囲が分かる台帳</h4>
+                            <ul class="text-sm m-0 space-y-2 pl-4">
+                                <li>製品名・版数・出荷範囲</li>
+                                <li>ソフト構成（Excelでも可）</li>
+                            </ul>
+                        </div>
+                        <div class="bg-navy-800/50 p-5 rounded border border-white/10">
+                            <h4 class="text-purple-400 font-bold mt-0 mb-3 flex items-center gap-2"><i data-lucide="folder-check" class="w-5 h-5"></i> 証跡の置き場所と型</h4>
+                            <ul class="text-sm m-0 space-y-2 pl-4">
+                                <li>依頼原本／調査メモ／回答書／提出履歴を同じ場所に集約</li>
+                                <li>「結論→根拠→対応方針→証跡」の回答書の型</li>
+                            </ul>
+                        </div>
+                        <div class="bg-navy-800/50 p-5 rounded border border-white/10">
+                            <h4 class="text-orange-400 font-bold mt-0 mb-3 flex items-center gap-2"><i data-lucide="clock" class="w-5 h-5"></i> 期限（SLA）運用</h4>
+                            <ul class="text-sm m-0 space-y-2 pl-4">
+                                <li>受領確認・一次回答・最終回答の目標時間を社内で決める（厳密でなくてOK）</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <h2>よくある誤解（短く整理）</h2>
+                    <ul class="space-y-2">
+                        <li><strong>UN-R155＝“ペネトレーションテストをやればOK” ではない</strong></li>
+                        <li><strong>UN-R155＝“OEMだけの話” でもない</strong>（実務はサプライチェーンに波及する）</li>
+                        <li><strong>「影響なし」は 根拠（証跡） がないと監査で崩れる</strong></li>
+                    </ul>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2>FAQ：UN-R155とは何ですか？</h2>
+                    <div class="space-y-6 mt-6">
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q1. UN-R155とは何ですか？</strong>
+                            <p class="m-0 text-slate-300">車両のサイバーリスクを継続的に管理する仕組み（CSMS）をメーカーに求める規則です。設計だけでなく運用まで含めた体制が問われます。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q2. UN-R155はサプライヤーにも適用されますか？</strong>
+                            <p class="m-0 text-slate-300">規則の直接の対象は主にOEM側ですが、OEMの説明責任のために、監査・照会・証跡提出などの形でサプライヤーへ要求が波及します。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q3. UN-R155対応でサプライヤーが最初にやるべきことは？</strong>
+                            <p class="m-0 text-slate-300">PSIRTの最小体制（窓口・一次回答テンプレ・役割）、対象範囲が分かる台帳、証跡の管理、期限（SLA）運用を先に整えるのが近道です。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q4. UN-R155とPSIRTは関係ありますか？</strong>
+                            <p class="m-0 text-slate-300">あります。脆弱性対応・インシデント対応を“運用として回せる”ことが重要になるため、PSIRTの整備は実務上の重要ポイントです。</p>
+                        </div>
+                    </div>
+
+                    <!-- 内部リンク領域 -->
+                    <div class="mt-12 space-y-6">
+                        <div class="related-box border-l-brand my-0">
+                            <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="book-open" class="w-4 h-4"></i> 次に読む：全体像を押さえる</div>
+                            <ul class="text-base m-0 list-none pl-0">
+                                <li><a href="/psirt/automotive-supplier-guide/" class="!text-brand-light hover:!text-brand">自動車サプライヤーのPSIRT完全ガイド</a></li>
+                            </ul>
+                        </div>
+
+                        <div class="related-box border-l-emerald-500 my-0">
+                            <div class="text-sm font-bold text-emerald-400 mb-2 flex items-center gap-2"><i data-lucide="list-checks" class="w-4 h-4"></i> 実務に落とし込む</div>
+                            <ul class="text-base m-0 list-none pl-0">
+                                <li><a href="/psirt/launch-checklist/" class="!text-emerald-400 hover:!text-emerald-300">PSIRT立上げ必須チェックリスト（雛形）</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- CTA Section -->
+            <div class="glass-card rounded-3xl p-8 md:p-12 text-center border-t-4 border-t-yellow-500 bg-navy-800/80 shadow-[0_0_40px_-10px_rgba(234,179,8,0.2)]">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">UN-R155対応、どこから手をつけるべきか迷っていませんか？</h2>
+                <p class="text-slate-300 mb-8 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+                    「OEMからの要求事項が難解で困っている」「自社の体制でどこまで対応すべきか整理したい」という方は、無料のオンライン相談をご利用ください。
+                </p>
+                <div class="flex justify-center">
+                    <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-navy-900 bg-white hover:bg-slate-200 transition-all duration-300 shadow-xl shadow-white/10 w-full sm:w-auto hover:-translate-y-1">
+                        <i data-lucide="message-square" class="w-5 h-5 text-yellow-600"></i>
+                        【無料】オンライン相談を予約する
+                    </a>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/5 text-center text-sm text-slate-500 mt-auto bg-navy-900/80">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span class="font-bold text-slate-400">Auto PSIRT Cloud</span>
+            </div>
+            <p>&copy; 2026 Unimobilities株式会社. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
