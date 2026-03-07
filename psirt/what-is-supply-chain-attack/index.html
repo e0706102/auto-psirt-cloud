@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEOメタタグ -->
+    <title>サプライチェーン攻撃とは？（出典ルール・NG対策ポイント）｜PSIRT/OEM監査で困らない | Auto PSIRT Cloud</title>
+    <meta name="description" content="サプライチェーン攻撃とは、取引先や開発・配布経路を悪用して標的へ侵入する攻撃のこと。自動車サプライヤーがOEM監査で問われる理由、PSIRTでの初動、報告時の出典ルール（一次情報の扱い）とNG表現（断定・社名・手口の書きすぎ）を短く整理します。">
+    <meta name="keywords" content="サプライチェーン攻撃とは, サプライチェーン攻撃, PSIRT, OEM監査, 自動車セキュリティ">
+    <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/psirt/what-is-supply-chain-attack/">
+    
+    <!-- OGPタグ (SNSシェア用) -->
+    <meta property="og:title" content="サプライチェーン攻撃とは？（出典ルール・NG対策ポイント）｜PSIRT/OEM監査で困らない">
+    <meta property="og:description" content="取引先や配布経路を悪用するサプライチェーン攻撃。監査で問われるポイントと、報告時のNGルールを解説。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/psirt/what-is-supply-chain-attack/">
+    <meta property="og:site_name" content="Auto PSIRT Cloud">
+
+    <!-- ファビコン -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%233b82f6%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z%22/><path d=%22m9 12 2 2 4-4%22/></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0a0f1c',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        brand: {
+                            light: '#60a5fa',
+                            DEFAULT: '#3b82f6',
+                            dark: '#2563eb',
+                        },
+                        accent: {
+                            DEFAULT: '#06b6d4',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #60a5fa, #06b6d4);
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* 記事用カスタムスタイル */
+        .prose h2 {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-top: 3.5rem;
+            color: #f8fafc;
+        }
+        .prose h3 {
+            color: #e2e8f0;
+            margin-top: 2.5rem;
+            border-left: 3px solid #3b82f6; /* Blue系アクセント */
+            padding-left: 0.75rem;
+            font-size: 1.25rem;
+        }
+        .prose a {
+            color: #60a5fa;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .prose a:hover {
+            border-bottom-color: #60a5fa;
+        }
+        .prose strong {
+            color: #f8fafc;
+            background: linear-gradient(transparent 60%, rgba(59, 130, 246, 0.3) 40%);
+        }
+        .related-box {
+            background: rgba(30, 41, 59, 0.6);
+            border-left: 4px solid #3b82f6;
+            padding: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-brand selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-brand/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-blue-500/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-accent flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="/news.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        ニュース一覧へ戻る
+                    </a>
+                    <a href="/demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                        相談 or デモ予約
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <article class="max-w-4xl mx-auto">
+            
+            <!-- パンくずリスト -->
+            <nav class="flex text-sm text-slate-400 mb-8" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/index.html" class="hover:text-white transition-colors">ホーム</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <a href="/news.html" class="hover:text-white transition-colors">ニュース・インサイト</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <span class="text-slate-500 truncate max-w-[200px] sm:max-w-none">サプライチェーン攻撃とは</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- 記事ヘッダー -->
+            <header class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-blue-500/20 border border-blue-500/30 text-blue-400 text-xs font-bold px-3 py-1 rounded-full">入門解説</span>
+                    <time class="text-slate-400 text-sm flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> 2026.03.07
+                    </time>
+                </div>
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
+                    サプライチェーン攻撃とは<br/>
+                    <span class="text-2xl md:text-3xl text-slate-300 font-medium">（出典ルール・NG対策ポイント）</span>
+                </h1>
+                
+                <!-- 導入文 -->
+                <div class="text-lg text-slate-300 leading-relaxed p-6 bg-navy-800/50 rounded-2xl border border-white/5 space-y-4">
+                    <p>サプライチェーン攻撃とは、ひとことで言うと <strong>「標的企業“そのもの”ではなく、標的が信頼して使っている取引先・部品・開発/配布経路を踏み台にして侵入する攻撃」</strong> です。</p>
+                    
+                    <p>自動車のようにTier構造が深い業界では、「自社が被害者」になるだけでなく、<strong>自社が“侵入口（踏み台）”として疑われる</strong>こともあります。だからOEM監査でも重要テーマになります。</p>
+                </div>
+            </header>
+
+            <!-- 記事本文 -->
+            <div class="glass-card p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl bg-navy-900/80 mb-16">
+                <div class="prose prose-invert prose-slate prose-lg max-w-none">
+                    
+                    <!-- 内部リンク①：全体像の設計へ -->
+                    <div class="related-box mt-0 border-l-brand">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="map" class="w-4 h-4"></i> 実務体制の全体像</div>
+                        <p class="text-sm text-slate-300 mb-2">「窓口・SLA・一次回答・証跡」まで含めてPSIRT運用を設計したい場合は、こちらの完全ガイドをご覧ください。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/automotive-supplier-guide/" class="!text-brand-light hover:!text-brand">自動車サプライヤーのPSIRT完全ガイド</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>代表的なパターン（自動車サプライヤー目線）</h2>
+                    <p>サプライチェーン攻撃は“入口”が複数あります。よくあるのは次の3系統です。</p>
+
+                    <div class="space-y-4 my-6">
+                        <div class="bg-navy-800/80 p-5 rounded-xl border border-white/5 flex items-start gap-4">
+                            <div class="p-2 bg-blue-500/10 rounded shrink-0 mt-0.5"><i data-lucide="box" class="w-5 h-5 text-blue-400"></i></div>
+                            <div>
+                                <strong class="text-slate-200 block mb-1">部品/OSS依存の悪用</strong>
+                                <span class="text-sm text-slate-300">上流コンポーネントに脆弱性や悪意のあるコード（改ざん）が混入するパターン。</span>
+                            </div>
+                        </div>
+                        <div class="bg-navy-800/80 p-5 rounded-xl border border-white/5 flex items-start gap-4">
+                            <div class="p-2 bg-purple-500/10 rounded shrink-0 mt-0.5"><i data-lucide="terminal-square" class="w-5 h-5 text-purple-400"></i></div>
+                            <div>
+                                <strong class="text-slate-200 block mb-1">開発・ビルド環境の侵害</strong>
+                                <span class="text-sm text-slate-300">CI/CDパイプライン、署名鍵、ビルドサーバなど、開発の土台が狙われるパターン。</span>
+                            </div>
+                        </div>
+                        <div class="bg-navy-800/80 p-5 rounded-xl border border-white/5 flex items-start gap-4">
+                            <div class="p-2 bg-emerald-500/10 rounded shrink-0 mt-0.5"><i data-lucide="send" class="w-5 h-5 text-emerald-400"></i></div>
+                            <div>
+                                <strong class="text-slate-200 block mb-1">配布・更新経路の悪用</strong>
+                                <span class="text-sm text-slate-300">更新サーバ、配布媒体、導入手順が踏まれ、正規のアップデートを装ってマルウェアが配られるパターン。</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <p class="text-center font-bold text-brand-light my-6">OEM側が知りたいのは「攻撃の名前」より、<br class="hidden sm:block"><strong>どこが入口で、どの版が影響し、どう止血し、いつ直るか</strong>です。</p>
+
+                    <h2>PSIRT/OEM監査で問われるポイント（最低限）</h2>
+                    <p>サプライチェーン攻撃は“起きてから”より<strong>“起きる前”の備え</strong>が監査で見られます。</p>
+                    
+                    <ul class="space-y-3 my-6">
+                        <li><strong>構成把握：</strong> どの製品版数に何が入っているか（SBOM/部品表の整備）</li>
+                        <li><strong>影響判定：</strong> 影響あり/なし/調査中を期限内（SLA）に返せるか</li>
+                        <li><strong>証跡：</strong> 判断根拠（通知原本、対象版数、対策、提出履歴）が残るか</li>
+                        <li><strong>連絡経路：</strong> OEM/上流への連絡窓口・一次回答テンプレがあるか</li>
+                    </ul>
+
+                    <h2>出典ルール（報告・社内共有・記事執筆での「一次情報」）</h2>
+                    <p>サプライチェーン攻撃の情報は、不安を煽る目的の誤情報も混ざりやすいので、<strong>出典ルールを固定する</strong>と社内外での炎上を防げます。</p>
+
+                    <div class="bg-navy-800 p-6 rounded-lg border border-white/10 my-6">
+                        <ul class="m-0 space-y-3 pl-0 list-none text-slate-200">
+                            <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-5 h-5 text-brand-light shrink-0 mt-0.5"></i> <div><strong>一次情報を優先：</strong> ベンダー公式アドバイザリ／公的DB（CVE等）／OEM通知の原文をソースとする。</div></li>
+                            <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-5 h-5 text-brand-light shrink-0 mt-0.5"></i> <div><strong>「いつ時点の情報か」を書く：</strong> 事態は動くため、更新で結論が変わる前提を明記する。</div></li>
+                            <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-5 h-5 text-brand-light shrink-0 mt-0.5"></i> <div><strong>断定は根拠セット：</strong> 対象製品・対象版数・到達条件の根拠を必ず併記する。</div></li>
+                            <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-5 h-5 text-brand-light shrink-0 mt-0.5"></i> <div><strong>伝聞の拡散を避ける：</strong> SNSやまとめ情報だけで結論を書かない。</div></li>
+                        </ul>
+                    </div>
+
+                    <h2>NG対策ポイント（やりがちな事故）</h2>
+                    <p>社内での共有や、用語辞典のようなドキュメントでも、次のNG表現は避けると安全です。</p>
+
+                    <ul class="space-y-3 my-6 list-none pl-0">
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>社名/製品名の断定</strong><br><span class="text-sm text-slate-400">（一次情報が無いのに「〜社が侵害された」等と書く）</span></div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>攻撃手口の“再現レベル”の詳細</strong><br><span class="text-sm text-slate-400">（悪用助長・社内規程違反になりやすい）</span></div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>影響範囲の言い切り</strong><br><span class="text-sm text-slate-400">（根拠なしに「全て安全」「完全に影響なし」など）</span></div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>機密の混入</strong><br><span class="text-sm text-slate-400">（取引先名、設計情報、SBOM原本の貼り付けなど）</span></div></li>
+                    </ul>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2>FAQ：サプライチェーン攻撃について</h2>
+                    <div class="space-y-6 mt-6">
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q1. サプライチェーン攻撃とは何ですか？</strong>
+                            <p class="m-0 text-slate-300">取引先・部品・開発/配布経路など“信頼の連鎖”を悪用して、標的に侵入する攻撃です。標的はOEMだけでなく、Tier2〜Tier4のサプライヤーも踏み台として含まれます。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q2. なぜOEM監査でサプライチェーン攻撃が問われるのですか？</strong>
+                            <p class="m-0 text-slate-300">深いサプライチェーンでは「誰が入口になっても」全体のサイバーリスクに直結するためです。そのため、構成把握（SBOM）、影響判定（SLA）、証跡の残し方が評価されます。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q3. PSIRTとどう関係しますか？</strong>
+                            <p class="m-0 text-slate-300">上流の脆弱性・改ざんが判明した際に、自社製品における対象版数の切り分け、暫定対策/恒久対策の策定、OEMへの一次回答と更新連絡を回すのがPSIRTの実務です。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q4. 情報共有で気をつけるNGは？</strong>
+                            <p class="m-0 text-slate-300">一次情報のない断定、攻撃手口の詳細な再現、機密情報の混入が典型NGです。出典（一次情報）と時点（いつの情報か）を必ず残すことが鉄則です。</p>
+                        </div>
+                    </div>
+
+                    <!-- 内部リンク②：テンプレ・チェックリスト -->
+                    <div class="related-box border-l-emerald-500 mt-12">
+                        <div class="text-sm font-bold text-emerald-400 mb-2 flex items-center gap-2"><i data-lucide="list-checks" class="w-4 h-4"></i> 次に読む</div>
+                        <p class="text-sm text-slate-300 mb-2">攻撃の連絡を受けた際、「受付→一次回答→証跡→更新連絡」を抜け漏れなく揃えるための型はこちら。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/launch-checklist/" class="!text-emerald-400 hover:!text-emerald-300">PSIRT立上げ必須チェックリスト（雛形）</a></li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- CTA Section (相談のみ) -->
+            <div class="glass-card rounded-3xl p-8 md:p-12 text-center border-t-4 border-t-brand bg-navy-800/80 shadow-[0_0_40px_-10px_rgba(59,130,246,0.3)]">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">サプライチェーン攻撃に耐える運用、できていますか？</h2>
+                <p class="text-slate-300 mb-8 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+                    はじめに！攻撃時の連絡網やPSIRT体制（窓口・SLA・証跡）を、いまの兼務体制でも回る形に整備したい方はご相談ください。
+                </p>
+                <div class="flex justify-center">
+                    <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-white bg-brand hover:bg-brand-dark transition-all duration-300 shadow-lg shadow-brand/20 w-full sm:w-auto hover:-translate-y-1">
+                        <i data-lucide="message-square" class="w-5 h-5"></i>
+                        【無料】オンライン相談を予約する
+                    </a>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/5 text-center text-sm text-slate-500 mt-auto bg-navy-900/80">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span class="font-bold text-slate-400">Auto PSIRT Cloud</span>
+            </div>
+            <p>&copy; 2026 Unimobilities株式会社. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
