@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEOメタタグ -->
+    <title>SBOMに必ず入れるべき項目｜どこまで固めればいい？最小カラムと運用の線引き | Auto PSIRT Cloud</title>
+    <meta name="description" content="SBOMに必ず入れるべき項目は「製品版数×部品版数」を切るための最小カラムから。Tier2〜Tier4向けに、OEM照会（CVE影響有無）に通る必須項目、増やすべき項目の線引き、固め方（手順）と監査で見られる証跡ポイントを解説します。">
+    <meta name="keywords" content="SBOMに必ず入れるべき項目, SBOM, ソフトウェア部品表, 脆弱性管理, PSIRT, 監査">
+    <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/psirt/must-have-fields/">
+    
+    <!-- OGPタグ (SNSシェア用) -->
+    <meta property="og:title" content="SBOMに必ず入れるべき項目｜どこまで固めればいい？最小カラムと運用の線引き">
+    <meta property="og:description" content="SBOMは全部埋めなくていい。OEM照会に通る必須項目と、増やすべき項目の「迷わない線引き」を解説。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/psirt/must-have-fields/">
+    <meta property="og:site_name" content="Auto PSIRT Cloud">
+
+    <!-- ファビコン -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%2310b981%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z%22/><path d=%22m9 12 2 2 4-4%22/></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0a0f1c',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        brand: {
+                            light: '#60a5fa',
+                            DEFAULT: '#3b82f6',
+                            dark: '#2563eb',
+                        },
+                        accent: {
+                            DEFAULT: '#06b6d4',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #10b981, #3b82f6);
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* 記事用カスタムスタイル */
+        .prose h2 {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-top: 3.5rem;
+            color: #f8fafc;
+        }
+        .prose h3 {
+            color: #e2e8f0;
+            margin-top: 2.5rem;
+            border-left: 3px solid #10b981; /* Emerald系アクセント */
+            padding-left: 0.75rem;
+            font-size: 1.25rem;
+        }
+        .prose a {
+            color: #34d399; /* emerald-400 */
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .prose a:hover {
+            border-bottom-color: #34d399;
+        }
+        .prose strong {
+            color: #f8fafc;
+            background: linear-gradient(transparent 60%, rgba(16, 185, 129, 0.3) 40%);
+        }
+        .related-box {
+            background: rgba(30, 41, 59, 0.6);
+            border-left: 4px solid #10b981;
+            padding: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 2rem 0;
+        }
+        .step-box {
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-emerald-500 selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-emerald-500/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-brand/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-accent flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="/news.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        ニュース一覧へ戻る
+                    </a>
+                    <a href="/demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                        相談 or デモ予約
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <article class="max-w-4xl mx-auto">
+            
+            <!-- パンくずリスト -->
+            <nav class="flex text-sm text-slate-400 mb-8" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/index.html" class="hover:text-white transition-colors">ホーム</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <a href="/news.html" class="hover:text-white transition-colors">ニュース・インサイト</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <span class="text-slate-500 truncate max-w-[200px] sm:max-w-none">SBOM必須項目</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- 記事ヘッダー -->
+            <header class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-xs font-bold px-3 py-1 rounded-full">実務ガイド</span>
+                    <time class="text-slate-400 text-sm flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> 2026.03.07
+                    </time>
+                </div>
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
+                    SBOMに必ず入れるべき項目<br/>
+                    <span class="text-2xl md:text-3xl text-slate-300 font-medium">（どこまで固めればいい？）</span>
+                </h1>
+                
+                <!-- 導入文 -->
+                <div class="text-lg text-slate-300 leading-relaxed p-6 bg-navy-800/50 rounded-2xl border border-white/5 space-y-4">
+                    <p>OEMからSBOM提出や脆弱性（CVE）照会を求められたとき、最初に詰まるのがここです。</p>
+                    
+                    <ul class="m-0 list-disc list-inside">
+                        <li>SBOMって「項目を全部埋めないとダメ」なの？</li>
+                        <li>SPDX/CycloneDXみたいな標準フォーマットが必須？</li>
+                        <li>どこまで固めれば、OEM照会に“根拠付き”で答えられる？</li>
+                    </ul>
+                    
+                    <p>結論から言うと、<strong>最初から“全部入りSBOM”を目指すほど失敗します。</strong></p>
+                    <p>Tier2〜Tier4の現場で最優先なのは、<strong>「製品版数×部品版数が切れる」＋「判断の根拠が残る」</strong> ことです。</p>
+                    <p>この記事では、SBOMに「必ず」入れるべき項目を最小セットに絞り、どこまで固めればいいかの線引きと、現場で回る固め方（手順）をまとめます。</p>
+                </div>
+            </header>
+
+            <!-- 記事本文 -->
+            <div class="glass-card p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl bg-navy-900/80 mb-16">
+                <div class="prose prose-invert prose-slate prose-lg max-w-none">
+                    
+                    <h2>先に結論：「必須」と「後回し」を分けると回り始める</h2>
+                    <p>SBOMの項目は、目的別に増やしたくなります。だからこそ最初にこう線引きします。</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-6">
+                        <div class="bg-navy-800 p-5 rounded-xl border-t-4 border-t-red-500 text-center shadow-lg">
+                            <h4 class="text-red-400 font-bold mt-0 mb-2">必須（まず固める）</h4>
+                            <p class="text-sm text-slate-300 m-0">OEM照会に“対象版数”で答えるための項目</p>
+                        </div>
+                        <div class="bg-navy-800 p-5 rounded-xl border-t-4 border-t-orange-400 text-center shadow-lg">
+                            <h4 class="text-orange-400 font-bold mt-0 mb-2">推奨（次に足す）</h4>
+                            <p class="text-sm text-slate-300 m-0">ノイズ（不要対応）を減らすための項目</p>
+                        </div>
+                        <div class="bg-navy-800 p-5 rounded-xl border-t-4 border-t-slate-500 text-center shadow-lg">
+                            <h4 class="text-slate-400 font-bold mt-0 mb-2">拡張（必要になったら）</h4>
+                            <p class="text-sm text-slate-300 m-0">監査・契約・顧客指定で求められた項目</p>
+                        </div>
+                    </div>
+                    
+                    <p class="text-center font-bold text-emerald-400 my-6">SBOMは“作ること”より、“更新できること”が価値です。<br>更新できないSBOMは監査でも照会でも使えません。</p>
+
+                    <h2 class="border-b-2 border-emerald-500 pb-2 mt-12 mb-6">SBOMに「必ず」入れるべき項目（最小セット）</h2>
+                    <p>最低限、以下の7つの項目があれば、SBOMとしての初期目的（照会への回答）は果たせます。</p>
+
+                    <div class="space-y-6 my-6">
+                        <div>
+                            <h4 class="text-white font-bold mt-0 mb-1 flex items-center gap-2">1) 製品名</h4>
+                            <p class="text-sm text-slate-300 m-0">提出や照会は「どの製品の話か」で始まります。製品名（SKUやECU名でも可）を固定します。</p>
+                        </div>
+                        <div class="bg-emerald-500/10 p-4 rounded-lg border border-emerald-500/30">
+                            <h4 class="text-emerald-400 font-bold mt-0 mb-1 flex items-center gap-2">2) 製品バージョン（最重要）</h4>
+                            <p class="text-sm text-slate-300 m-0">OEM照会で追加質問が止まらない最大原因が「どの版まで影響？」です。<br>製品バージョンがないSBOMは、実務上“SBOMとして機能しません”。</p>
+                        </div>
+                        <div>
+                            <h4 class="text-white font-bold mt-0 mb-1 flex items-center gap-2">3) コンポーネント名</h4>
+                            <p class="text-sm text-slate-300 m-0">OSS/商用/自社を問わず、構成要素を一意に識別できる名前（パッケージ名、モジュール名）を入れます。</p>
+                        </div>
+                        <div>
+                            <h4 class="text-white font-bold mt-0 mb-1 flex items-center gap-2">4) コンポーネントバージョン</h4>
+                            <p class="text-sm text-slate-300 m-0">CVEはバージョンで刺さります。<br>OSSならバージョン、商用品なら型番/リビジョン、自社ならコミット/ビルド番号など、比較可能な識別子に揃えます。</p>
+                        </div>
+                        <div>
+                            <h4 class="text-white font-bold mt-0 mb-1 flex items-center gap-2">5) 種別（OSS/商用/自社）</h4>
+                            <p class="text-sm text-slate-300 m-0">「どこに問い合わせるか」「誰が直すか」が変わるので、種別は早めに固定します。</p>
+                        </div>
+                        <div class="bg-navy-800 p-4 rounded-lg border border-white/10">
+                            <h4 class="text-brand-light font-bold mt-0 mb-1 flex items-center gap-2">6) 搭載箇所/モジュール（1列でOK）</h4>
+                            <p class="text-sm text-slate-300 m-0">“影響なし”を説明するときに効きます。<br>粒度は細かくなくて良いので、まずは「どのモジュールに入っているか」を1列で持ちます。</p>
+                        </div>
+                        <div class="bg-navy-800 p-4 rounded-lg border border-white/10">
+                            <h4 class="text-brand-light font-bold mt-0 mb-1 flex items-center gap-2">7) 更新日・更新者（またはSBOMスナップショットID）</h4>
+                            <p class="text-sm text-slate-300 m-0">監査で効くのは「最新版が管理されていること」です。<br>最低限、更新日と更新者（できればスナップショットID）を残します。</p>
+                        </div>
+                    </div>
+
+                    <h2>推奨：次に足すと強くなる項目（ノイズ削減・監査で効く）</h2>
+                    <p>上記の最小セットが運用に乗り始めたら、以下の項目を足すとさらに対応が楽になります。</p>
+                    
+                    <ul class="space-y-3 font-medium">
+                        <li><strong>供給元/取得元：</strong> 取引先・ベンダー・上流など（照会時の“問い合わせ先”になる）</li>
+                        <li><strong>備考（根拠の一言）：</strong> 外部IFなし／機能無効／実行経路なし 等</li>
+                        <li><strong>ライセンス：</strong> 提出先要件がある場合のみでOK（最初から必須にしない）</li>
+                    </ul>
+                    <p class="text-brand-light font-bold">ここまで来ると、「影響なし」の説明が強くなり、追加質問が減ります。</p>
+
+                    <h2>どこまで固めればいい？（現場で迷わない3段階）</h2>
+
+                    <div class="space-y-6 my-8">
+                        <div class="relative pl-6 border-l-2 border-red-500/50">
+                            <div class="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-red-500 border-4 border-navy-900"></div>
+                            <h4 class="text-red-400 font-bold mt-0 mb-2">レベル1：OEM照会に“対象版数”で答えられる</h4>
+                            <ul class="text-sm m-0 text-slate-300 space-y-1">
+                                <li>必須項目（上の7つ）が埋まっている</li>
+                                <li>対象製品を絞って運用できている（全部やらない）</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="relative pl-6 border-l-2 border-orange-500/50">
+                            <div class="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-orange-400 border-4 border-navy-900"></div>
+                            <h4 class="text-orange-400 font-bold mt-0 mb-2">レベル2：CVE突合・トリアージで“ノイズを減らせる”</h4>
+                            <ul class="text-sm m-0 text-slate-300 space-y-1">
+                                <li>搭載箇所/備考が育っている（影響なし根拠が残る）</li>
+                                <li>更新トリガー（リリース時/部品更新時/照会時）が決まっている</li>
+                            </ul>
+                        </div>
+
+                        <div class="relative pl-6 border-l-2 border-transparent">
+                            <div class="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-emerald-400 border-4 border-navy-900"></div>
+                            <h4 class="text-emerald-400 font-bold mt-0 mb-2">レベル3：監査・提出で“証跡が揃う”</h4>
+                            <ul class="text-sm m-0 text-slate-300 space-y-1">
+                                <li>正本（社内版）と提出版の切り分けができている</li>
+                                <li>提出履歴、参照元、承認線が説明できる</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <p class="text-xl font-bold bg-white/5 p-4 rounded text-center">
+                        最初にやるべきは、レベル1の完成です。<br>
+                        <span class="text-base font-normal text-slate-300 mt-2 block">レベル1が回っていないのに、レベル3の項目を増やすと更新が止まります。</span>
+                    </p>
+
+                    <h2 class="border-b-2 border-emerald-500 pb-2 mt-12 mb-6">手順：SBOM項目を“固める”5ステップ（手作りでも迷わない）</h2>
+
+                    <div class="step-box">
+                        <h4 class="text-emerald-400 font-bold mt-0 mb-2 flex items-center gap-2">
+                            Step 1：目的を1つに絞る（まずは照会対応）
+                        </h4>
+                        <p class="text-sm text-slate-300 m-0">最初の目的は「CVE照会に答える」で十分です。目的が増えるほど項目が増えて運用が止まります。</p>
+                    </div>
+
+                    <div class="step-box">
+                        <h4 class="text-emerald-400 font-bold mt-0 mb-2 flex items-center gap-2">
+                            Step 2：対象製品を絞る（全部やらない）
+                        </h4>
+                        <p class="text-sm text-slate-300 m-0">OEM照会が多い／外部IFがある／売上影響が大きい製品から着手します。</p>
+                    </div>
+
+                    <div class="step-box">
+                        <h4 class="text-emerald-400 font-bold mt-0 mb-2 flex items-center gap-2">
+                            Step 3：最小カラム（必須7）を固定する
+                        </h4>
+                        <p class="text-sm text-slate-300 m-0">列を固定し、表記ゆれを禁止します（製品名・版数のゆれは後で地獄になります）。</p>
+                    </div>
+
+                    <div class="step-box">
+                        <h4 class="text-emerald-400 font-bold mt-0 mb-2 flex items-center gap-2">
+                            Step 4：版数の“切り方”を決める（製品版数×部品版数）
+                        </h4>
+                        <p class="text-sm text-slate-300 m-0">「製品の版数」と「部品の版数」を必ず分けて持ちます。ここが決まると照会対応が速くなります。</p>
+                    </div>
+
+                    <div class="step-box">
+                        <h4 class="text-emerald-400 font-bold mt-0 mb-2 flex items-center gap-2">
+                            Step 5：更新トリガーを3つだけ決める
+                        </h4>
+                        <ul class="text-sm text-slate-300 m-0 space-y-1">
+                            <li>製品リリース（版数変更）</li>
+                            <li>部品更新（供給元更新含む）</li>
+                            <li>OEM照会（調査結果の追記）</li>
+                        </ul>
+                    </div>
+
+                    <!-- 内部リンク①：全体像 -->
+                    <div class="related-box border-l-brand mt-8">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="map" class="w-4 h-4"></i> 全体像の確認</div>
+                        <p class="text-sm text-slate-300 mb-2">Excelで始めるか、標準形式（SPDX等）へ移行するか、提出版/社内版をどう切るかは、こちらのガイドで整理しています。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/sbom-complete-guide/" class="!text-brand-light hover:!text-brand">SBOM完全ガイド（SPDX/CycloneDX/Excel運用・提出と機密の現実解）</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- 途中CTA（主CTA） -->
+                    <div class="bg-navy-800/50 p-6 md:p-8 rounded-2xl border border-emerald-500/30 text-center my-10 shadow-[0_0_20px_rgba(16,185,129,0.1)]">
+                        <p class="text-slate-200 mb-6 font-medium text-lg">OEM監査対応・出荷を止めないための“SBOMの項目設計と更新ルール”から整備しましょう。まずはご相談ください。</p>
+                        <a href="/demo_form.html" class="inline-flex items-center gap-2 px-8 py-3.5 bg-brand hover:bg-brand-dark text-white rounded-full font-bold transition-all hover:-translate-y-1 shadow-lg shadow-brand/20">
+                            <i data-lucide="calendar" class="w-5 h-5"></i> 【無料】オンライン相談を予約する
+                        </a>
+                    </div>
+
+                    <h2>監査で見られるのは「項目の多さ」より「証跡と再現性」</h2>
+                    <p>監査・照会で突っ込まれるのは、SBOMの網羅性よりも次のような「運用の実態」です。</p>
+
+                    <div class="bg-navy-800 p-6 rounded-lg border border-white/10 my-6">
+                        <ul class="m-0 space-y-3 pl-0 list-none text-slate-200 font-medium">
+                            <li class="flex items-start gap-3"><i data-lucide="search" class="w-5 h-5 text-emerald-400 shrink-0 mt-0.5"></i> <div>そのSBOMは <strong>どの製品版数</strong> のものか？</div></li>
+                            <li class="flex items-start gap-3"><i data-lucide="search" class="w-5 h-5 text-emerald-400 shrink-0 mt-0.5"></i> <div><strong>いつ誰が更新</strong> したか？更新は止まっていないか？</div></li>
+                            <li class="flex items-start gap-3"><i data-lucide="search" class="w-5 h-5 text-emerald-400 shrink-0 mt-0.5"></i> <div><strong>“影響なし”の根拠</strong>（到達性/条件）を説明できるか？</div></li>
+                            <li class="flex items-start gap-3"><i data-lucide="search" class="w-5 h-5 text-emerald-400 shrink-0 mt-0.5"></i> <div>提出版は、<strong>正本から再現可能</strong> か？（その場しのぎではないか）</div></li>
+                        </ul>
+                    </div>
+
+                    <!-- 内部リンク②：監査観点 -->
+                    <div class="related-box border-l-brand mt-8">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="file-check" class="w-4 h-4"></i> 監査のポイント</div>
+                        <p class="text-sm text-slate-300 mb-2">「どの証跡を残せば監査が通るか」を抜け漏れなく確認したい方はこちら。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="#" class="!text-brand-light hover:!text-brand">監査エビデンスチェックリスト（作成中）</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>よくある失敗（項目を増やす前に避ける）</h2>
+                    <ul class="space-y-3 my-6 list-none pl-0">
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>製品バージョンがない</strong>（＝照会で必ず詰む）</div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>“最新版SBOM”しかなく</strong>、過去版数が再現できない</div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>正本が複数に散らばって</strong>矛盾する</div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>便利そうな項目を増やしすぎて</strong>更新が止まる</div></li>
+                    </ul>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2>FAQ：SBOMの項目について</h2>
+                    <div class="space-y-6 mt-6">
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q1. SBOMに必ず入れるべき項目は何ですか？</strong>
+                            <p class="m-0 text-slate-300">最小は「製品名」「製品バージョン」「コンポーネント名」「コンポーネントバージョン」「種別（OSS/商用/自社）」「搭載箇所」「更新日/更新者」です。まず“版数で答えられる”状態を作るのが優先です。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q2. どこまで固めればOEMに通りますか？</strong>
+                            <p class="m-0 text-slate-300">まずはレベル1（照会に対象版数で答えられる）です。提出・監査（レベル3）は段階的に。項目を増やすより、更新が回ることが評価されやすいです。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q3. SPDX/CycloneDXは最初から必須ですか？</strong>
+                            <p class="m-0 text-slate-300">必須ではありません。Excelで最小項目＋更新運用が回ってから標準化した方が成功率が高いです（作った瞬間に古くなるのが一番まずい）。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q4. 自社ソフトの「バージョン」が曖昧です。どう書けば？</strong>
+                            <p class="m-0 text-slate-300">コミットID、ビルド番号、リリースタグなど、比較可能な識別子に統一します。OEM照会は“どれが対象か”を切れることが最重要です。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q5. SBOMの更新頻度はどれくらいが現実的ですか？</strong>
+                            <p class="m-0 text-slate-300">最小は「製品リリース（版数変更）時」です。照会が増えてきたら、部品更新や供給元通知も更新トリガーに追加します。</p>
+                        </div>
+                    </div>
+
+                    <!-- 内部リンク③：次に読む -->
+                    <div class="related-box border-l-brand mt-12">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="book-open" class="w-4 h-4"></i> 次に読む</div>
+                        <p class="text-sm text-slate-300 mb-2">そもそもSBOMとは何か、目的を短く確認したい方はこちらをご覧ください。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/what-is-sbom/" class="!text-brand-light hover:!text-brand">SBOMとは？提出物ではなく運用資産として理解する</a></li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- CTA Section -->
+            <div class="glass-card rounded-3xl p-8 md:p-12 text-center border-t-4 border-t-emerald-500 bg-navy-800/80 shadow-[0_0_40px_-10px_rgba(16,185,129,0.2)]">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">Excel SBOMから、自動トリアージへ</h2>
+                <p class="text-slate-300 mb-8 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+                    <strong>Auto PSIRT Cloud</strong>なら、最小項目で作ったExcelの部品表をアップロードするだけで、日々の脆弱性（CVE）チェックを自動化できます。<br>
+                    OEM回答書（レポート）作成までの流れを、実際の画面で確認してみませんか？
+                </p>
+                <div class="flex justify-center">
+                    <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-navy-900 bg-white hover:bg-slate-200 transition-all duration-300 shadow-xl shadow-white/10 w-full sm:w-auto hover:-translate-y-1">
+                        <i data-lucide="monitor-play" class="w-5 h-5 text-emerald-600"></i>
+                        OEM回答書作成のデモを見る
+                    </a>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/5 text-center text-sm text-slate-500 mt-auto bg-navy-900/80">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span class="font-bold text-slate-400">Auto PSIRT Cloud</span>
+            </div>
+            <p>&copy; 2026 Unimobilities株式会社. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
