@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEOメタタグ -->
+    <title>トリアージ判定シート（決定理由）テンプレ｜CVEを3段階で説明できる形にする | Auto PSIRT Cloud</title>
+    <meta name="description" content="CVEトリアージの「決定理由」を誰が見ても説明できる形にする判定シートテンプレ。期限（SLA）・影響・確度・対応方針を3段階で記録し、VEX（影響あり/なし/調査中）に落とし込みます。OEM照会・監査の追加質問を減らす“証跡の残し方”も併記。">
+    <meta name="keywords" content="トリアージ判定シート, CVE, トリアージ, VEX, PSIRT, 脆弱性管理">
+    <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/psirt/triage-decision-sheet-template/">
+    
+    <!-- OGPタグ (SNSシェア用) -->
+    <meta property="og:title" content="トリアージ判定シート（決定理由）テンプレ｜CVEを3段階で説明できる形にする">
+    <meta property="og:description" content="CVEトリアージの決定理由を残し、VEXへ落とし込むための実用Excel/TSVテンプレ。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/psirt/triage-decision-sheet-template/">
+    <meta property="og:site_name" content="Auto PSIRT Cloud">
+
+    <!-- ファビコン -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%2310b981%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z%22/><path d=%22m9 12 2 2 4-4%22/></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0a0f1c',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        brand: {
+                            light: '#60a5fa',
+                            DEFAULT: '#3b82f6',
+                            dark: '#2563eb',
+                        },
+                        accent: {
+                            DEFAULT: '#06b6d4',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #10b981, #3b82f6);
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* 記事用カスタムスタイル */
+        .prose h2 {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-top: 3.5rem;
+            color: #f8fafc;
+        }
+        .prose h3 {
+            color: #e2e8f0;
+            margin-top: 2.5rem;
+            border-left: 3px solid #10b981; /* Emerald系アクセント */
+            padding-left: 0.75rem;
+            font-size: 1.25rem;
+        }
+        .prose a {
+            color: #34d399; /* emerald-400 */
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .prose a:hover {
+            border-bottom-color: #34d399;
+        }
+        .prose strong {
+            color: #f8fafc;
+            background: linear-gradient(transparent 60%, rgba(16, 185, 129, 0.3) 40%);
+        }
+        .related-box {
+            background: rgba(30, 41, 59, 0.6);
+            border-left: 4px solid #10b981;
+            padding: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 2rem 0;
+        }
+        
+        /* テンプレートコンテナ用スタイル */
+        .template-container {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            border-radius: 0.75rem;
+            overflow: hidden;
+            margin: 2rem 0;
+        }
+        .template-header {
+            background: rgba(16, 185, 129, 0.1);
+            border-bottom: 1px solid rgba(16, 185, 129, 0.2);
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .template-content {
+            padding: 1.5rem;
+            overflow-x: auto;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            color: #e2e8f0;
+            white-space: pre;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-emerald-500 selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-emerald-500/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-brand/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-accent flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="/news.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        ニュース一覧へ戻る
+                    </a>
+                    <a href="/demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                        相談 or デモ予約
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <article class="max-w-4xl mx-auto">
+            
+            <!-- パンくずリスト -->
+            <nav class="flex text-sm text-slate-400 mb-8" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/index.html" class="hover:text-white transition-colors">ホーム</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <a href="/news.html" class="hover:text-white transition-colors">ニュース・インサイト</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <span class="text-slate-500 truncate max-w-[200px] sm:max-w-none">トリアージ判定シート</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- 記事ヘッダー -->
+            <header class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-xs font-bold px-3 py-1 rounded-full">実務テンプレ</span>
+                    <time class="text-slate-400 text-sm flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> 2026.03.07
+                    </time>
+                </div>
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
+                    トリアージ判定シート（決定理由）テンプレ<br/>
+                    <span class="text-2xl md:text-3xl text-slate-300 font-medium">（CVEを3段階で説明できる形にする）</span>
+                </h1>
+                
+                <!-- 導入文 -->
+                <div class="text-lg text-slate-300 leading-relaxed p-6 bg-navy-800/50 rounded-2xl border border-white/5 space-y-4">
+                    <p>CVEトリアージが回らない原因は、判断の難しさではなく <strong>「決定理由が残らない／人によってブレる」</strong> ことです。</p>
+                    
+                    <p>結果として、OEM照会や監査でこうなります。</p>
+                    <ul class="m-0 list-disc list-inside">
+                        <li>「影響なし」の根拠が説明できず、追加質問が止まらない</li>
+                        <li>期限（SLA）だけが迫り、一次回答が遅れる</li>
+                        <li>同じCVEを何度も調べ直す（判断が資産化されない）</li>
+                    </ul>
+                    
+                    <p>そこで、期限（SLA）・影響・確度・対応方針を“3段階”で固定し、誰が見ても説明できる形にしたのがこの <strong>トリアージ判定シート</strong> です。</p>
+                </div>
+            </header>
+
+            <!-- 記事本文 -->
+            <div class="glass-card p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl bg-navy-900/80 mb-16">
+                <div class="prose prose-invert prose-slate prose-lg max-w-none">
+                    
+                    <!-- 内部リンク①：全体像 -->
+                    <div class="related-box mt-0 border-l-brand">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="map" class="w-4 h-4"></i> 導入（全体像の補足）</div>
+                        <p class="text-sm text-slate-300 mb-2">VEXを含む、トリアージの実務フローや背景を先に押さえたい方はこちらへ。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/cve-triage-vex-guide/" class="!text-brand-light hover:!text-brand">CVEトリアージ＆VEX実務 完全ガイド</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>このシートで決めること（最小4項目）</h2>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-6">
+                        <div class="bg-navy-800 p-4 rounded-lg border-l-4 border-l-red-500">
+                            <strong class="text-red-400 block mb-1">期限（SLA）</strong>
+                            <span class="text-sm text-slate-300">いつまでに何を返す必要があるか</span>
+                        </div>
+                        <div class="bg-navy-800 p-4 rounded-lg border-l-4 border-l-orange-500">
+                            <strong class="text-orange-400 block mb-1">影響（Impact）</strong>
+                            <span class="text-sm text-slate-300">安全・品質・範囲・外部到達性の大きさ</span>
+                        </div>
+                        <div class="bg-navy-800 p-4 rounded-lg border-l-4 border-l-emerald-500">
+                            <strong class="text-emerald-400 block mb-1">確度（Confidence）</strong>
+                            <span class="text-sm text-slate-300">その判断が“どれだけ根拠に支えられているか”</span>
+                        </div>
+                        <div class="bg-navy-800 p-4 rounded-lg border-l-4 border-l-brand-light">
+                            <strong class="text-brand-light block mb-1">対応方針（Treatment）</strong>
+                            <span class="text-sm text-slate-300">いま何をするか（対応必須／要確認／対応不要）</span>
+                        </div>
+                    </div>
+                    
+                    <p class="text-center font-bold text-emerald-400">ここが揃うと、VEX（影響あり/なし/調査中）への変換が一瞬でできます。</p>
+
+                    <h2 class="border-b-2 border-emerald-500 pb-2 mt-12 mb-6">【定義】3段階ルール（コピペ用）</h2>
+                    <p>このルールをシートの別タブや社内Wikiに貼っておき、判断基準を統一します。</p>
+
+                    <div class="space-y-6 my-6">
+                        <div>
+                            <h4 class="text-red-400 font-bold mt-0 mb-2 border-b border-white/10 pb-1">期限（SLA）</h4>
+                            <ul class="text-sm m-0 space-y-1 text-slate-300">
+                                <li><strong class="text-red-300">高：</strong> OEM/顧客期限あり（〜5営業日など）／一次回答必須</li>
+                                <li><strong class="text-yellow-300">中：</strong> 期限あり（交渉余地あり）／定例内で一次回答</li>
+                                <li><strong class="text-emerald-300">低：</strong> 期限なし／バックログ管理</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h4 class="text-orange-400 font-bold mt-0 mb-2 border-b border-white/10 pb-1">影響（Impact）</h4>
+                            <ul class="text-sm m-0 space-y-1 text-slate-300">
+                                <li><strong class="text-red-300">高：</strong> 外部IFあり・遠隔成立の可能性／安全・出荷に関係／搭載台数が多い</li>
+                                <li><strong class="text-yellow-300">中：</strong> 条件付き・限定範囲（特定機能/特定顧客）</li>
+                                <li><strong class="text-emerald-300">低：</strong> 内部限定／機能未使用・無効／実行経路が成立しにくい</li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h4 class="text-emerald-400 font-bold mt-0 mb-2 border-b border-white/10 pb-1">確度（Confidence）</h4>
+                            <ul class="text-sm m-0 space-y-1 text-slate-300">
+                                <li><strong class="text-emerald-300">高：</strong> 対象製品・対象版数が確定／搭載根拠（SBOM等）＋一次情報（公告/修正）あり</li>
+                                <li><strong class="text-yellow-300">中：</strong> 搭載候補だが版数未確定／情報不足（追加確認が必要）</li>
+                                <li><strong class="text-red-300">低：</strong> 一般情報のみ／CPE一致レベル／搭載未確認</li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h4 class="text-brand-light font-bold mt-0 mb-2 border-b border-white/10 pb-1">対応方針（Treatment）</h4>
+                            <ul class="text-sm m-0 space-y-1 text-slate-300">
+                                <li><strong class="text-red-400">A：対応必須</strong> （＝VEX: Affected）</li>
+                                <li><strong class="text-yellow-400">B：要確認</strong> （＝VEX: Under Investigation／調査中＋次回更新日）</li>
+                                <li><strong class="text-emerald-400">C：対応不要</strong> （＝VEX: Not affected／根拠＋条件を残してクローズ）</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <h2 class="mt-12">【テンプレ】トリアージ判定シート（TSV）</h2>
+                    <p>ここから下をコピーして、ExcelのA1セルに貼り付けてください（タブ区切りで自動展開されます）。</p>
+
+                    <!-- TSV Template Container -->
+                    <div class="template-container">
+                        <div class="template-header">
+                            <span class="text-sm font-bold text-emerald-400 flex items-center gap-2">
+                                <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> triage_decision_sheet.tsv
+                            </span>
+                            <button onclick="copyToClipboard(this)" class="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 rounded text-xs font-bold transition-colors">
+                                <i data-lucide="copy" class="w-3.5 h-3.5"></i> コピーする
+                            </button>
+                        </div>
+                        <div class="template-content" id="tsv-content">案件ID	受付日	通知元	相手期限	SLA(高/中/低)	CVE	対象製品	対象製品版数(暫定/確定)	コンポーネント名	コンポーネント版数	搭載(Yes/No/不明)	到達性(Yes/No/不明)	影響(高/中/低)	確度(高/中/低)	対応方針(A/B/C)	VEX(affected/not_affected/under_investigation)	決定理由(1〜3行)	次回更新日	決定者	承認者	証跡リンク/ID	備考
+例:INC-2026-0001	2026-07-03	NVD	-	低	CVE-2026-XXXX	メーターパネル	v2.3.1(確定)	OpenSSL	3.0.13	Yes	No	低	高	C	not_affected	外部IFなし(閉域)のため成立条件不在。SBOM行ID:123参照。	2026-07-10	山田	佐藤	CHG-88/SBOM-123	設定変更時は再評価</div>
+                    </div>
+
+                    <h3>“決定理由”の書き方（迷わない型）</h3>
+                    <p>シートの「決定理由」欄には、長文は不要です。以下の3要素を1〜3行で書くだけでOEM説明に通ります。</p>
+                    
+                    <ul class="space-y-1 bg-navy-800/80 p-4 rounded-lg">
+                        <li><strong>根拠（何を見たか）：</strong> SBOM/部品表行ID、公告、試験、設定</li>
+                        <li><strong>結論の理由：</strong> 非搭載／到達性なし／影響範囲外／緩和済み</li>
+                        <li><strong>条件（前提）：</strong> 機能無効、外部IFなし、特定構成のみ 等</li>
+                    </ul>
+
+                    <!-- 途中CTA（主CTA） -->
+                    <div class="bg-navy-800/50 p-6 md:p-8 rounded-2xl border border-emerald-500/30 text-center my-10 shadow-[0_0_20px_rgba(16,185,129,0.1)]">
+                        <p class="text-slate-200 mb-6 font-medium text-lg">このままのテンプレを、自社向け（製品/版数/証跡/承認線/SLA）に整備したい方はご相談ください。</p>
+                        <a href="/demo_form.html" class="inline-flex items-center gap-2 px-8 py-3.5 bg-brand hover:bg-brand-dark text-white rounded-full font-bold transition-all hover:-translate-y-1 shadow-lg shadow-brand/20">
+                            <i data-lucide="calendar" class="w-5 h-5"></i> 【無料】オンライン相談を予約する
+                        </a>
+                    </div>
+
+                    <h2>付録：Auto PSIRT Cloudで“運用標準化”する時のポイント</h2>
+                    <p>このシートをシステム（Auto PSIRT Cloud等）に乗せる場合、以下の設計にすると自動化が活きます。</p>
+                    
+                    <ul class="space-y-2">
+                        <li>判定シートの列をそのまま <strong>チケット項目</strong> にする（入力の迷いを消す）</li>
+                        <li><strong>証跡リンク/ID</strong> を必須化し、「影響なし」の再説明コストをゼロにする</li>
+                        <li><strong>VEX</strong>（affected / not_affected / under_investigation）を固定し、OEM回答書にそのまま転記できる状態にする</li>
+                    </ul>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2>FAQ：トリアージ判定シートについて</h2>
+                    <div class="space-y-6 mt-6">
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q1. トリアージ判定シートは、なぜ必要ですか？</strong>
+                            <p class="m-0 text-slate-300">「影響あり/なし」よりも <strong>決定理由（根拠・前提・対象版数）</strong> が監査やOEM照会で問われるためです。判定理由が残ると追加質問が減り、同じ判断を繰り返さずに済みます。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q2. 3段階（高/中/低）で十分ですか？</strong>
+                            <p class="m-0 text-slate-300">最初は十分です。細かくしすぎると入力が止まります。まず3段階で運用を回し、必要になった項目だけ増やす方が成功率が高いです。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q3. 「要確認（調査中）」のときに必ず書くべきことは？</strong>
+                            <p class="m-0 text-slate-300"><strong>次回更新日</strong>です。結論よりも「いつ確度が上がるか」を示す方がSLA運用が安定します。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q4. VEXはどう書けばいいですか？</strong>
+                            <p class="m-0 text-slate-300">対応方針A＝affected、B＝under_investigation、C＝not_affected、のように単純に対応させるとブレません。</p>
+                        </div>
+                    </div>
+
+                    <!-- 内部リンク②：次に読む -->
+                    <div class="related-box border-l-brand mt-12">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="book-open" class="w-4 h-4"></i> 次に読む</div>
+                        <p class="text-sm text-slate-300 mb-2">CVE番号の読み方や、CVSSスコアの「どこを見るべきか」の基礎知識はこちら。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/what-is-cve/" class="!text-brand-light hover:!text-brand">CVEとは？番号の意味と読み方</a></li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- CTA Section -->
+            <div class="glass-card rounded-3xl p-8 md:p-12 text-center border-t-4 border-t-emerald-500 bg-navy-800/80 shadow-[0_0_40px_-10px_rgba(16,185,129,0.2)]">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">この判定シート、AIで自動入力しませんか？</h2>
+                <p class="text-slate-300 mb-8 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+                    <strong>Auto PSIRT Cloud</strong>なら、脆弱性情報を取り込むだけで、このシートに該当する「期限・影響・確度」の推測とVEXの一次判定をAIが自動で実施します。
+                </p>
+                <div class="flex justify-center">
+                    <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-navy-900 bg-white hover:bg-slate-200 transition-all duration-300 shadow-xl shadow-white/10 w-full sm:w-auto hover:-translate-y-1">
+                        <i data-lucide="monitor-play" class="w-5 h-5 text-emerald-600"></i>
+                        CVE・トリアージ＆影響判定のデモを見る
+                    </a>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/5 text-center text-sm text-slate-500 mt-auto bg-navy-900/80">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span class="font-bold text-slate-400">Auto PSIRT Cloud</span>
+            </div>
+            <p>&copy; 2026 Unimobilities株式会社. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Copy to clipboard function for TSV template
+        function copyToClipboard(button) {
+            const content = document.getElementById('tsv-content').textContent;
+            
+            const textarea = document.createElement('textarea');
+            textarea.value = content;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            
+            try {
+                document.execCommand('copy');
+                const originalHtml = button.innerHTML;
+                button.innerHTML = '<i data-lucide="check" class="w-3.5 h-3.5"></i> コピーしました';
+                button.classList.remove('bg-emerald-500/20', 'text-emerald-300');
+                button.classList.add('bg-brand/20', 'text-brand-light');
+                lucide.createIcons();
+                
+                setTimeout(() => {
+                    button.innerHTML = originalHtml;
+                    button.classList.remove('bg-brand/20', 'text-brand-light');
+                    button.classList.add('bg-emerald-500/20', 'text-emerald-300');
+                    lucide.createIcons();
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy', err);
+            } finally {
+                document.body.removeChild(textarea);
+            }
+        }
+    </script>
+</body>
+</html>
