@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEOメタタグ -->
+    <title>期限（SLA）管理：回答期限がない案件の守り方｜PSIRTの“放置”をなくす運用設計 | Auto PSIRT Cloud</title>
+    <meta name="description" content="期限が明記されないCVE通知・取引先連絡を放置すると、OEM照会や監査で一気に炎上します。PSIRTのSLAを「一次仕分け期限」「更新日」「棚卸しサイクル」で内製し、優先度付け・バックログ運用・証跡を残す手順を解説します。">
+    <meta name="keywords" content="期限, OEM調査依頼, 監査, SLA, PSIRT, 脆弱性管理, バックログ">
+    <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/psirt/sla-no-deadline/">
+    
+    <!-- OGPタグ (SNSシェア用) -->
+    <meta property="og:title" content="期限（SLA）管理：回答期限がない案件の守り方｜PSIRTの“放置”をなくす運用設計">
+    <meta property="og:description" content="期限がない案件こそSLAの内製が必要。放置を防ぎ、監査に耐えるPSIRTの期限管理術を解説します。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/psirt/sla-no-deadline/">
+    <meta property="og:site_name" content="Auto PSIRT Cloud">
+
+    <!-- ファビコン -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23f97316%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z%22/><path d=%22m9 12 2 2 4-4%22/></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0a0f1c',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        brand: {
+                            light: '#60a5fa',
+                            DEFAULT: '#3b82f6',
+                            dark: '#2563eb',
+                        },
+                        accent: {
+                            DEFAULT: '#06b6d4',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #f97316, #ef4444); /* Orange to Red */
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* 記事用カスタムスタイル */
+        .prose h2 {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-top: 3.5rem;
+            color: #f8fafc;
+        }
+        .prose h3 {
+            color: #e2e8f0;
+            margin-top: 2.5rem;
+            border-left: 3px solid #f97316; /* Orange系アクセント */
+            padding-left: 0.75rem;
+            font-size: 1.25rem;
+        }
+        .prose a {
+            color: #fb923c; /* orange-400 */
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .prose a:hover {
+            border-bottom-color: #fb923c;
+        }
+        .prose strong {
+            color: #f8fafc;
+            background: linear-gradient(transparent 60%, rgba(249, 115, 22, 0.3) 40%);
+        }
+        .related-box {
+            background: rgba(30, 41, 59, 0.6);
+            border-left: 4px solid #f97316;
+            padding: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 2rem 0;
+        }
+        .step-box {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(249, 115, 22, 0.3);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            position: relative;
+        }
+        .step-number {
+            position: absolute;
+            top: -1rem;
+            left: 1.5rem;
+            background: #f97316;
+            color: white;
+            font-weight: bold;
+            font-size: 0.875rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            border: 4px solid #0a0f1c;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-orange-500 selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-orange-500/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-brand/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-accent flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="/news.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        ニュース一覧へ戻る
+                    </a>
+                    <a href="/demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                        相談 or デモ予約
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <article class="max-w-4xl mx-auto">
+            
+            <!-- パンくずリスト -->
+            <nav class="flex text-sm text-slate-400 mb-8" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/index.html" class="hover:text-white transition-colors">ホーム</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <a href="/news.html" class="hover:text-white transition-colors">ニュース・インサイト</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <span class="text-slate-500 truncate max-w-[200px] sm:max-w-none">期限管理（SLA）</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- 記事ヘッダー -->
+            <header class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-orange-500/20 border border-orange-500/30 text-orange-400 text-xs font-bold px-3 py-1 rounded-full">実務ガイド</span>
+                    <time class="text-slate-400 text-sm flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> 2026.03.07
+                    </time>
+                </div>
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
+                    期限（SLA）管理：回答期限がない案件の守り方<br/>
+                    <span class="text-2xl md:text-3xl text-slate-300 font-medium">（PSIRTの“放置”をなくす運用設計）</span>
+                </h1>
+                
+                <!-- 導入文 -->
+                <div class="text-lg text-slate-300 leading-relaxed p-6 bg-navy-800/50 rounded-2xl border border-white/5 space-y-4">
+                    <p>PSIRT運用で地味に効いてくるのが、<strong>「期限が書かれていない案件」</strong>です。</p>
+                    
+                    <p>NVDの新規CVE、取引先の“念のため共有”通知、スキャナの検知など、外部の締切（SLA）が無いものは毎週増え続けます。<br>
+                    そして、放置が続くとこうなります。</p>
+                    
+                    <ul class="m-0 list-disc list-inside">
+                        <li>OEM照会（期限あり）が来た瞬間に、過去の未処理が雪崩れる</li>
+                        <li>「継続的に脆弱性を監視・評価しているか？」という監査質問に、証跡で答えられない</li>
+                        <li>チームの判断がブレて、同じCVEを何度も調べ直す</li>
+                    </ul>
+                    
+                    <p>結論、期限がない案件こそ <strong>“社内SLAを自分で作る”</strong> 必要があります。</p>
+                    <p>この記事では、兼務でも回るように <strong>「期限（SLA）の内製」</strong>を手順に落とし込みます。</p>
+                </div>
+            </header>
+
+            <!-- 記事本文 -->
+            <div class="glass-card p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl bg-navy-900/80 mb-16">
+                <div class="prose prose-invert prose-slate prose-lg max-w-none">
+                    
+                    <!-- 内部リンク①：全体像 -->
+                    <div class="related-box mt-0 border-l-brand">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="map" class="w-4 h-4"></i> 監査・OEM照会の全体像</div>
+                        <p class="text-sm text-slate-300 mb-2">期限（SLA）を“監査に耐える運用”として整理する前提として、OEM対応の全体フローを補完したい方はこちらをご覧ください。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/audit-investigation-response-guide/" class="!text-brand-light hover:!text-brand">OEM調査依頼・監査対応 完全ガイド</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>そもそも「期限がない案件」が危険な理由</h2>
+                    <p>期限がない案件は「重要でない」ではありません。危険なのは、次の2点です。</p>
+
+                    <div class="space-y-6 my-6">
+                        <div class="bg-navy-800 p-5 rounded-lg border-l-4 border-l-red-500">
+                            <h4 class="text-red-400 font-bold mt-0 mb-2 flex items-center gap-2"><i data-lucide="alert-triangle" class="w-5 h-5"></i> 1. 将来“期限あり”に変わる</h4>
+                            <p class="text-sm text-slate-300 m-0">今日のCVE通知が、明日のOEM照会になります。その際、「何ヶ月前から把握していた？なぜ放置していた？」と聞かれると対応に窮します。</p>
+                        </div>
+                        <div class="bg-navy-800 p-5 rounded-lg border-l-4 border-l-orange-500">
+                            <h4 class="text-orange-400 font-bold mt-0 mb-2 flex items-center gap-2"><i data-lucide="file-search" class="w-5 h-5"></i> 2. 監査で“継続運用”の証跡に使われる</h4>
+                            <p class="text-sm text-slate-300 m-0">監査で見られるのは「全部対応したか」よりも、<strong>受付 → 仕分け → 判断 → 記録（証跡） が回っているか</strong>です。放置案件が多いとプロセス不全と見なされます。</p>
+                        </div>
+                    </div>
+                    
+                    <p class="text-center font-bold text-brand-light">つまり、期限がない案件は「SLAが無い」のではなく、<br class="hidden sm:block"><strong>「SLAを自分で作らないと運用が崩れる領域」</strong>です。</p>
+
+                    <h2 class="mt-12">先に結論：期限のない案件は「3つの期限」を社内で固定する</h2>
+                    <p>期限なし案件を守る最小セットは、これだけです。</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-6">
+                        <div class="bg-navy-800 p-5 rounded-xl border border-white/5 shadow-lg relative overflow-hidden group hover:border-orange-500/50 transition-colors">
+                            <div class="absolute -right-4 -top-4 opacity-5 group-hover:scale-110 transition-transform">
+                                <i data-lucide="filter" class="w-24 h-24 text-orange-400"></i>
+                            </div>
+                            <h4 class="text-orange-400 font-bold mt-0 mb-3 border-b border-white/10 pb-2">① 一次仕分け期限<br><span class="text-xs font-normal text-slate-400">Triage SLA</span></h4>
+                            <p class="text-sm text-slate-300 m-0">まず“どの箱に入れるか”をいつまでに決めるか</p>
+                        </div>
+                        <div class="bg-navy-800 p-5 rounded-xl border border-white/5 shadow-lg relative overflow-hidden group hover:border-brand-light/50 transition-colors">
+                            <div class="absolute -right-4 -top-4 opacity-5 group-hover:scale-110 transition-transform">
+                                <i data-lucide="refresh-cw" class="w-24 h-24 text-brand-light"></i>
+                            </div>
+                            <h4 class="text-brand-light font-bold mt-0 mb-3 border-b border-white/10 pb-2">② 次回更新日<br><span class="text-xs font-normal text-slate-400">Update Date</span></h4>
+                            <p class="text-sm text-slate-300 m-0">調査中・保留中でも「次にいつ見るか」を固定する</p>
+                        </div>
+                        <div class="bg-navy-800 p-5 rounded-xl border border-white/5 shadow-lg relative overflow-hidden group hover:border-emerald-400/50 transition-colors">
+                            <div class="absolute -right-4 -top-4 opacity-5 group-hover:scale-110 transition-transform">
+                                <i data-lucide="calendar-check" class="w-24 h-24 text-emerald-400"></i>
+                            </div>
+                            <h4 class="text-emerald-400 font-bold mt-0 mb-3 border-b border-white/10 pb-2">③ 定期棚卸し<br><span class="text-xs font-normal text-slate-400">Backlog Review</span></h4>
+                            <p class="text-sm text-slate-300 m-0">週次/月次で“古くなった判断”を洗い替える</p>
+                        </div>
+                    </div>
+                    <p class="text-center font-bold">これで「放置」が「運用」に変わります。</p>
+
+                    <h2 class="border-b-2 border-orange-500 pb-2 mt-12 mb-8">手順：期限なし案件を“燃えない形”で回す（5ステップ）</h2>
+
+                    <div class="step-box pt-8">
+                        <div class="step-number">Step 1</div>
+                        <h4 class="text-white font-bold mt-0 mb-3 flex items-center gap-2">入口を統一し、必ずチケット化する</h4>
+                        <p class="text-sm text-slate-300 mb-4">期限がない案件ほど散らばります。メール・チャット・口頭・スキャナ通知を、必ず <strong>案件ID（チケット）</strong> に落とします。<br>
+                        （監査で効く“運用している証拠”になります）</p>
+                        
+                        <div class="bg-navy-900/80 p-4 rounded border border-white/10">
+                            <strong class="text-orange-300 text-sm block mb-2">最低限のチケット項目</strong>
+                            <ul class="text-sm m-0 text-slate-300 space-y-1">
+                                <li>受付日 ／ 発信元 ／ 対象製品候補 ／ 関連CVE</li>
+                                <li><strong>期限：なし</strong>（＝期限なしフラグ）</li>
+                                <li><strong>一次仕分け期限（社内）：</strong>YYYY-MM-DD</li>
+                                <li><strong>次回更新日：</strong>YYYY-MM-DD</li>
+                                <li>証跡（参照先URL/文書ID）</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="step-box pt-8">
+                        <div class="step-number">Step 2</div>
+                        <h4 class="text-white font-bold mt-0 mb-3 flex items-center gap-2">期限なしを「3クラス」に仕分けし、一次仕分け期限を決める</h4>
+                        <p class="text-sm text-slate-300 mb-4">期限なし案件を全部同じ温度で扱うと破綻します。まずは3クラスで十分です。</p>
+                        
+                        <div class="space-y-3">
+                            <div class="flex items-start gap-4">
+                                <div class="w-20 shrink-0 font-bold text-red-400">Hot<br><span class="text-xs font-normal text-slate-500">（短期で燃える）</span></div>
+                                <div>
+                                    <p class="text-sm text-slate-300 m-0 mb-1">悪用兆候あり／外部IFあり／影響範囲が大きい</p>
+                                    <p class="text-sm font-bold text-white bg-white/10 inline-block px-2 py-0.5 rounded m-0">→ 一次仕分け期限：1〜3営業日</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-4">
+                                <div class="w-20 shrink-0 font-bold text-yellow-400">Warm<br><span class="text-xs font-normal text-slate-500">（要確認）</span></div>
+                                <div>
+                                    <p class="text-sm text-slate-300 m-0 mb-1">情報が揃っていないが、対象になり得る</p>
+                                    <p class="text-sm font-bold text-white bg-white/10 inline-block px-2 py-0.5 rounded m-0">→ 一次仕分け期限：5営業日</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-4">
+                                <div class="w-20 shrink-0 font-bold text-blue-400">Cold<br><span class="text-xs font-normal text-slate-500">（監視）</span></div>
+                                <div>
+                                    <p class="text-sm text-slate-300 m-0 mb-1">対象外の可能性が高い／影響が限定的</p>
+                                    <p class="text-sm font-bold text-white bg-white/10 inline-block px-2 py-0.5 rounded m-0">→ 一次仕分け期限：10〜20営業日（次回棚卸しまで）</p>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-sm font-bold text-orange-400 mt-4">ポイント：期限なし案件に“先に締切を与える”のがSLA管理です。</p>
+                    </div>
+
+                    <div class="step-box pt-8">
+                        <div class="step-number">Step 3</div>
+                        <h4 class="text-white font-bold mt-0 mb-3 flex items-center gap-2">「次回更新日」を必須化して“保留の放置”をゼロにする</h4>
+                        <p class="text-sm text-slate-300 mb-4">期限なし案件の大半は、一次仕分けの時点で情報不足が残ります。そのとき重要なのは結論ではなく、<strong>次回更新日（いつ確度が上がるか）</strong> です。</p>
+                        
+                        <ul class="text-sm text-slate-300 space-y-2 m-0 bg-navy-900/80 p-4 rounded border border-white/5">
+                            <li><strong>供給元回答待ち</strong> → 回答予定日を次回更新日に</li>
+                            <li><strong>SBOM未整備</strong> → 版数確認の期限を次回更新日に</li>
+                            <li><strong>仕様確認が必要</strong> → 設計への質問期限を次回更新日に</li>
+                        </ul>
+                        <p class="text-sm text-brand-light mt-3 font-medium">次回更新日が入っていれば、監査でも「保留＝放置ではない」と説明できます。</p>
+                    </div>
+
+                    <div class="step-box pt-8">
+                        <div class="step-number">Step 4</div>
+                        <h4 class="text-white font-bold mt-0 mb-3 flex items-center gap-2">バックログを「棚卸しサイクル」で回す（週次10分でOK）</h4>
+                        <p class="text-sm text-slate-300 mb-4">期限なし案件は増えます。増える前提で、棚卸しを仕組みにします。</p>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+                            <div class="bg-navy-900/80 p-3 rounded border border-white/5">
+                                <strong class="text-white block mb-1">週次（10分）</strong>
+                                <span class="text-sm text-slate-400">Hot/Warmの“期限超過”だけ潰す</span>
+                            </div>
+                            <div class="bg-navy-900/80 p-3 rounded border border-white/5">
+                                <strong class="text-white block mb-1">月次（30分）</strong>
+                                <span class="text-sm text-slate-400">Coldも含めて「判断の古さ」を洗い替える</span>
+                            </div>
+                            <div class="bg-navy-900/80 p-3 rounded border border-white/5">
+                                <strong class="text-white block mb-1">四半期</strong>
+                                <span class="text-sm text-slate-400">製品ラインが増えたら評価基準を更新</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-box pt-8">
+                        <div class="step-number">Step 5</div>
+                        <h4 class="text-white font-bold mt-0 mb-3 flex items-center gap-2">監査用の“見せ方”を作る（＝証跡が勝ち筋）</h4>
+                        <p class="text-sm text-slate-300 mb-3">監査で最終的に効くのは、次の3点です。</p>
+                        <ul class="text-sm text-slate-300 m-0 space-y-1.5">
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-400"></i> 期限なし案件にも一次仕分け期限が付いている（＝運用している）</li>
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-400"></i> 次回更新日があり、更新履歴が残っている（＝放置していない）</li>
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-400"></i> 棚卸しサイクルの記録がある（＝継続性がある）</li>
+                        </ul>
+                    </div>
+
+                    <h2>（支援）OEMに説明できる“回答の型”を用意する</h2>
+                    <p>期限なし案件を自社で整理しても、結局は後からOEM照会（期限あり）が来ます。<br>
+                    その時に備えて、<strong>「いまの結論＋根拠＋次回更新日」</strong>を短文で出せるテンプレを持っておくと強いです。</p>
+
+                    <!-- 内部リンク②：回答テンプレ -->
+                    <div class="related-box border-l-brand my-6">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> 回答の型（テンプレ）</div>
+                        <p class="text-sm text-slate-300 mb-2">一次回答（受領・暫定範囲・次回更新日）の書き方を固定化したい方はこちら。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/response-report-must-have-items/" class="!text-brand-light hover:!text-brand">要点でわかる「OEMに答える」テンプレ</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- 途中CTA（主CTA） -->
+                    <div class="bg-navy-800/50 p-6 md:p-8 rounded-2xl border border-orange-500/30 text-center my-10 shadow-[0_0_20px_rgba(249,115,22,0.15)]">
+                        <p class="text-slate-200 mb-6 font-medium text-lg">OEM調査依頼・監査対応の進め方を整理して、いまの体制で回るように整備したい方はご相談ください。</p>
+                        <a href="/demo_form.html" class="inline-flex items-center gap-2 px-8 py-3.5 bg-brand hover:bg-brand-dark text-white rounded-full font-bold transition-all hover:-translate-y-1 shadow-lg shadow-brand/20">
+                            <i data-lucide="calendar" class="w-5 h-5"></i> 【無料】オンライン相談を予約する
+                        </a>
+                    </div>
+
+                    <h2>よくある失敗（期限なし案件が“地雷化”するパターン）</h2>
+                    <ul class="space-y-3 my-6 list-none pl-0">
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>「期限なし＝後回し」</strong>で、一次仕分け期限が存在しない</div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>「調査中」に次回更新日がない</strong>ので、ただの放置に見える</div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>チケット化されず</strong>、判断理由が残らない（監査で再現できない）</div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>棚卸しが無く</strong>、半年後に“いまさら対応”になって炎上する</div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>結論が「影響なし」の断定だけ</strong>で、条件・根拠がない</div></li>
+                    </ul>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2>FAQ：SLA管理・バックログ運用について</h2>
+                    <div class="space-y-6 mt-6">
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q1. 期限がないCVE通知は無視してもいいですか？</strong>
+                            <p class="m-0 text-slate-300">無視はおすすめしません。対応まで行かなくても、受付→一次仕分け→記録（根拠）→次回更新日までは残すと、OEM照会・監査で説明できます。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q2. 社内SLA（一次仕分け期限）はどう決めればいいですか？</strong>
+                            <p class="m-0 text-slate-300">まずはHot/Warm/Coldの3クラスで十分です。Hotは1〜3営業日、Warmは5営業日、Coldは次回棚卸し（10〜20営業日）など、運用が止まらない期限を先に置きます。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q3. 「調査中」が溜まるのを防ぐには？</strong>
+                            <p class="m-0 text-slate-300">次回更新日を必須化し、週次の棚卸しで期限超過だけを潰すのが最小構成です。結論を急ぐより、更新日で運用を回す方が崩れません。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q4. 監査では具体的に何を見られますか？</strong>
+                            <p class="m-0 text-slate-300">「期限なし案件も含めて運用が回っているか」です。チケット、一次仕分け期限、次回更新日、棚卸し記録が揃うと説明が通ります。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q5. OTAや配布スケジュールが絡むとSLAが難しいです</strong>
+                            <p class="m-0 text-slate-300">期限なし案件でも、将来の修正版配布（OTA/現地/工場）が絡むと“期限あり化”します。早めに「次回更新日」と「想定配布方式」を置くのが安全です。</p>
+                        </div>
+                    </div>
+
+                    <!-- 内部リンク③：次に読む -->
+                    <div class="related-box border-l-brand mt-12">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="book-open" class="w-4 h-4"></i> 次に読む</div>
+                        <p class="text-sm text-slate-300 mb-2">配布方法（OTA/工場/現地）が絡むとSLAの設計が変わります。OTAについての前提知識はこちら。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="#" class="!text-brand-light hover:!text-brand">OTAが「？」な担当者向け解説（作成中）</a></li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- CTA Section -->
+            <div class="glass-card rounded-3xl p-8 md:p-12 text-center border-t-4 border-t-orange-500 bg-navy-800/80 shadow-[0_0_40px_-10px_rgba(249,115,22,0.2)]">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">タスクの期限管理、システムで自動化しませんか？</h2>
+                <p class="text-slate-300 mb-8 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+                    <strong>Auto PSIRT Cloud</strong>なら、期限のないCVE情報も自動でチケット化。設定したSLA（目標時間）や次回更新日が近づくとダッシュボードでアラートを出し、「放置による炎上」をシステムが未然に防ぎます。
+                </p>
+                <div class="flex justify-center">
+                    <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-navy-900 bg-white hover:bg-slate-200 transition-all duration-300 shadow-xl shadow-white/10 w-full sm:w-auto hover:-translate-y-1">
+                        <i data-lucide="monitor-play" class="w-5 h-5 text-orange-600"></i>
+                        OEM回答書作成・タスク管理のデモを見る
+                    </a>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/5 text-center text-sm text-slate-500 mt-auto bg-navy-900/80">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span class="font-bold text-slate-400">Auto PSIRT Cloud</span>
+            </div>
+            <p>&copy; 2026 Unimobilities株式会社. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
