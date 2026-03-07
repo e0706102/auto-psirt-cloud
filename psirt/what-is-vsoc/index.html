@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEOメタタグ -->
+    <title>VSOCとは？PSIRTとの違いと見極めポイント｜サプライヤー向け用語辞典 | Auto PSIRT Cloud</title>
+    <meta name="description" content="VSOC（Vehicle Security Operations Center）とは何かをサプライヤー向けに解説。PSIRTとの違い（監視・検知 vs 脆弱性対応）と、OEMから「VSOCが必要」と言われたときに確認すべき見極めポイント（対象範囲、ログ、SLA、役割分担）を短く整理します。">
+    <meta name="keywords" content="VSOCとは, PSIRT, VSOC, 自動車セキュリティ, UN-R155, 監視">
+    <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/psirt/what-is-vsoc/">
+    
+    <!-- OGPタグ (SNSシェア用) -->
+    <meta property="og:title" content="VSOCとは？PSIRTとの違いと見極めポイント｜サプライヤー向け用語辞典">
+    <meta property="og:description" content="VSOCとは何か？PSIRTとの違いと、OEM要求時の「4つの見極めポイント」を解説します。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/psirt/what-is-vsoc/">
+    <meta property="og:site_name" content="Auto PSIRT Cloud">
+
+    <!-- ファビコン -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%2306b6d4%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z%22/><path d=%22m9 12 2 2 4-4%22/></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0a0f1c',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        brand: {
+                            light: '#60a5fa',
+                            DEFAULT: '#3b82f6',
+                            dark: '#2563eb',
+                        },
+                        accent: {
+                            DEFAULT: '#06b6d4',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #06b6d4, #3b82f6); /* Cyan to Blue gradient */
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* 記事用カスタムスタイル */
+        .prose h2 {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-top: 3.5rem;
+            color: #f8fafc;
+        }
+        .prose h3 {
+            color: #e2e8f0;
+            margin-top: 2.5rem;
+            border-left: 3px solid #06b6d4; /* Cyan系アクセント */
+            padding-left: 0.75rem;
+            font-size: 1.25rem;
+        }
+        .prose a {
+            color: #22d3ee;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .prose a:hover {
+            border-bottom-color: #22d3ee;
+        }
+        .prose strong {
+            color: #f8fafc;
+            background: linear-gradient(transparent 60%, rgba(6, 182, 212, 0.3) 40%);
+        }
+        .related-box {
+            background: rgba(30, 41, 59, 0.6);
+            border-left: 4px solid #06b6d4;
+            padding: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-cyan-500 selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-cyan-500/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-blue-500/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-accent flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="/news.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        ニュース一覧へ戻る
+                    </a>
+                    <a href="/demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                        相談 or デモ予約
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <article class="max-w-4xl mx-auto">
+            
+            <!-- パンくずリスト -->
+            <nav class="flex text-sm text-slate-400 mb-8" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/index.html" class="hover:text-white transition-colors">ホーム</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <a href="/news.html" class="hover:text-white transition-colors">ニュース・インサイト</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <span class="text-slate-500 truncate max-w-[200px] sm:max-w-none">VSOCとは</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- 記事ヘッダー -->
+            <header class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-blue-500/20 border border-blue-500/30 text-blue-400 text-xs font-bold px-3 py-1 rounded-full">入門解説</span>
+                    <time class="text-slate-400 text-sm flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> 2026.03.07
+                    </time>
+                </div>
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
+                    VSOCとは<br/>
+                    <span class="text-2xl md:text-3xl text-slate-300 font-medium">（PSIRTとの違い・見極めポイント）</span>
+                </h1>
+                
+                <!-- 導入文 -->
+                <div class="text-lg text-slate-300 leading-relaxed p-6 bg-navy-800/50 rounded-2xl border border-white/5 space-y-4">
+                    <p>VSOCとは Vehicle Security Operations Center の略で、ひとことで言うと<br>
+                    <strong>「車両（および車両とつながるクラウド/通信）を対象に、セキュリティの“監視・検知・一次対応”を回す運用（センター）」</strong> です。</p>
+                    
+                    <p>一般のSOC（企業ITの監視）に対して、VSOCは <strong>車載・コネクテッド領域に寄せた概念</strong> で、例えば次のような情報を起点に「異常を見つけて、初動し、エスカレーションする」ことが主目的になります。</p>
+
+                    <ul class="m-0 list-disc list-inside">
+                        <li>車両側のセキュリティイベント（IDS/ゲートウェイ/診断系の異常など）</li>
+                        <li>コネクテッド/OTA/バックエンドのログ（不正アクセス、異常通信、改ざん兆候など）</li>
+                        <li>インシデント兆候の相関（車両×クラウド×通信の合わせ技）</li>
+                    </ul>
+                </div>
+            </header>
+
+            <!-- 記事本文 -->
+            <div class="glass-card p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl bg-navy-900/80 mb-16">
+                <div class="prose prose-invert prose-slate prose-lg max-w-none">
+                    
+                    <!-- 内部リンク①：全体像の補足 -->
+                    <div class="related-box mt-0 border-l-brand">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="map" class="w-4 h-4"></i> 用語だけでなく「運用」を押さえる</div>
+                        <p class="text-sm text-slate-300 mb-2">VSOC単体ではなく、受付→判断→対外回答（PSIRT運用）まで含めて全体像を押さえたい方はこちらをご覧ください。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/automotive-supplier-guide/" class="!text-brand-light hover:!text-brand">自動車サプライヤーのPSIRT完全ガイド</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>VSOCとPSIRTの違い（ここを混同すると話が噛み合いません）</h2>
+                    <p>サプライヤー現場で混乱しやすいのが「VSOC＝PSIRT？」問題です。結論、<strong>別物</strong>です。</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
+                        <div class="bg-navy-800/80 p-5 rounded-xl border border-white/5 border-l-4 border-l-cyan-400">
+                            <h4 class="text-cyan-400 font-bold mt-0 mb-2 flex items-center gap-2">
+                                <i data-lucide="activity" class="w-5 h-5"></i> VSOC
+                            </h4>
+                            <p class="text-sm text-slate-200 font-bold m-0 mb-2">監視・検知が主役（“いま起きている”兆候を拾う）</p>
+                            <p class="text-sm text-slate-400 m-0">例：異常通信、侵入兆候、イベント相関、一次対応、エスカレーション</p>
+                        </div>
+                        <div class="bg-navy-800/80 p-5 rounded-xl border border-white/5 border-l-4 border-l-brand-light">
+                            <h4 class="text-brand-light font-bold mt-0 mb-2 flex items-center gap-2">
+                                <i data-lucide="shield-alert" class="w-5 h-5"></i> PSIRT
+                            </h4>
+                            <p class="text-sm text-slate-200 font-bold m-0 mb-2">製品の脆弱性/セキュリティ問題の受付・影響判定・対外回答が主役（“何を、どの版で、どう対応するか”を決めて返す）</p>
+                            <p class="text-sm text-slate-400 m-0">例：CVE影響判定、影響あり/なし回答、暫定対策/恒久対策、証跡管理</p>
+                        </div>
+                    </div>
+                    
+                    <p>実務では、<strong>「VSOCが見つけた兆候をPSIRTが製品対応に落とす」</strong>、または<strong>「PSIRTで扱う脆弱性情報をVSOCの監視・検知に反映する」</strong>という相互連携の関係になります。</p>
+
+                    <h2>「VSOCが必要」と言われたときの見極めポイント（サプライヤー向け）</h2>
+                    <p>OEMやTier1から「VSOCを整備してください」と言われた場合、まず確認すべきは“言葉”ではなく<strong>要求の中身</strong>です。ここを整理すると、過剰投資や誤解が減ります。</p>
+
+                    <div class="space-y-6 my-8">
+                        <div class="relative pl-6 border-l-2 border-cyan-500/30">
+                            <div class="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-cyan-500 border-4 border-navy-900"></div>
+                            <h4 class="text-cyan-400 font-bold mt-0 mb-2">1) 監視対象はどこまでか（車両？クラウド？自社IT？）</h4>
+                            <ul class="text-sm m-0 text-slate-300">
+                                <li>車両（ECU/ゲートウェイ）まで見てほしいのか</li>
+                                <li>コネクテッド/OTA/バックエンドまで見てほしいのか</li>
+                                <li>それとも企業IT（一般SOC）なのか</li>
+                            </ul>
+                            <p class="text-sm font-bold text-white mt-2 mb-0 bg-white/5 inline-block px-2 py-1 rounded">→ 対象を切らないと、必要なデータも運用も決まりません。</p>
+                        </div>
+
+                        <div class="relative pl-6 border-l-2 border-cyan-500/30">
+                            <div class="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-cyan-500 border-4 border-navy-900"></div>
+                            <h4 class="text-cyan-400 font-bold mt-0 mb-2">2) 何をログとして出せるのか（見れないものは監視できない）</h4>
+                            <ul class="text-sm m-0 text-slate-300">
+                                <li>どのイベントを、どの頻度で、どこへ集約できるか</li>
+                                <li>データの機密区分（共有可否）</li>
+                            </ul>
+                            <p class="text-sm font-bold text-white mt-2 mb-0 bg-white/5 inline-block px-2 py-1 rounded">→ 「VSOCやれ」と言われても、ログの出し方が決まっていないケースが多いです。</p>
+                        </div>
+
+                        <div class="relative pl-6 border-l-2 border-cyan-500/30">
+                            <div class="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-cyan-500 border-4 border-navy-900"></div>
+                            <h4 class="text-cyan-400 font-bold mt-0 mb-2">3) SLAは何か（24/7が前提か、営業時間対応でよいか）</h4>
+                            <ul class="text-sm m-0 text-slate-300">
+                                <li>受領確認の目安</li>
+                                <li>一次切り分けの期限</li>
+                                <li>OEMへの報告期限（誰が何をいつまでに）</li>
+                            </ul>
+                            <p class="text-sm font-bold text-white mt-2 mb-0 bg-white/5 inline-block px-2 py-1 rounded">→ VSOCは「体制（当番・連絡網）」の要求になりやすいので、最初に確認します。</p>
+                        </div>
+
+                        <div class="relative pl-6 border-l-2 border-transparent">
+                            <div class="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-cyan-500 border-4 border-navy-900"></div>
+                            <h4 class="text-cyan-400 font-bold mt-0 mb-2">4) 役割分担（誰が発見し、誰が判断し、誰が回答するか）</h4>
+                            <ul class="text-sm m-0 text-slate-300">
+                                <li>検知（監視）担当</li>
+                                <li>技術切り分け（開発/設計）</li>
+                                <li>対外回答（PSIRT窓口）</li>
+                            </ul>
+                            <p class="text-sm font-bold text-red-400 mt-2 mb-0 bg-red-500/10 inline-block px-2 py-1 rounded">→ VSOCとPSIRTの境界が曖昧だと、事故ります（「誰が返すの？」問題）。</p>
+                        </div>
+                    </div>
+
+                    <h2>中小サプライヤーはVSOCまで必要？（現実的な考え方）</h2>
+                    <p>Tier2〜Tier4が最初から「フルVSOC（24/7・相関分析・SOCツール一式）」を内製するのは現実的ではないことが多いです。</p>
+                    
+                    <p>一方で、OEMの要求は「立派なセンター名」ではなく、実質的には次の2点に収束しがちです。</p>
+                    <ol>
+                        <li><strong>窓口があり、期限内に返せる（PSIRT運用）</strong></li>
+                        <li><strong>兆候/通知を受けたときの初動・エスカレーションが決まっている（VSOC相当の運用）</strong></li>
+                    </ol>
+
+                    <p>まずは <strong>PSIRT（受付・影響判定・回答・証跡）</strong> を固め、監視は「取引先の監視結果を受け取る」「自社が扱える範囲のログだけ一次確認する」から始めるのが、失敗しにくい順序です。</p>
+
+                    <!-- 途中CTA（相談のみ） -->
+                    <div class="bg-navy-800/50 p-6 md:p-8 rounded-2xl border border-cyan-500/30 text-center my-10 shadow-[0_0_20px_rgba(6,182,212,0.1)]">
+                        <p class="text-slate-200 mb-6 font-medium text-lg">OEMの要求を整理し、PSIRTとVSOCの境界線を自社の実態に合わせて定義したい方はご相談ください。</p>
+                        <a href="/demo_form.html" class="inline-flex items-center gap-2 px-8 py-3.5 bg-brand hover:bg-brand-dark text-white rounded-full font-bold transition-all hover:-translate-y-1 shadow-lg shadow-brand/20">
+                            <i data-lucide="message-square" class="w-5 h-5"></i> 【無料】オンライン相談を予約する
+                        </a>
+                    </div>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2>FAQ：VSOCとは</h2>
+                    <div class="space-y-6 mt-6">
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q1. VSOCとは何ですか？</strong>
+                            <p class="m-0 text-slate-300">車両および車両とつながるシステムを対象に、セキュリティの監視・検知・一次対応を運用として回す概念（センター）です。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q2. VSOCとPSIRTは同じですか？</strong>
+                            <p class="m-0 text-slate-300">同じではありません。VSOCは「監視・検知」、PSIRTは「脆弱性/製品セキュリティ問題の受付・影響判定・対外回答」が中心です。実務では相互に連携します。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q3. 中小サプライヤーもVSOCが必要ですか？</strong>
+                            <p class="m-0 text-slate-300">求められることは増えていますが、最初からフル機能のVSOC内製が必要とは限りません。要求の対象範囲・ログ・SLA・役割分担を確認し、PSIRT運用＋VSOC相当の初動体制から始めるのが現実的です。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q4. VSOCは24時間365日が必須ですか？</strong>
+                            <p class="m-0 text-slate-300">要求次第です。24/7が必要なケースもありますが、まずはSLA（受領確認・一次切り分け・報告期限）を確認し、現実的な体制設計に落とし込みます。</p>
+                        </div>
+                    </div>
+
+                    <!-- 内部リンク②：次に読む -->
+                    <div class="related-box border-l-brand mt-12">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="book-open" class="w-4 h-4"></i> 次に読む</div>
+                        <p class="text-sm text-slate-300 mb-2">用語の混同を解消し、要求定義の会話をしやすくするために「PSIRTとは」の記事もあわせてご確認ください。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/what-is-psirt/" class="!text-brand-light hover:!text-brand">PSIRTとは（役割・やるべきことを一言で）</a></li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/5 text-center text-sm text-slate-500 mt-auto bg-navy-900/80">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span class="font-bold text-slate-400">Auto PSIRT Cloud</span>
+            </div>
+            <p>&copy; 2026 Unimobilities株式会社. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
