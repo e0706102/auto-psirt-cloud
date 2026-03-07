@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEOメタタグ -->
+    <title>VEX記述テンプレ（not_affected/affected/under_investigation）｜OEM照会に通る「結論＋根拠」の型 | Auto PSIRT Cloud</title>
+    <meta name="description" content="VEX記述テンプレを公開。CVEに対して not_affected／affected／under_investigation を“対象版数・根拠・条件・次回更新日”つきで書く型を、OEM照会（期限/SLA）に通る文例で整理。追加質問を減らす証跡の残し方も解説します。">
+    <meta name="keywords" content="VEX記述テンプレ, VEX, CVE, トリアージ, 脆弱性対応, PSIRT, 自動車セキュリティ">
+    <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/psirt/vex-writing-template/">
+    
+    <!-- OGPタグ (SNSシェア用) -->
+    <meta property="og:title" content="VEX記述テンプレ（not_affected/affected/under_investigation）｜OEM照会に通る「結論＋根拠」の型">
+    <meta property="og:description" content="CVE対応で揉めないためのVEX記述テンプレ。影響あり/なし/調査中をOEM照会に通る型で書く方法を公開。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/psirt/vex-writing-template/">
+    <meta property="og:site_name" content="Auto PSIRT Cloud">
+
+    <!-- ファビコン -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23a855f7%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z%22/><path d=%22m9 12 2 2 4-4%22/></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0a0f1c',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        brand: {
+                            light: '#60a5fa',
+                            DEFAULT: '#3b82f6',
+                            dark: '#2563eb',
+                        },
+                        accent: {
+                            DEFAULT: '#06b6d4',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #a855f7, #3b82f6); /* Purple to Blue */
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* 記事用カスタムスタイル */
+        .prose h2 {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-top: 3.5rem;
+            color: #f8fafc;
+        }
+        .prose h3 {
+            color: #e2e8f0;
+            margin-top: 2.5rem;
+            border-left: 3px solid #a855f7; /* Purple系アクセント */
+            padding-left: 0.75rem;
+            font-size: 1.25rem;
+        }
+        .prose a {
+            color: #c084fc; /* purple-400 */
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .prose a:hover {
+            border-bottom-color: #c084fc;
+        }
+        .prose strong {
+            color: #f8fafc;
+            background: linear-gradient(transparent 60%, rgba(168, 85, 247, 0.3) 40%);
+        }
+        .related-box {
+            background: rgba(30, 41, 59, 0.6);
+            border-left: 4px solid #a855f7;
+            padding: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 2rem 0;
+        }
+        
+        .template-box {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(168, 85, 247, 0.4);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.2);
+        }
+        .template-header {
+            color: #c084fc;
+            font-weight: bold;
+            margin-top: 0;
+            margin-bottom: 1rem;
+            border-bottom: 1px dashed rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .template-content {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-size: 0.875rem;
+            line-height: 1.6;
+            color: #cbd5e1;
+            white-space: pre-wrap;
+        }
+        .placeholder-text {
+            color: #d8b4fe; /* purple-300 */
+            background: rgba(168, 85, 247, 0.1);
+            padding: 0 0.25rem;
+            border-radius: 0.25rem;
+            font-weight: 600;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 0.125rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-left: 0.5rem;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-purple-500 selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-purple-500/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-brand/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-accent flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="/news.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        ニュース一覧へ戻る
+                    </a>
+                    <a href="/demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                        相談 or デモ予約
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <article class="max-w-4xl mx-auto">
+            
+            <!-- パンくずリスト -->
+            <nav class="flex text-sm text-slate-400 mb-8" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/index.html" class="hover:text-white transition-colors">ホーム</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <a href="/news.html" class="hover:text-white transition-colors">ニュース・インサイト</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <span class="text-slate-500 truncate max-w-[200px] sm:max-w-none">VEX記述テンプレ</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- 記事ヘッダー -->
+            <header class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-purple-500/20 border border-purple-500/30 text-purple-400 text-xs font-bold px-3 py-1 rounded-full">実務テンプレ</span>
+                    <time class="text-slate-400 text-sm flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> 2026.03.07
+                    </time>
+                </div>
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
+                    VEX記述テンプレ<br/>
+                    <span class="text-2xl md:text-3xl text-slate-300 font-medium">（OEM照会に通る「結論＋根拠」の型）</span>
+                </h1>
+                
+                <!-- 導入文 -->
+                <div class="text-lg text-slate-300 leading-relaxed p-6 bg-navy-800/50 rounded-2xl border border-white/5 space-y-4">
+                    <p>CVE対応でいちばん揉めるのは「結論」ではなく、<strong>“結論の書き方（根拠・条件・対象版数）”が毎回バラバラなこと</strong>です。</p>
+                    
+                    <p>結果として、OEM照会や監査でこうなりがちです。</p>
+                    <ul class="m-0 list-disc list-inside">
+                        <li>「影響なし」と書いたら、根拠の追加質問が止まらない</li>
+                        <li>「調査中」が長引き、SLA（回答期限）を落とす</li>
+                        <li>同じ判断を何度もやり直す（証跡が残っていない）</li>
+                    </ul>
+                    
+                    <p>そこで使えるのが <strong>VEX（Vulnerability Exploitability eXchange）</strong> の考え方です。</p>
+                    <p>VEXはざっくり言うと、<strong>「このCVEは自社製品に影響する/しない/調査中」を“理由付きで表明する書き方”</strong>です。<br>ここでは、実務でそのまま貼れる VEX記述テンプレ をまとめます。</p>
+                </div>
+            </header>
+
+            <!-- 記事本文 -->
+            <div class="glass-card p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl bg-navy-900/80 mb-16">
+                <div class="prose prose-invert prose-slate prose-lg max-w-none">
+                    
+                    <!-- 内部リンク①：全体像の設計へ -->
+                    <div class="related-box mt-0 border-l-brand">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="map" class="w-4 h-4"></i> 全体像（実務フロー）を先に押さえる</div>
+                        <p class="text-sm text-slate-300 mb-2">VEXの運用全体（対象版数の切り方、到達性、SLA、証跡）を通しで設計したい場合はこちらのガイドをご覧ください。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/cve-triage-vex-guide/" class="!text-brand-light hover:!text-brand">CVEトリアージ＆VEX実務 完全ガイド</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>先に結論：VEX記述は「5点セット」で通る</h2>
+                    <p><code>not_affected</code> / <code>affected</code> / <code>under_investigation</code> いずれのステータスでも、OEMが知りたいことは同じです。</p>
+                    
+                    <p>VEXは、この5点が入っていれば“逃げない文章”になります。</p>
+
+                    <div class="bg-navy-800 p-6 rounded-lg border border-white/10 my-6">
+                        <ol class="m-0 space-y-3 font-medium text-slate-200">
+                            <li class="flex items-start gap-2"><i data-lucide="tag" class="w-5 h-5 text-purple-400 shrink-0 mt-0.5"></i> <div><strong>ステータス：</strong> not_affected / affected / under_investigation</div></li>
+                            <li class="flex items-start gap-2"><i data-lucide="target" class="w-5 h-5 text-purple-400 shrink-0 mt-0.5"></i> <div><strong>対象範囲：</strong> 製品名・製品版数（暫定/確定も明記）</div></li>
+                            <li class="flex items-start gap-2"><i data-lucide="search" class="w-5 h-5 text-purple-400 shrink-0 mt-0.5"></i> <div><strong>根拠（理由）：</strong> 何を確認してそう判断したか（1〜3行）</div></li>
+                            <li class="flex items-start gap-2"><i data-lucide="settings" class="w-5 h-5 text-purple-400 shrink-0 mt-0.5"></i> <div><strong>条件：</strong> 影響なし等が成立する前提（設定無効、外部IFなし等）</div></li>
+                            <li class="flex items-start gap-2"><i data-lucide="clock" class="w-5 h-5 text-purple-400 shrink-0 mt-0.5"></i> <div><strong>次回更新日（SLA）：</strong> 調査中や確度が上がるタイミング</div></li>
+                        </ol>
+                    </div>
+
+                    <h2 class="border-b-2 border-purple-500 pb-2 mt-12 mb-6">【テンプレ】VEX記述（共通ヘッダ）</h2>
+                    <p>まずはこの共通部分を、チケット/Excel/回答書の先頭に貼ってください。</p>
+
+                    <div class="template-box">
+                        <h4 class="template-header"><i data-lucide="file-text" class="w-4 h-4"></i> 共通ヘッダ</h4>
+                        <div class="template-content">【VEX記述】
+- CVE：CVE-<span class="placeholder-text">____</span>
+- 対象製品：<span class="placeholder-text">____</span>
+- 対象製品版数：<span class="placeholder-text">____</span>（暫定/確定）
+- ステータス：not_affected / affected / under_investigation
+- 決定理由（1〜3行）：<span class="placeholder-text">____</span>
+- 条件（前提があれば）：<span class="placeholder-text">____</span>
+- 次回更新日（SLA）：YYYY-MM-DD
+- 証跡：SBOM/構成表/設定/試験結果の参照先（IDや保管場所）</div>
+                    </div>
+
+                    <h2 class="border-b-2 border-purple-500 pb-2 mt-12 mb-6">【テンプレ】not_affected（影響なし）の書き方</h2>
+                    <p>“影響なし”は断言より <strong>根拠＋条件</strong> が重要です。理由をコード化するとブレません。</p>
+
+                    <div class="bg-navy-800/80 p-5 rounded-lg border-l-4 border-l-emerald-500 mb-6">
+                        <strong class="text-slate-200 block mb-2">理由コード例（どれか1つに寄せる）</strong>
+                        <ul class="text-sm m-0 space-y-1 text-slate-300">
+                            <li><strong class="text-emerald-400">NA-1：非搭載</strong>（SBOM/部品表に存在しない）</li>
+                            <li><strong class="text-emerald-400">NA-2：影響範囲外</strong>（影響対象版ではない）</li>
+                            <li><strong class="text-emerald-400">NA-3：成立条件不在</strong>（到達性なし・外部IFなし・実行経路なし）</li>
+                            <li><strong class="text-emerald-400">NA-4：緩和済み</strong>（設定/運用で成立しない）</li>
+                        </ul>
+                    </div>
+
+                    <div class="template-box">
+                        <h4 class="template-header text-emerald-400 border-emerald-500/30"><i data-lucide="shield-check" class="w-4 h-4"></i> not_affected（影響なし）</h4>
+                        <div class="template-content">ステータス：not_affected
+決定理由：NA-<span class="placeholder-text">__</span>（例：外部IFなしのため成立条件不在。SBOM行ID:___を確認）
+条件：設定<span class="placeholder-text">___</span>が無効のまま（変更時は再評価）
+証跡：SBOM-<span class="placeholder-text">___</span>／仕様書<span class="placeholder-text">___</span>／設定値<span class="placeholder-text">___</span>
+次回更新日：YYYY-MM-DD（必要がなければ「変更時に再評価」でも可）</div>
+                    </div>
+
+                    <h2 class="border-b-2 border-purple-500 pb-2 mt-12 mb-6">【テンプレ】affected（影響あり）の書き方</h2>
+                    <p>影響ありは<strong>「いま（止血）」と「いつ（直る）」を分ける</strong>と、追加質問が減ります。</p>
+
+                    <div class="template-box">
+                        <h4 class="template-header text-red-400 border-red-500/30"><i data-lucide="alert-triangle" class="w-4 h-4"></i> affected（影響あり）</h4>
+                        <div class="template-content">ステータス：affected
+決定理由：対象製品版数<span class="placeholder-text">____</span>に当該コンポーネント<span class="placeholder-text">____</span> v<span class="placeholder-text">____</span>が搭載され、成立条件（外部IF<span class="placeholder-text">____</span>）が存在するため
+暫定対策（可能なら）：<span class="placeholder-text">____</span>（前提：<span class="placeholder-text">____</span>）
+恒久対策（予定）：修正版 v<span class="placeholder-text">____</span> を YYYY-MM-DD 目標（確度：高/中/低）
+証跡：構成表<span class="placeholder-text">___</span>／検証メモ<span class="placeholder-text">___</span>／修正チケット<span class="placeholder-text">___</span>
+次回更新日：YYYY-MM-DD（進捗更新日）</div>
+                    </div>
+
+                    <h2 class="border-b-2 border-purple-500 pb-2 mt-12 mb-6">【テンプレ】under_investigation（調査中）の書き方</h2>
+                    <p>調査中で最悪なのは沈黙です。<strong>受領＋次回更新日</strong> があるだけで運用が回ります。</p>
+
+                    <div class="template-box">
+                        <h4 class="template-header text-yellow-400 border-yellow-500/30"><i data-lucide="clock" class="w-4 h-4"></i> under_investigation（調査中）</h4>
+                        <div class="template-content">ステータス：under_investigation
+決定理由：対象製品の版数・搭載有無（SBOM/構成）を確認中。追加確認が必要（確認事項：<span class="placeholder-text">____</span>）
+条件：暫定（未確定）。確定次第更新
+証跡：受付番号<span class="placeholder-text">____</span>／依頼原本<span class="placeholder-text">____</span>
+次回更新日（SLA）：YYYY-MM-DD（ここだけは必須）</div>
+                    </div>
+
+                    <!-- 途中CTA（主CTA） -->
+                    <div class="bg-navy-800/50 p-6 md:p-8 rounded-2xl border border-purple-500/30 text-center my-10 shadow-[0_0_20px_rgba(168,85,247,0.15)]">
+                        <p class="text-slate-200 mb-6 font-medium text-lg">VEX（not_affected / affected / under_investigation）の書き方を、<br class="hidden md:block">自社の製品構成・SLA・承認線に合わせて整備したい方はご相談ください。</p>
+                        <a href="/demo_form.html" class="inline-flex items-center gap-2 px-8 py-3.5 bg-brand hover:bg-brand-dark text-white rounded-full font-bold transition-all hover:-translate-y-1 shadow-lg shadow-brand/20">
+                            <i data-lucide="calendar" class="w-5 h-5"></i> 【無料】オンライン相談を予約する
+                        </a>
+                    </div>
+
+                    <h2>よくあるNG（VEXが弱くなる書き方）</h2>
+                    <ul class="space-y-3 my-6 list-none pl-0">
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>対象版数が無い</strong>（どの版の話か不明）</div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>not_affected を断定して根拠が無い</strong>（追加質問が増える）</div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>under_investigation に次回更新日が無い</strong>（放置に見える）</div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>条件（前提）が書かれていない</strong>（設定変更で覆る）</div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>証跡が“どこにあるか”分からない</strong>（監査で詰む）</div></li>
+                    </ul>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2>FAQ：VEX記述のやり方について</h2>
+                    <div class="space-y-6 mt-6">
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q1. VEX記述で最低限書くべき項目は何ですか？</strong>
+                            <p class="m-0 text-slate-300">最低限は「ステータス」「対象製品・対象版数」「決定理由（根拠）」「次回更新日（調査中の場合）」です。影響なしの場合は条件（前提）も書くと強くなります。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q2. not_affected を書くときに注意することは？</strong>
+                            <p class="m-0 text-slate-300">「影響なし」を断言するほど、根拠が求められます。非搭載／影響範囲外／到達性なし等の理由を1つに寄せ、SBOMや仕様の参照先（証跡）を残してください。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q3. under_investigation はどこまで書けばいいですか？</strong>
+                            <p class="m-0 text-slate-300">結論よりも「何が未確定か（確認事項）」と「次回更新日（SLA）」が重要です。沈黙より、更新日を宣言して運用を回す方が信頼が落ちません。</p>
+                        </div>
+                    </div>
+
+                    <!-- 内部リンク②：次に読む -->
+                    <div class="related-box border-l-brand mt-12">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="book-open" class="w-4 h-4"></i> 次に読む</div>
+                        <p class="text-sm text-slate-300 mb-2">そもそもVEXの定義や目的、他の用語との違いを根本から整理したい方はこちら。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="#" class="!text-brand-light hover:!text-brand">VEXとは（作成中）</a></li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- CTA Section -->
+            <div class="glass-card rounded-3xl p-8 md:p-12 text-center border-t-4 border-t-purple-500 bg-navy-800/80 shadow-[0_0_40px_-10px_rgba(168,85,247,0.2)]">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">VEX（影響判定）の記述も、AIで自動化しませんか？</h2>
+                <p class="text-slate-300 mb-8 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+                    <strong>Auto PSIRT Cloud</strong>なら、AIが自社のSBOM情報とCVEを突き合わせ、「影響あり/なし/調査中」の一次判定と、その根拠文（VEX）を自動生成。そのままOEM回答書に出力できます。
+                </p>
+                <div class="flex justify-center">
+                    <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-navy-900 bg-white hover:bg-slate-200 transition-all duration-300 shadow-xl shadow-white/10 w-full sm:w-auto hover:-translate-y-1">
+                        <i data-lucide="monitor-play" class="w-5 h-5 text-purple-600"></i>
+                        CVE→トリアージ→VEX→OEM回答の流れをデモで見る
+                    </a>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/5 text-center text-sm text-slate-500 mt-auto bg-navy-900/80">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span class="font-bold text-slate-400">Auto PSIRT Cloud</span>
+            </div>
+            <p>&copy; 2026 Unimobilities株式会社. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
