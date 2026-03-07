@@ -1361,6 +1361,40 @@
                     </div>
                 </a>
 
+                <!-- 記事38：VEX記述テンプレ -->
+                <a href="/psirt/vex-writing-template/" data-category="実務テンプレ" class="article-card glass-card rounded-2xl overflow-hidden group hover:-translate-y-1 hover:border-purple-500/50 transition-all duration-300 flex flex-col h-full bg-navy-900/60">
+                    <div class="relative h-48 overflow-hidden bg-navy-800 border-b border-white/5">
+                        <div class="absolute inset-0 bg-gradient-to-br from-purple-500/20 to-blue-500/20 group-hover:scale-105 transition-transform duration-500"></div>
+                        <div class="absolute inset-0 flex items-center justify-center opacity-50 group-hover:opacity-80 transition-opacity">
+                            <i data-lucide="file-signature" class="w-16 h-16 text-white"></i>
+                        </div>
+                        <div class="absolute top-3 left-3 flex gap-2">
+                            <span class="bg-purple-500/80 backdrop-blur-md text-white text-xs font-bold px-2.5 py-1 rounded">実務テンプレ</span>
+                        </div>
+                    </div>
+                    <div class="p-6 flex flex-col flex-grow">
+                        <time class="text-xs text-slate-400 font-medium mb-3 flex items-center gap-1.5">
+                            <i data-lucide="calendar" class="w-3.5 h-3.5"></i> 2026.03.07
+                        </time>
+                        <h2 class="text-lg font-bold text-slate-100 mb-3 group-hover:text-purple-400 transition-colors line-clamp-2">
+                            VEX記述テンプレ（not_affected/affected/under_investigation）｜OEM照会に通る「結論＋根拠」の型
+                        </h2>
+                        <p class="text-sm text-slate-400 leading-relaxed line-clamp-3 mb-4 flex-grow">
+                            VEX記述テンプレを公開。CVEに対して影響有無を“対象版数・根拠・条件・次回更新日”つきで書く型を、OEM照会に通る文例で整理します。
+                        </p>
+                        <div class="flex items-center justify-between w-full mt-auto pt-4 border-t border-white/5">
+                            <div class="flex items-center text-purple-400 text-sm font-bold group-hover:gap-2 transition-all">
+                                続きを読む <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i>
+                            </div>
+                            <button onclick="event.preventDefault(); summarizeArticle(this, 'VEX記述テンプレ（not_affected/affected/under_investigation）｜OEM照会に通る「結論＋根拠」の型')" class="flex items-center gap-1.5 px-3 py-1.5 bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 border border-purple-500/30 rounded-lg transition-colors text-xs font-bold z-10 relative">
+                                ✨ AI要約
+                            </button>
+                        </div>
+                        <div class="ai-summary-container hidden mt-4 p-3 bg-navy-800/90 rounded-lg border border-white/10 text-sm text-slate-300 relative z-10 shadow-inner"></div>
+                    </div>
+                </a>
+                
+
                 
                 <!-- 83: SBOM生成の自動化) -->
                 <a href="/psirt/sbom-generation-automation/" data-category="実務ガイド" class="article-card glass-card rounded-2xl overflow-hidden group hover:-translate-y-1 hover:border-brand/50 transition-all duration-300 flex flex-col h-full bg-navy-900/60">
@@ -1759,6 +1793,7 @@
     </script>
 </body>
 </html>
+
 
 
 
