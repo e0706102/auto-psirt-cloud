@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEOメタタグ -->
+    <title>トリアージのやり方｜まず3つだけで分類する（PSIRT初心者・OEM監査対応） | Auto PSIRT Cloud</title>
+    <meta name="description" content="PSIRTのトリアージは「期限（SLA）・影響（安全/範囲）・確度（根拠）」の3点だけでまず分類すれば迷いません。OEM照会や監査でも説明できる、優先度の付け方・一次回答の型・証跡の残し方を、初心者向けにステップとテンプレで解説します。">
+    <meta name="keywords" content="トリアージのやり方, PSIRT, OEM監査, トリアージ, 脆弱性対応, SLA">
+    <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/psirt/triage-3-points/">
+    
+    <!-- OGPタグ (SNSシェア用) -->
+    <meta property="og:title" content="トリアージのやり方：まず3つだけで分類する（はじめて用）">
+    <meta property="og:description" content="PSIRT初心者は必見。迷わないための「3点（期限・影響・確度）」トリアージと、すぐ使える一次回答テンプレを公開。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/psirt/triage-3-points/">
+    <meta property="og:site_name" content="Auto PSIRT Cloud">
+
+    <!-- ファビコン -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%233b82f6%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z%22/><path d=%22m9 12 2 2 4-4%22/></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0a0f1c',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        brand: {
+                            light: '#60a5fa',
+                            DEFAULT: '#3b82f6',
+                            dark: '#2563eb',
+                        },
+                        accent: {
+                            DEFAULT: '#06b6d4',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #60a5fa, #06b6d4);
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* 記事用カスタムスタイル */
+        .prose h2 {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-top: 3.5rem;
+            color: #f8fafc;
+        }
+        .prose h3 {
+            color: #e2e8f0;
+            margin-top: 2.5rem;
+            border-left: 3px solid #3b82f6; /* Brand Blue */
+            padding-left: 0.75rem;
+            font-size: 1.25rem;
+        }
+        .prose a {
+            color: #60a5fa;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .prose a:hover {
+            border-bottom-color: #60a5fa;
+        }
+        .prose strong {
+            color: #f8fafc;
+            background: linear-gradient(transparent 60%, rgba(59, 130, 246, 0.3) 40%);
+        }
+        .related-box {
+            background: rgba(30, 41, 59, 0.6);
+            border-left: 4px solid #3b82f6;
+            padding: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 2rem 0;
+        }
+        .template-box {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.2);
+        }
+        .template-content {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-size: 0.875rem;
+            line-height: 1.6;
+            color: #cbd5e1;
+            white-space: pre-wrap;
+        }
+        .step-box {
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-brand selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-brand/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-blue-500/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-accent flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="/news.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        ニュース一覧へ戻る
+                    </a>
+                    <a href="/demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                        相談 or デモ予約
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <article class="max-w-4xl mx-auto">
+            
+            <!-- パンくずリスト -->
+            <nav class="flex text-sm text-slate-400 mb-8" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/index.html" class="hover:text-white transition-colors">ホーム</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <a href="/news.html" class="hover:text-white transition-colors">ニュース・インサイト</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <span class="text-slate-500 truncate max-w-[200px] sm:max-w-none">トリアージのやり方</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- 記事ヘッダー -->
+            <header class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-blue-500/20 border border-blue-500/30 text-blue-400 text-xs font-bold px-3 py-1 rounded-full">入門解説</span>
+                    <time class="text-slate-400 text-sm flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> 2026.03.07
+                    </time>
+                </div>
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
+                    トリアージのやり方：<br/>
+                    <span class="text-2xl md:text-3xl text-slate-300 font-medium">まず3つだけで分類する（はじめて用）</span>
+                </h1>
+                
+                <!-- 導入文 -->
+                <div class="text-lg text-slate-300 leading-relaxed p-6 bg-navy-800/50 rounded-2xl border border-white/5 space-y-4">
+                    <p>PSIRT業務がつらくなる原因は、セキュリティ知識の不足というより <strong>「最初の仕分け（トリアージ）が無い／人によってブレる」</strong> ことにあります。</p>
+                    
+                    <ul class="m-0 list-disc list-inside">
+                        <li>OEMからの照会（期限あり）が突然来る</li>
+                        <li>CVE通知や取引先通知が大量に来る</li>
+                        <li>調査が深掘りになって、一次回答の期限を落とす</li>
+                        <li>“影響なし”の根拠が残らず、監査で説明できない</li>
+                    </ul>
+                    
+                    <p>この状況を止めるコツは、最初から完璧な評価を狙わず、<strong>「まず3つだけ」</strong>で分類することです。</p>
+                    <p>本記事では、PSIRT初心者向けに <strong>三角形（3点）トリアージ</strong> として、迷わず回せる型に落とします。</p>
+                </div>
+            </header>
+
+            <!-- 記事本文 -->
+            <div class="glass-card p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl bg-navy-900/80 mb-16">
+                <div class="prose prose-invert prose-slate prose-lg max-w-none">
+                    
+                    <!-- 内部リンク①：全体像 -->
+                    <div class="related-box mt-0 border-l-brand">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="map" class="w-4 h-4"></i> トリアージから回答までの全体設計</div>
+                        <p class="text-sm text-slate-300 mb-2">PSIRT全体（窓口・SLA・証跡・OEM回答）を含む設計は、こちらのガイドにまとめています。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/automotive-supplier-guide/" class="!text-brand-light hover:!text-brand">自動車サプライヤーのPSIRT完全ガイド：UN-R155対応を兼務で回す方法</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>そもそもトリアージとは（やらないことが大事）</h2>
+                    <p>トリアージ＝<strong>初動の仕分け</strong>です。<br>
+                    やるべきことは「分類して、期限を守って、次の一手を決める」こと。</p>
+
+                    <p>逆に、トリアージで <strong>やらないこと</strong> はこれです。</p>
+                    <div class="bg-red-500/10 border border-red-500/20 p-4 rounded-lg my-4">
+                        <ul class="m-0 text-red-300 list-disc list-inside space-y-1">
+                            <li>いきなり原因究明まで踏み込む</li>
+                            <li>すべてを“最終回答”として作り込む</li>
+                            <li>情報不足なのに沈黙する（期限超過が最悪）</li>
+                        </ul>
+                    </div>
+                    <p class="font-bold text-brand-light text-center mt-6">トリアージの成功条件は “一次回答できる状態にする” ことです。</p>
+
+                    <h2 class="mt-12">まず見るべき3つ（＝三角形トリアージ）</h2>
+                    <p>トリアージで見るのは、結局この3点に収束します。</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-6">
+                        <div class="bg-navy-800 p-5 rounded-xl border-t-4 border-t-red-500 text-center shadow-lg">
+                            <i data-lucide="clock" class="w-8 h-8 text-red-400 mx-auto mb-2"></i>
+                            <h4 class="text-red-400 font-bold mt-0 mb-2">① 期限（SLA）</h4>
+                            <p class="text-sm text-slate-300 m-0">いつまでに何を返す必要があるか</p>
+                        </div>
+                        <div class="bg-navy-800 p-5 rounded-xl border-t-4 border-t-orange-500 text-center shadow-lg">
+                            <i data-lucide="alert-triangle" class="w-8 h-8 text-orange-400 mx-auto mb-2"></i>
+                            <h4 class="text-orange-400 font-bold mt-0 mb-2">② 影響（Impact）</h4>
+                            <p class="text-sm text-slate-300 m-0">安全・品質・出荷・顧客影響の大きさ</p>
+                        </div>
+                        <div class="bg-navy-800 p-5 rounded-xl border-t-4 border-t-emerald-500 text-center shadow-lg">
+                            <i data-lucide="search-check" class="w-8 h-8 text-emerald-400 mx-auto mb-2"></i>
+                            <h4 class="text-emerald-400 font-bold mt-0 mb-2">③ 確度（Confidence）</h4>
+                            <p class="text-sm text-slate-300 m-0">その情報が「本当に当社に当たる」根拠の強さ</p>
+                        </div>
+                    </div>
+                    <p>この3点で、優先度と次アクションがほぼ決まります。</p>
+
+                    <h3>① 期限（SLA）の見方（最優先）</h3>
+                    <p>期限は、技術的重大度より強いことがあります（OEM照会は典型です）。</p>
+                    <ul class="space-y-1">
+                        <li><strong>SLAあり（高）：</strong> OEM照会、監査指摘、顧客期限、契約期限</li>
+                        <li><strong>SLA弱い（中）：</strong> 取引先通知（期限はあるが交渉余地あり）</li>
+                        <li><strong>SLAなし（低）：</strong> 一般CVE通知、ニュース、参考情報</li>
+                    </ul>
+                    <div class="bg-navy-800/80 p-4 border-l-4 border-red-500 rounded my-4">
+                        <strong class="text-red-400 block mb-1">初心者の鉄則：</strong>
+                        <span class="text-slate-300">期限があるなら、まず「受領＋次回更新日」を返す。<br>完璧な結論を待つより、運用が回っていることの方が重要です。</span>
+                    </div>
+
+                    <h3>② 影響（Impact）の見方（安全・範囲・止血可否）</h3>
+                    <p>影響は「スコア」ではなく、現場で説明できる要素で見ます。</p>
+                    <ul class="space-y-1">
+                        <li><strong>高：</strong> 安全に関わる可能性／外部IFから到達し得る／広範囲（搭載台数が多い）／出荷停止リスク</li>
+                        <li><strong>中：</strong> 特定条件でのみ影響／限定範囲（特定ECU・特定顧客）</li>
+                        <li><strong>低：</strong> 内部限定／機能が無効／実行経路がない（前提が固定）</li>
+                    </ul>
+
+                    <h3>③ 確度（Confidence）の見方（根拠が強いほど前に出す）</h3>
+                    <p>確度が低いと、調査を深掘りしても空振りになります。まず根拠の強さを見ます。</p>
+                    <ul class="space-y-1">
+                        <li><strong>高：</strong> 対象製品/版数が特定済み、再現手順あり、PoCあり、取引先から根拠提示あり</li>
+                        <li><strong>中：</strong> 対象候補はあるが未検証、情報の粒度が粗い</li>
+                        <li><strong>低：</strong> 噂レベル、一般論、CPE一致だけで実物未確認</li>
+                    </ul>
+                    <p class="font-bold text-emerald-400 mt-4">監査の観点では、「影響なし」よりも “確度の根拠（なぜそう言えるのか／何を見たのか）” が問われます。</p>
+
+                    <h2 class="mt-12">3点で優先度を決める（迷わない最小ルール）</h2>
+                    <p>三角形トリアージは、最初はこの“最小ルール”で十分です。</p>
+
+                    <div class="overflow-x-auto my-6">
+                        <table class="w-full text-sm text-left border-collapse">
+                            <thead>
+                                <tr class="bg-white/5 border-b border-white/10">
+                                    <th class="p-3 font-bold text-slate-200">優先度</th>
+                                    <th class="p-3 font-bold text-slate-200">条件</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-white/5">
+                                <tr>
+                                    <td class="p-3 font-bold text-red-400 whitespace-nowrap"><span class="bg-red-500/20 px-2 py-0.5 rounded">P0（即対応）</span></td>
+                                    <td class="p-3 text-slate-300"><strong>期限が高い</strong> または <strong>「影響高 × 確度高」</strong></td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 font-bold text-orange-400 whitespace-nowrap"><span class="bg-orange-500/20 px-2 py-0.5 rounded">P1（優先）</span></td>
+                                    <td class="p-3 text-slate-300"><strong>「期限中」</strong> または（影響高/確度高のどちらかが高）</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 font-bold text-slate-400 whitespace-nowrap"><span class="bg-slate-500/20 px-2 py-0.5 rounded">P2（定例/保留）</span></td>
+                                    <td class="p-3 text-slate-300">期限なし ＆ 影響低 ＆ 確度低（＝まず情報を集める）</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p class="text-sm text-slate-400">※「確度低」でも期限が高い（OEM照会など）場合はP0です。この場合、やることは“結論”より <strong>対象版数の切り方と次回更新日</strong> の連絡です。</p>
+
+                    <h2 class="border-b-2 border-brand pb-2 mt-12 mb-6">手順（ステップ）：三角形トリアージを10分で回す</h2>
+
+                    <div class="step-box">
+                        <h4 class="text-brand-light font-bold mt-0 mb-2 flex items-center gap-2">
+                            Step 0：まず1枚のチケットにする（入口の統一）
+                        </h4>
+                        <p class="text-sm text-slate-300 m-0">通知・メール・口頭依頼を、必ず案件IDに落とします。<br>
+                        （後から監査で「運用していた証拠」になります）</p>
+                    </div>
+
+                    <div class="step-box">
+                        <h4 class="text-brand-light font-bold mt-0 mb-2 flex items-center gap-2">
+                            Step 1：期限（SLA）を埋める
+                        </h4>
+                        <ul class="text-sm text-slate-300 m-0 space-y-1">
+                            <li>期限：YYYY-MM-DD</li>
+                            <li>一次回答期限：YYYY-MM-DD（自社SLA）</li>
+                            <li><strong>次回更新日：YYYY-MM-DD（調査中でも必須）</strong></li>
+                        </ul>
+                    </div>
+
+                    <div class="step-box">
+                        <h4 class="text-brand-light font-bold mt-0 mb-2 flex items-center gap-2">
+                            Step 2：影響（Impact）を“言葉”で埋める
+                        </h4>
+                        <ul class="text-sm text-slate-300 m-0 space-y-1">
+                            <li>外部IF：あり/なし（例：Bluetooth、Wi-Fi、CAN診断、OTA 等）</li>
+                            <li>影響範囲：広い/限定（例：全車種 vs 特定顧客）</li>
+                            <li>安全/出荷：関係あり/なし（暫定でOK）</li>
+                        </ul>
+                    </div>
+
+                    <div class="step-box">
+                        <h4 class="text-brand-light font-bold mt-0 mb-2 flex items-center gap-2">
+                            Step 3：確度（Confidence）の根拠を書き残す
+                        </h4>
+                        <ul class="text-sm text-slate-300 m-0 space-y-1">
+                            <li>対象版数が切れているか：暫定/確定</li>
+                            <li>根拠：SBOM/部品表行、供給元通知、再現、PoC、ログなど</li>
+                            <li>不足情報：何が足りないか（次の依頼が明確になる）</li>
+                        </ul>
+                    </div>
+
+                    <div class="step-box">
+                        <h4 class="text-brand-light font-bold mt-0 mb-2 flex items-center gap-2">
+                            Step 4：P0/P1/P2を決め、一次回答の型で返す
+                        </h4>
+                        <ul class="text-sm text-slate-300 m-0 space-y-1">
+                            <li><strong>P0：</strong>受領＋暫定範囲＋次回更新日（まず期限を守る）</li>
+                            <li><strong>P1：</strong>担当割当＋調査計画＋更新日</li>
+                            <li><strong>P2：</strong>保留理由＋監視（定例で再評価）</li>
+                        </ul>
+                    </div>
+
+                    <h2>【コピペ用】三角形トリアージテンプレ（チケット本文に貼る）</h2>
+                    <p>このテンプレートをチケットや台帳に貼って埋めるだけで、判断の記録が残ります。</p>
+
+                    <div class="template-box">
+                        <div class="template-content">案件名：
+受付日：
+発信元：OEM／取引先／社内検知／その他
+期限（相手SLA）：YYYY-MM-DD（なし/あり）
+一次回答期限（自社SLA）：YYYY-MM-DD
+次回更新日：YYYY-MM-DD
+
+<span class="text-red-400 font-bold">①期限（SLA）：高 / 中 / 低</span>
+根拠：
+
+<span class="text-orange-400 font-bold">②影響（Impact）：高 / 中 / 低</span>
+外部IF：あり/なし（内容：____）
+範囲：広い/限定（対象：____）
+安全/出荷：関係あり/なし（暫定可）
+
+<span class="text-emerald-400 font-bold">③確度（Confidence）：高 / 中 / 低</span>
+対象版数：暫定（）／確定（）
+根拠：SBOM/部品表行____／通知文書____／再現____
+
+<span class="text-brand-light font-bold">優先度：P0 / P1 / P2</span>
+担当（Owner）：
+一次回答（要点）：受領・暫定範囲・次回更新日
+証跡リンク：フォルダ/チケットID____</div>
+                    </div>
+
+                    <!-- 内部リンク②：テンプレ一式 -->
+                    <div class="related-box border-l-emerald-500 my-8">
+                        <div class="text-sm font-bold text-emerald-400 mb-2 flex items-center gap-2"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> 実務テンプレ・SOPへ</div>
+                        <p class="text-sm text-slate-300 mb-2">受付・一次回答・証跡・承認線まで“抜け漏れ防止”で揃えたい場合は、こちらのチェックリストを活用してください。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/launch-checklist/" class="!text-emerald-400 hover:!text-emerald-300">PSIRT立上げ必須チェックリスト（雛形）</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- 途中CTA（主CTA） -->
+                    <div class="bg-navy-800/50 p-6 md:p-8 rounded-2xl border border-brand/30 text-center my-10 shadow-[0_0_20px_rgba(59,130,246,0.15)]">
+                        <p class="text-slate-200 mb-6 font-medium text-lg">脆弱性トリアージ対象をできる限り減らし、運用を楽にしたい方はご相談ください。</p>
+                        <a href="/demo_form.html" class="inline-flex items-center gap-2 px-8 py-3.5 bg-brand hover:bg-brand-dark text-white rounded-full font-bold transition-all hover:-translate-y-1 shadow-lg shadow-brand/20">
+                            <i data-lucide="calendar" class="w-5 h-5"></i> 【無料】オンライン相談を予約する
+                        </a>
+                    </div>
+
+                    <h2>OEM監査で見られるポイント（トリアージで残すべき証拠）</h2>
+                    <p>監査で問われるのは「判断が正しいか」だけではありません。<br>
+                    <strong>“その時点で合理的に判断した証拠が残っているか”</strong> です。</p>
+
+                    <p>最低限、次を残しておけば強いです。</p>
+                    <ul class="space-y-2 font-medium">
+                        <li>期限（相手SLA）と一次回答・次回更新日の履歴</li>
+                        <li>対象版数（暫定→確定）の更新履歴</li>
+                        <li>影響評価の前提（外部IFの有無、機能の使用有無、範囲）</li>
+                        <li>確度の根拠（SBOM/部品表、通知原本、再現、チケット）</li>
+                    </ul>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2>FAQ：トリアージのやり方について</h2>
+                    <div class="space-y-6 mt-6">
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q1. トリアージと“影響判定”は同じですか？</strong>
+                            <p class="m-0 text-slate-300">同じではありません。トリアージは初動の仕分け（優先度と次アクションを決める）で、影響判定はその後の調査・結論作りです。まずは期限・影響・確度の3点で分類し、一次回答できる状態にします。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q2. 情報が足りないとき、どう分類しますか？</strong>
+                            <p class="m-0 text-slate-300">「確度：低/中」として扱い、次回更新日を必ず設定してください。期限がある案件（OEM照会など）は、結論より先に「受領＋暫定範囲＋次回更新日」を返す方が運用として評価されます。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q3. “期限がない”案件は放置していいですか？</strong>
+                            <p class="m-0 text-slate-300">放置はおすすめしません。P2（定例/バックログ）に落として、週次などの定例で再評価する仕組みが必要です。証跡として「なぜ後回しにしたか（影響/確度が低い）」を1行残すと監査に強くなります。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q4. 三角形の3点のうち、どれを最優先に見るべきですか？</strong>
+                            <p class="m-0 text-slate-300">原則は <strong>期限（SLA）</strong>です。期限があるのに沈黙すると、技術的に正しくても信用を失います。期限を守りつつ、影響と確度の根拠を固めていくのが現実的です。</p>
+                        </div>
+                    </div>
+
+                    <!-- 内部リンク③：次に読む -->
+                    <div class="related-box border-l-brand mt-12">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="book-open" class="w-4 h-4"></i> 次に読む</div>
+                        <p class="text-sm text-slate-300 mb-2">そもそもPSIRTの役割・やることを短く整理したい方はこちらをご覧ください。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/what-is-psirt/" class="!text-brand-light hover:!text-brand">PSIRTとは（役割・やるべきことを一言で）</a></li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- CTA Section -->
+            <div class="glass-card rounded-3xl p-8 md:p-12 text-center border-t-4 border-t-brand bg-navy-800/80 shadow-[0_0_40px_-10px_rgba(59,130,246,0.2)]">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">日々のトリアージを、AIに任せませんか？</h2>
+                <p class="text-slate-300 mb-8 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+                    <strong>Auto PSIRT Cloud</strong>なら、毎日のCVE情報と自社のSBOMを自動で突合し、「対応必須か、無視してよいか」の初期トリアージをAIが自動で行います。
+                </p>
+                <div class="flex justify-center">
+                    <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-navy-900 bg-white hover:bg-slate-200 transition-all duration-300 shadow-xl shadow-white/10 w-full sm:w-auto hover:-translate-y-1">
+                        <i data-lucide="monitor-play" class="w-5 h-5 text-brand"></i>
+                        CVEトリアージ・影響判定のデモを見る
+                    </a>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/5 text-center text-sm text-slate-500 mt-auto bg-navy-900/80">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span class="font-bold text-slate-400">Auto PSIRT Cloud</span>
+            </div>
+            <p>&copy; 2026 Unimobilities株式会社. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
