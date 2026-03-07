@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEOメタタグ -->
+    <title>SBOM提出向け 抜粋区分・マスキング手順テンプレ｜そのまま使える雛形 | Auto PSIRT Cloud</title>
+    <meta name="description" content="SBOMをOEM/取引先へ提出する際の「抜粋区分」と「マスキング手順」をテンプレ化。提出版SBOMの作り方、出す/伏せる項目の判断基準、よくあるNG、証跡の残し方まで1ページで整理します。">
+    <meta name="keywords" content="SBOM提出向け 抜粋区分・マスキング手順テンプレ, SBOM, ソフトウェア部品表, 機密情報, マスキング, 脆弱性管理">
+    <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/psirt/submission-excerpt-masking-template/">
+    
+    <!-- OGPタグ (SNSシェア用) -->
+    <meta property="og:title" content="SBOM提出向け 抜粋区分・マスキング手順テンプレ｜そのまま使える雛形">
+    <meta property="og:description" content="SBOM提出時の「どこまで出すか」の悩みを解決。提出レベル定義とマスキング台帳の雛形を公開します。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/psirt/submission-excerpt-masking-template/">
+    <meta property="og:site_name" content="Auto PSIRT Cloud">
+
+    <!-- ファビコン -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%233b82f6%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z%22/><path d=%22m9 12 2 2 4-4%22/></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0a0f1c',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        brand: {
+                            light: '#60a5fa',
+                            DEFAULT: '#3b82f6',
+                            dark: '#2563eb',
+                        },
+                        accent: {
+                            DEFAULT: '#06b6d4',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #60a5fa, #06b6d4);
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* 記事用カスタムスタイル */
+        .prose h2 {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-top: 3.5rem;
+            color: #f8fafc;
+        }
+        .prose h3 {
+            color: #e2e8f0;
+            margin-top: 2.5rem;
+            border-left: 3px solid #6366f1; /* Indigo系アクセント */
+            padding-left: 0.75rem;
+            font-size: 1.25rem;
+        }
+        .prose a {
+            color: #60a5fa;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .prose a:hover {
+            border-bottom-color: #60a5fa;
+        }
+        .prose strong {
+            color: #f8fafc;
+            background: linear-gradient(transparent 60%, rgba(99, 102, 241, 0.3) 40%);
+        }
+        .related-box {
+            background: rgba(30, 41, 59, 0.6);
+            border-left: 4px solid #6366f1;
+            padding: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 2rem 0;
+        }
+        
+        .template-box {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(99, 102, 241, 0.4);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        .template-content {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-size: 0.875rem;
+            line-height: 1.6;
+            color: #cbd5e1;
+            white-space: pre-wrap;
+        }
+        .placeholder-text {
+            color: #a5b4fc;
+            background: rgba(99, 102, 241, 0.1);
+            padding: 0 0.25rem;
+            border-radius: 0.25rem;
+            font-weight: 600;
+        }
+        .custom-table th {
+            background-color: rgba(30, 41, 59, 0.8);
+            border-bottom: 2px solid #6366f1;
+            font-weight: 700;
+        }
+        .custom-table td {
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .custom-table tr:hover td {
+            background-color: rgba(255,255,255,0.02);
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-brand selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-brand/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-indigo-500/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-accent flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="/news.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        ニュース一覧へ戻る
+                    </a>
+                    <a href="/demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                        相談 or デモ予約
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <article class="max-w-4xl mx-auto">
+            
+            <!-- パンくずリスト -->
+            <nav class="flex text-sm text-slate-400 mb-8" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/index.html" class="hover:text-white transition-colors">ホーム</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <a href="/news.html" class="hover:text-white transition-colors">ニュース・インサイト</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <span class="text-slate-500 truncate max-w-[200px] sm:max-w-none">SBOM提出向け 抜粋・マスキングテンプレ</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- 記事ヘッダー -->
+            <header class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-indigo-500/20 border border-indigo-500/30 text-indigo-400 text-xs font-bold px-3 py-1 rounded-full">実務テンプレ</span>
+                    <time class="text-slate-400 text-sm flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> 2026.03.07
+                    </time>
+                </div>
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
+                    SBOM提出向け 抜粋区分・マスキング手順テンプレ<br/>
+                    <span class="text-2xl md:text-3xl text-slate-300 font-medium">（そのまま使える雛形）</span>
+                </h1>
+                
+                <!-- 導入文 -->
+                <div class="text-lg text-slate-300 leading-relaxed p-6 bg-navy-800/50 rounded-2xl border border-white/5 space-y-4">
+                    <p>SBOM提出で一番の悩みは<strong>「どこまで出すか」</strong>です。</p>
+                    
+                    <p>出しすぎると設計情報（IP）に近い情報が漏れます。一方で、出さなさすぎるとOEM/取引先の照会に答えられず、追加質問で工数が爆発します。</p>
+                    
+                    <p>そこで本記事では、提出用SBOM（抜粋版）を作るための「抜粋区分」と「マスキング手順」テンプレを掲載します。</p>
+                    <p>最初から完璧を狙わず、<strong>“必要最小限＋後から説明できる（証跡が残る）”</strong>運用に寄せるのがコツです。</p>
+                </div>
+            </header>
+
+            <!-- 記事本文 -->
+            <div class="glass-card p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl bg-navy-900/80 mb-16">
+                <div class="prose prose-invert prose-slate prose-lg max-w-none">
+                    
+                    <!-- 内部リンク①：全体像 -->
+                    <div class="related-box mt-0 border-l-brand">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="map" class="w-4 h-4"></i> 全体像を先に見直す</div>
+                        <p class="text-sm text-slate-300 mb-2">SBOMの全体像（Excel→標準化、提出版/社内版の切り分け、更新運用）を先に押さえたい方はこちらをご覧ください。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/sbom-complete-guide/" class="!text-brand-light hover:!text-brand">SBOM完全ガイド（SPDX/CycloneDX/Excel運用・提出と機密の現実解）</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>結論：提出は「3レベル」で決めると揉めない</h2>
+                    <p>SBOM提出の抜粋・マスキングは、次の3レベルに分けると社内合意が取りやすいです。</p>
+
+                    <div class="space-y-4 my-6">
+                        <div class="bg-navy-800 p-4 rounded-lg border-l-4 border-l-brand-light">
+                            <strong class="text-brand-light block mb-1">レベル1：照会回答用（最小）</strong>
+                            <p class="text-sm text-slate-300 m-0">CVE照会に答えるための“必要最小限”。</p>
+                        </div>
+                        <div class="bg-navy-800 p-4 rounded-lg border-l-4 border-l-indigo-400">
+                            <strong class="text-indigo-400 block mb-1">レベル2：取引先提出用（標準）</strong>
+                            <p class="text-sm text-slate-300 m-0">OEM/顧客の指定様式に合わせた提出物。</p>
+                        </div>
+                        <div class="bg-navy-800 p-4 rounded-lg border-l-4 border-l-red-400">
+                            <strong class="text-red-400 block mb-1">レベル3：監査・深掘り用（例外）</strong>
+                            <p class="text-sm text-slate-300 m-0">NDA前提・限定共有。原則は出さない（必要時のみ）。</p>
+                        </div>
+                    </div>
+                    
+                    <p>この「レベル」を先に決めるだけで、毎回の議論が減ります。</p>
+
+                    <h2 class="border-b-2 border-indigo-500 pb-2 mt-12 mb-6">【テンプレ】抜粋区分（提出レベル）定義</h2>
+                    <p><strong>使い方：</strong> 社内ルールに貼って<span class="placeholder-text">【 】</span>だけ埋めてください。</p>
+
+                    <div class="template-box">
+                        <div class="template-content">対象製品：<span class="placeholder-text">【製品名】</span>
+対象版数：<span class="placeholder-text">【製品バージョン】</span>
+提出先：<span class="placeholder-text">【OEM名／取引先名】</span>
+目的：<span class="placeholder-text">【照会回答／契約・監査／その他】</span>
+適用レベル：<span class="placeholder-text">【レベル1／2／3】</span></div>
+                    </div>
+
+                    <h3>レベル別に「含める項目」の例</h3>
+                    
+                    <div class="space-y-6 my-6">
+                        <div>
+                            <h4 class="text-brand-light font-bold mt-0 mb-2">レベル1（照会回答用）</h4>
+                            <ul class="text-sm m-0 space-y-1 text-slate-300">
+                                <li>製品名／製品バージョン</li>
+                                <li>コンポーネント名／コンポーネントバージョン</li>
+                                <li>影響判断の根拠に必要な最小メモ（例：外部IFなし、機能無効）</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="text-indigo-400 font-bold mt-0 mb-2">レベル2（提出用）</h4>
+                            <ul class="text-sm m-0 space-y-1 text-slate-300">
+                                <li>レベル1 ＋ （必要に応じて）搭載箇所（ECU/モジュール程度）</li>
+                                <li>ライセンス（要求がある場合）</li>
+                                <li>供給元情報（要求がある場合。ただし後述のマスキングで調整）</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="text-red-400 font-bold mt-0 mb-2">レベル3（監査・深掘り用）</h4>
+                            <ul class="text-sm m-0 space-y-1 text-slate-300">
+                                <li>依存関係の詳細、ハッシュ、ビルド情報など</li>
+                                <li class="text-slate-400">※NDA/限定共有が前提。提出の既定値にはしない</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <h2 class="border-b-2 border-indigo-500 pb-2 mt-12 mb-6">【テンプレ】マスキング（伏せ方）ルール</h2>
+                    <p><strong>使い方：</strong> 下表をそのまま「出す/伏せる」を決める台帳にします。<br>
+                    「伏せる」場合は、<strong>“消す”か“置換（トークン化）”</strong>を選びます。</p>
+
+                    <div class="overflow-x-auto my-6">
+                        <table class="w-full text-sm text-left border-collapse custom-table min-w-[800px]">
+                            <thead>
+                                <tr>
+                                    <th class="p-3 text-white rounded-tl-lg whitespace-nowrap">項目</th>
+                                    <th class="p-3 text-center text-slate-300">レベル1</th>
+                                    <th class="p-3 text-center text-slate-300">レベル2</th>
+                                    <th class="p-3 text-center text-slate-300">レベル3</th>
+                                    <th class="p-3 text-white">マスキング方法（例）</th>
+                                    <th class="p-3 text-white rounded-tr-lg">理由メモ</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-slate-300">
+                                <tr>
+                                    <td class="p-3 border-r border-white/5 font-bold">製品名/版数</td>
+                                    <td class="p-3 text-center text-brand-light font-bold">出す</td>
+                                    <td class="p-3 text-center text-brand-light font-bold">出す</td>
+                                    <td class="p-3 text-center text-brand-light font-bold">出す</td>
+                                    <td class="p-3 border-l border-white/5 text-slate-400">なし</td>
+                                    <td class="p-3 border-l border-white/5">対象範囲の必須</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 border-r border-white/5 font-bold">OSS名/版数</td>
+                                    <td class="p-3 text-center text-brand-light font-bold">出す</td>
+                                    <td class="p-3 text-center text-brand-light font-bold">出す</td>
+                                    <td class="p-3 text-center text-brand-light font-bold">出す</td>
+                                    <td class="p-3 border-l border-white/5 text-slate-400">なし</td>
+                                    <td class="p-3 border-l border-white/5">CVE照会の必須</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 border-r border-white/5 font-bold">自社モジュール名（内部名）</td>
+                                    <td class="p-3 text-center text-red-400 font-bold">伏せる</td>
+                                    <td class="p-3 text-center text-yellow-400 font-bold">置換</td>
+                                    <td class="p-3 text-center text-brand-light font-bold">出す</td>
+                                    <td class="p-3 border-l border-white/5 font-mono text-xs">MODULE_A 等に置換</td>
+                                    <td class="p-3 border-l border-white/5">IP/設計推測を防ぐ</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 border-r border-white/5 font-bold">ファイルパス/リポジトリURL</td>
+                                    <td class="p-3 text-center text-red-400 font-bold">伏せる</td>
+                                    <td class="p-3 text-center text-red-400 font-bold">伏せる</td>
+                                    <td class="p-3 text-center text-brand-light font-bold">出す</td>
+                                    <td class="p-3 border-l border-white/5 text-slate-400">行ごと削除</td>
+                                    <td class="p-3 border-l border-white/5">構造・運用情報が出る</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 border-r border-white/5 font-bold">顧客名/プロジェクト名</td>
+                                    <td class="p-3 text-center text-red-400 font-bold">伏せる</td>
+                                    <td class="p-3 text-center text-red-400 font-bold">伏せる</td>
+                                    <td class="p-3 text-center text-brand-light font-bold">出す</td>
+                                    <td class="p-3 border-l border-white/5 font-mono text-xs">CustomerX 等</td>
+                                    <td class="p-3 border-l border-white/5">取引情報の秘匿</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 border-r border-white/5 font-bold">供給元（サプライヤー名）</td>
+                                    <td class="p-3 text-center text-red-400 font-bold">伏せる</td>
+                                    <td class="p-3 text-center text-yellow-400 font-bold text-xs">条件付き</td>
+                                    <td class="p-3 text-center text-brand-light font-bold">出す</td>
+                                    <td class="p-3 border-l border-white/5 text-slate-400">NDA有無で出し分け</td>
+                                    <td class="p-3 border-l border-white/5">取引情報の秘匿</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 border-r border-white/5 font-bold">搭載箇所（ECU/機能）</td>
+                                    <td class="p-3 text-center text-slate-400">任意</td>
+                                    <td class="p-3 text-center text-brand-light font-bold">出す</td>
+                                    <td class="p-3 text-center text-brand-light font-bold">出す</td>
+                                    <td class="p-3 border-l border-white/5 text-slate-400">粒度調整（大分類）</td>
+                                    <td class="p-3 border-l border-white/5">影響説明に有用</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 border-r border-white/5 font-bold">ライセンス</td>
+                                    <td class="p-3 text-center text-slate-400">任意</td>
+                                    <td class="p-3 text-center text-yellow-400 font-bold text-xs">条件付き</td>
+                                    <td class="p-3 text-center text-brand-light font-bold">出す</td>
+                                    <td class="p-3 border-l border-white/5 text-slate-400">要求がある場合のみ</td>
+                                    <td class="p-3 border-l border-white/5">提出先要件に依存</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 border-r border-white/5 font-bold">ハッシュ/署名情報</td>
+                                    <td class="p-3 text-center text-red-400 font-bold">伏せる</td>
+                                    <td class="p-3 text-center text-red-400 font-bold">伏せる</td>
+                                    <td class="p-3 text-center text-brand-light font-bold">出す</td>
+                                    <td class="p-3 border-l border-white/5 text-slate-400">行ごと削除</td>
+                                    <td class="p-3 border-l border-white/5">攻撃面を増やす可能性</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 border-r border-white/5 font-bold">備考（到達性/無効化）</td>
+                                    <td class="p-3 text-center text-brand-light font-bold">出す</td>
+                                    <td class="p-3 text-center text-brand-light font-bold">出す</td>
+                                    <td class="p-3 text-center text-brand-light font-bold">出す</td>
+                                    <td class="p-3 border-l border-white/5 text-slate-400">技術詳細は削る</td>
+                                    <td class="p-3 border-l border-white/5">“影響なし根拠”に必要</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="bg-navy-800/80 p-5 rounded-lg border-l-4 border-l-indigo-400 my-6">
+                        <strong class="text-indigo-300 block mb-2">💡 マスキングのポイント</strong>
+                        <ul class="text-sm m-0 space-y-2 text-slate-300">
+                            <li>「伏せる＝空欄」だと追加質問が来やすいので、置換（トークン化）できるものは<strong>置換がおすすめ</strong>です。</li>
+                            <li>“影響なしの根拠”は<strong>短文で残す</strong>と照会対応が楽になります（例：外部IFなし／機能無効）。</li>
+                        </ul>
+                    </div>
+
+                    <h2>【手順テンプレ】提出版SBOMの作り方（5ステップ）</h2>
+                    <div class="bg-navy-800 p-6 rounded-xl border border-white/10 my-6">
+                        <ol class="m-0 space-y-3 pl-6 text-slate-200 font-medium">
+                            <li>提出の目的を決める（照会回答／契約／監査）</li>
+                            <li>適用レベルを選ぶ（レベル1/2/3）</li>
+                            <li>社内正本（フルSBOM）を固定（対象製品・対象版数）</li>
+                            <li>抜粋→マスキングを適用（上の表で機械的に）</li>
+                            <li>提出物として保存
+                                <ul class="text-sm font-normal text-slate-400 mt-2 space-y-1 list-disc pl-4">
+                                    <li>提出版ID ／ 提出日 ／ 提出先 ／ 対象版数</li>
+                                    <li><strong>参照した社内正本のID（証跡）</strong></li>
+                                </ul>
+                            </li>
+                        </ol>
+                    </div>
+
+                    <!-- 途中CTA（主CTA） -->
+                    <div class="bg-navy-800/50 p-6 md:p-8 rounded-2xl border border-indigo-500/30 text-center my-10 shadow-[0_0_20px_rgba(99,102,241,0.1)]">
+                        <p class="text-slate-200 mb-6 font-medium text-lg">このままのテンプレを、自社向けに整備したい方はご相談ください。</p>
+                        <a href="/demo_form.html" class="inline-flex items-center gap-2 px-8 py-3.5 bg-brand hover:bg-brand-dark text-white rounded-full font-bold transition-all hover:-translate-y-1 shadow-lg shadow-brand/20">
+                            <i data-lucide="calendar" class="w-5 h-5"></i> 【無料】オンライン相談を予約する
+                        </a>
+                    </div>
+
+                    <h2>よくあるNG（提出が炎上するパターン）</h2>
+                    <ul class="space-y-3 my-6 list-none pl-0">
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>NG：製品版数が書かれていない</strong><br><span class="text-sm text-slate-400">→ “どの版のSBOM？”で追加質問が止まらない</span></div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>NG：丸ごと提出</strong><br><span class="text-sm text-slate-400">→ IP/取引情報のリスクが増える</span></div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>NG：伏せすぎて意味がない</strong><br><span class="text-sm text-slate-400">→ “照会に答えられないSBOM”になる</span></div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>NG：提出版と正本が混ざる</strong><br><span class="text-sm text-slate-400">→ 監査で矛盾（最新版がどれか分からない）</span></div></li>
+                    </ul>
+
+                    <h2>Auto PSIRT Cloudでの運用イメージ</h2>
+                    <p>提出版を作るときに重要なのは<strong>「提出版の再現性」</strong>です。</p>
+                    <p>「いつ・どの正本を元に・どのマスキングルールで作ったか」を残しておくと、追加質問や監査が一気に楽になります。ツールを活用すれば、この「正本からの安全な切り出し」を自動化できます。</p>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2>FAQ：SBOMの抜粋・提出について</h2>
+                    <div class="space-y-6 mt-6">
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q1. SBOMはそのまま提出していいですか？</strong>
+                            <p class="m-0 text-slate-300">おすすめしません。SBOMは設計情報に近いことがあり、出しすぎるとIP/取引情報のリスクが増えます。提出は「目的×レベル」で抜粋版を作るのが現実的です。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q2. マスキングは「削除」と「置換」どちらが良いですか？</strong>
+                            <p class="m-0 text-slate-300">可能なら置換（トークン化）が便利です。削除だけだと「なぜ消えている？」と追加質問が増えるため、説明可能な形（MODULE_A など）で残すと運用が安定します。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q3. どこまで出せば照会（CVE影響有無）に答えられますか？</strong>
+                            <p class="m-0 text-slate-300">最小は「製品名・製品版数・コンポーネント名/版数」と、影響なしの根拠を短く示すメモです。搭載箇所は粒度を調整して付けると説明が楽になります。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q4. 提出版の“証跡”として何を残すべきですか？</strong>
+                            <p class="m-0 text-slate-300">提出版ID、提出日、提出先、対象版数、参照した社内正本のID、適用したマスキングルール（版数）を残すと、監査・追加質問に強くなります。</p>
+                        </div>
+                    </div>
+
+                    <!-- 内部リンク②：次に読む -->
+                    <div class="related-box border-l-brand mt-12">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="book-open" class="w-4 h-4"></i> 次に読む</div>
+                        <p class="text-sm text-slate-300 mb-2">SBOMの定義・目的から短く確認したい方はこちらをご覧ください。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/what-is-sbom/" class="!text-brand-light hover:!text-brand">SBOMとは？提出物ではなく運用資産として理解する</a></li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- CTA Section -->
+            <div class="glass-card rounded-3xl p-8 md:p-12 text-center border-t-4 border-t-indigo-500 bg-navy-800/80 shadow-[0_0_40px_-10px_rgba(99,102,241,0.2)]">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">マスキングや提出版の作成を自動化しませんか？</h2>
+                <p class="text-slate-300 mb-8 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+                    <strong>Auto PSIRT Cloud</strong>なら、社内の正本SBOMから、提出先や目的に合わせた「抜粋版（マスキング済み）」を安全かつ一瞬で生成できます。
+                </p>
+                <div class="flex justify-center">
+                    <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-navy-900 bg-white hover:bg-slate-200 transition-all duration-300 shadow-xl shadow-white/10 w-full sm:w-auto hover:-translate-y-1">
+                        <i data-lucide="monitor-play" class="w-5 h-5 text-indigo-600"></i>
+                        SBOM連携からレポート出力までのデモを見る
+                    </a>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/5 text-center text-sm text-slate-500 mt-auto bg-navy-900/80">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span class="font-bold text-slate-400">Auto PSIRT Cloud</span>
+            </div>
+            <p>&copy; 2026 Unimobilities株式会社. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
