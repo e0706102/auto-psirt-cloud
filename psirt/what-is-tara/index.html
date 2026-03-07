@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEOメタタグ -->
+    <title>TARAとは？（ISO/SAE 21434のリスク分析の出だし）｜成果物と監査で見られる点 | Auto PSIRT Cloud</title>
+    <meta name="description" content="TARA（Threat Analysis and Risk Assessment）とは、ISO/SAE 21434で求められる“脅威分析とリスク評価”。資産・攻撃経路・影響を整理してセキュリティ目標/要件へ落とす、リスク分析の出だしです。OEM監査で見られる成果物と、PSIRT運用に効く使い方を短く解説します。">
+    <meta name="keywords" content="TARAとは, TARA, ISO/SAE 21434, リスク分析, PSIRT, OEM監査, 自動車セキュリティ">
+    <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/psirt/what-is-tara/">
+    
+    <!-- OGPタグ (SNSシェア用) -->
+    <meta property="og:title" content="TARAとは？（ISO/SAE 21434のリスク分析の出だし）｜成果物と監査で見られる点">
+    <meta property="og:description" content="TARA（脅威分析とリスク評価）とは何か？OEM監査で見られる成果物と、PSIRTの脆弱性対応運用に効く使い方を短く解説します。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/psirt/what-is-tara/">
+    <meta property="og:site_name" content="Auto PSIRT Cloud">
+
+    <!-- ファビコン -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%233b82f6%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z%22/><path d=%22m9 12 2 2 4-4%22/></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0a0f1c',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        brand: {
+                            light: '#60a5fa',
+                            DEFAULT: '#3b82f6',
+                            dark: '#2563eb',
+                        },
+                        accent: {
+                            DEFAULT: '#06b6d4',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #60a5fa, #06b6d4);
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* 記事用カスタムスタイル */
+        .prose h2 {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-top: 3.5rem;
+            color: #f8fafc;
+        }
+        .prose h3 {
+            color: #e2e8f0;
+            margin-top: 2.5rem;
+            border-left: 3px solid #3b82f6; /* Blue系アクセント */
+            padding-left: 0.75rem;
+            font-size: 1.25rem;
+        }
+        .prose a {
+            color: #60a5fa;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .prose a:hover {
+            border-bottom-color: #60a5fa;
+        }
+        .prose strong {
+            color: #f8fafc;
+            background: linear-gradient(transparent 60%, rgba(59, 130, 246, 0.3) 40%);
+        }
+        .related-box {
+            background: rgba(30, 41, 59, 0.6);
+            border-left: 4px solid #3b82f6;
+            padding: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-brand selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-brand/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-blue-500/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-accent flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="/news.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        ニュース一覧へ戻る
+                    </a>
+                    <a href="/demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                        相談 or デモ予約
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <article class="max-w-4xl mx-auto">
+            
+            <!-- パンくずリスト -->
+            <nav class="flex text-sm text-slate-400 mb-8" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/index.html" class="hover:text-white transition-colors">ホーム</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <a href="/news.html" class="hover:text-white transition-colors">ニュース・インサイト</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <span class="text-slate-500 truncate max-w-[200px] sm:max-w-none">TARAとは</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- 記事ヘッダー -->
+            <header class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-blue-500/20 border border-blue-500/30 text-blue-400 text-xs font-bold px-3 py-1 rounded-full">入門解説</span>
+                    <time class="text-slate-400 text-sm flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> 2026.03.07
+                    </time>
+                </div>
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
+                    TARAとは<br/>
+                    <span class="text-2xl md:text-3xl text-slate-300 font-medium">（21434のリスク分析の出だし）</span>
+                </h1>
+                
+                <!-- 導入文 -->
+                <div class="text-lg text-slate-300 leading-relaxed p-6 bg-navy-800/50 rounded-2xl border border-white/5 space-y-4">
+                    <p>TARAとは <strong>Threat Analysis and Risk Assessment（脅威分析とリスク評価）</strong> のことです。</p>
+                    
+                    <p>ISO/SAE 21434の文脈では、製品の“どこが狙われ得るか（脅威）”と“どれくらい危ないか（リスク）”を整理し、セキュリティ目標（Cybersecurity Goals）や要件へ落とし込むための出発点になります。</p>
+
+                    <p>ひとことで言うと、<strong>「守るべき対象（資産）」「攻撃の入口（攻撃経路）」「起きたら困ること（影響）」</strong>を言語化して、設計と運用の優先度を決める作業です。</p>
+                </div>
+            </header>
+
+            <!-- 記事本文 -->
+            <div class="glass-card p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl bg-navy-900/80 mb-16">
+                <div class="prose prose-invert prose-slate prose-lg max-w-none">
+                    
+                    <!-- 内部リンク①：全体像 -->
+                    <div class="related-box mt-0 border-l-brand">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="map" class="w-4 h-4"></i> 全体像を先に見る</div>
+                        <p class="text-sm text-slate-300 mb-2">TARAの“判断根拠”は、出荷後のCVEトリアージやOEM回答（影響あり/なし）でも使います。運用全体像は以下の記事で整理しています。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/automotive-supplier-guide/" class="!text-brand-light hover:!text-brand">自動車サプライヤーのPSIRT完全ガイド：UN-R155対応を兼務で回す方法</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>21434でのTARAの位置づけ（なぜ「出だし」なのか）</h2>
+                    <p>TARAは、単に表を埋める作業ではなく、次の流れの“最初の根拠”になります。</p>
+
+                    <div class="bg-navy-800 p-6 rounded-lg border border-white/10 my-6 text-center font-bold text-slate-200">
+                        脅威・リスク評価（TARA） <br>
+                        <i data-lucide="arrow-down" class="w-4 h-4 mx-auto my-1 text-slate-500"></i><br>
+                        セキュリティ目標 <br>
+                        <i data-lucide="arrow-down" class="w-4 h-4 mx-auto my-1 text-slate-500"></i><br>
+                        セキュリティ要件 <br>
+                        <i data-lucide="arrow-down" class="w-4 h-4 mx-auto my-1 text-slate-500"></i><br>
+                        設計/検証 <br>
+                        <i data-lucide="arrow-down" class="w-4 h-4 mx-auto my-1 text-slate-500"></i><br>
+                        <span class="text-brand-light">運用（PSIRT含む）</span>
+                    </div>
+
+                    <p>OEM監査で見られるのは「立派なスコア」より、<strong>要件・設計・試験・運用が、TARAの結論とつながっているか（トレーサビリティ）</strong> です。</p>
+
+                    <h2>TARAで最低限そろえる成果物（中小サプライヤー向け最小セット）</h2>
+                    <p>兼務体制でも“監査で説明できる”最小セットは、まずこれで十分です。</p>
+
+                    <ul class="space-y-3 font-medium bg-navy-800/50 p-6 rounded-xl border border-white/5 my-6 list-none pl-0">
+                        <li class="flex items-start gap-3"><i data-lucide="target" class="w-5 h-5 text-brand-light shrink-0 mt-0.5"></i> <div><strong>スコープ：</strong>どの機能/ECU/製品版数が対象か</div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="box" class="w-5 h-5 text-brand-light shrink-0 mt-0.5"></i> <div><strong>資産（守るもの）：</strong>データ、機能、安全/品質に関わる要素</div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="git-merge" class="w-5 h-5 text-brand-light shrink-0 mt-0.5"></i> <div><strong>攻撃経路：</strong>外部IF（通信、診断、更新、クラウド連携等）</div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="alert-triangle" class="w-5 h-5 text-brand-light shrink-0 mt-0.5"></i> <div><strong>ダメージシナリオ：</strong>何が起きると困るか（影響）</div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="search-check" class="w-5 h-5 text-brand-light shrink-0 mt-0.5"></i> <div><strong>リスク評価の根拠：</strong>定性的でもよいので“なぜそう判断したか”</div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="check-circle-2" class="w-5 h-5 text-brand-light shrink-0 mt-0.5"></i> <div><strong>結論：</strong>セキュリティ目標/要件（または当面の対策方針）</div></li>
+                    </ul>
+
+                    <p class="text-lg font-bold text-center text-brand-light mt-8">
+                        ポイントは「細かさ」より<br class="hidden sm:block"> “版数と前提条件が書けること” です。<br>
+                        <span class="text-sm font-normal text-slate-300">PSIRTの影響判定（not_affected等）の根拠にも転用できます。</span>
+                    </p>
+
+                    <h2>よくある誤解（OEM監査で詰まりやすい）</h2>
+                    <ul class="space-y-4 my-6 list-none pl-0">
+                        <li class="bg-navy-800/80 p-4 rounded-lg border-l-4 border-red-500">
+                            <strong class="text-slate-200">誤解1：TARAは一度作ったら終わり</strong><br>
+                            <span class="text-red-400">→ 仕様変更、外部IF追加、OTA運用変更、重大CVEなどで見直しが必要です。</span>
+                        </li>
+                        <li class="bg-navy-800/80 p-4 rounded-lg border-l-4 border-yellow-500">
+                            <strong class="text-slate-200">誤解2：スコアが高い/低いが重要</strong><br>
+                            <span class="text-yellow-400">→ 監査では「前提」「攻撃経路」「対象版数」「要件への反映」が重視されます。</span>
+                        </li>
+                        <li class="bg-navy-800/80 p-4 rounded-lg border-l-4 border-blue-500">
+                            <strong class="text-slate-200">誤解3：PSIRTとは別物で関係ない</strong><br>
+                            <span class="text-brand-light">→ TARAの結論（到達性、前提条件、外部IF）は、CVEトリアージやOEM照会の説明根拠になります。</span>
+                        </li>
+                    </ul>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2>FAQ：TARAとは</h2>
+                    <div class="space-y-6 mt-6">
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q1. TARAとは何ですか？</strong>
+                            <p class="m-0 text-slate-300">脅威（Threat）を洗い出し、影響と起こりやすさを評価してリスク（Risk）を判断し、セキュリティ目標/要件へ落とすための作業です（ISO/SAE 21434の基本プロセス）。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q2. TARAで必ず作るべき成果物は？</strong>
+                            <p class="m-0 text-slate-300">まずはスコープ、資産、攻撃経路、影響（ダメージシナリオ）、判断根拠、結論（目標/要件）です。中小サプライヤーは“最小セット＋版数”で始めると止まりません。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q3. TARAはいつ見直しますか？</strong>
+                            <p class="m-0 text-slate-300">設計変更（外部IF追加など）、運用変更（OTA/クラウド連携）、重大脆弱性やインシデント、OEM要求が入ったタイミングが代表的です。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q4. TARAはPSIRT運用にどう効きますか？</strong>
+                            <p class="m-0 text-slate-300">CVE照会で「到達性がない」「前提条件が成立しない」などを説明する根拠になります。影響なし（not_affected）の条件を“言い切れる形”にできます。</p>
+                        </div>
+                    </div>
+
+                    <!-- 内部リンク②：次に読む -->
+                    <div class="related-box border-l-emerald-500 mt-12">
+                        <div class="text-sm font-bold text-emerald-400 mb-2 flex items-center gap-2"><i data-lucide="list-checks" class="w-4 h-4"></i> 次に読む</div>
+                        <p class="text-sm text-slate-300 mb-2">運用フェーズに入ってからの、受付→一次回答→証跡→更新連絡まで“抜け漏れなく”整える型はこちら。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/launch-checklist/" class="!text-emerald-400 hover:!text-emerald-300">PSIRT立上げ必須チェックリスト（雛形）</a></li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- CTA Section (相談のみ) -->
+            <div class="glass-card rounded-3xl p-8 md:p-12 text-center border-t-4 border-t-brand bg-navy-800/80 shadow-[0_0_40px_-10px_rgba(59,130,246,0.3)]">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">自社のリスク評価とOEMへの回答方針、整理しませんか？</h2>
+                <p class="text-slate-300 mb-8 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+                    はじめに、TARAの考え方を日々の脆弱性対応やOEM照会にどう活かすか、方針を整理したい方はご相談ください。
+                </p>
+                <div class="flex justify-center">
+                    <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-white bg-brand hover:bg-brand-dark transition-all duration-300 shadow-lg shadow-brand/20 w-full sm:w-auto hover:-translate-y-1">
+                        <i data-lucide="message-square" class="w-5 h-5"></i>
+                        【無料】オンライン相談を予約する
+                    </a>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/5 text-center text-sm text-slate-500 mt-auto bg-navy-900/80">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span class="font-bold text-slate-400">Auto PSIRT Cloud</span>
+            </div>
+            <p>&copy; 2026 Unimobilities株式会社. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
