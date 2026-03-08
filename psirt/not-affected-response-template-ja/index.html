@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEOメタタグ -->
+    <title>“影響なし”OEM回答文テンプレ（日本語）｜証跡・SLAまで抜けない書き方 | Auto PSIRT Cloud</title>
+    <meta name="description" content="OEM照会に「影響なし」と回答する際の日本語テンプレを掲載。対象版数、理由（非搭載/到達性なし等）、前提条件、証跡、次回更新日（SLA）まで“抜けない”文面の作り方と運用のコツ、よくあるNG例、Auto PSIRT Cloudへ落とすポイントを解説します。">
+    <meta name="keywords" content="“影響なし”OEM回答文テンプレ, OEM調査依頼, 証跡, SLA, PSIRT, 脆弱性管理">
+    <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/psirt/not-affected-response-template-ja/">
+    
+    <!-- OGPタグ (SNSシェア用) -->
+    <meta property="og:title" content="“影響なし”OEM回答文テンプレ（日本語）｜証跡・SLAまで抜けない書き方">
+    <meta property="og:description" content="OEMからの追加質問を防ぐ「影響なし」回答の型。コピペで使える日本語テンプレと運用ルールを解説します。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/psirt/not-affected-response-template-ja/">
+    <meta property="og:site_name" content="Auto PSIRT Cloud">
+
+    <!-- ファビコン -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%2306b6d4%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z%22/><path d=%22m9 12 2 2 4-4%22/></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0a0f1c',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        brand: {
+                            light: '#60a5fa',
+                            DEFAULT: '#3b82f6',
+                            dark: '#2563eb',
+                        },
+                        accent: {
+                            DEFAULT: '#06b6d4',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #06b6d4, #3b82f6); /* Cyan to Blue */
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* 記事用カスタムスタイル */
+        .prose h2 {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-top: 3.5rem;
+            color: #f8fafc;
+        }
+        .prose h3 {
+            color: #e2e8f0;
+            margin-top: 2.5rem;
+            border-left: 3px solid #06b6d4; /* Cyan系アクセント */
+            padding-left: 0.75rem;
+            font-size: 1.25rem;
+        }
+        .prose a {
+            color: #22d3ee; /* cyan-400 */
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .prose a:hover {
+            border-bottom-color: #22d3ee;
+        }
+        .prose strong {
+            color: #f8fafc;
+            background: linear-gradient(transparent 60%, rgba(6, 182, 212, 0.3) 40%);
+        }
+        .related-box {
+            background: rgba(30, 41, 59, 0.6);
+            border-left: 4px solid #06b6d4;
+            padding: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 2rem 0;
+        }
+        .template-box {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(6, 182, 212, 0.4);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.2);
+        }
+        .template-content {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-size: 0.875rem;
+            line-height: 1.6;
+            color: #cbd5e1;
+            white-space: pre-wrap;
+        }
+        .placeholder-text {
+            color: #67e8f9; /* cyan-300 */
+            background: rgba(6, 182, 212, 0.1);
+            padding: 0 0.25rem;
+            border-radius: 0.25rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-cyan-500 selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-cyan-500/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-brand/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-accent flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="/news.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        ニュース一覧へ戻る
+                    </a>
+                    <a href="/demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                        相談 or デモ予約
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <article class="max-w-4xl mx-auto">
+            
+            <!-- パンくずリスト -->
+            <nav class="flex text-sm text-slate-400 mb-8" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/index.html" class="hover:text-white transition-colors">ホーム</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <a href="/news.html" class="hover:text-white transition-colors">ニュース・インサイト</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <span class="text-slate-500 truncate max-w-[200px] sm:max-w-none">“影響なし”OEM回答文テンプレ</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- 記事ヘッダー -->
+            <header class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-cyan-500/20 border border-cyan-500/30 text-cyan-400 text-xs font-bold px-3 py-1 rounded-full">実務テンプレ</span>
+                    <time class="text-slate-400 text-sm flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> 2026.03.08
+                    </time>
+                </div>
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
+                    “影響なし”OEM回答文テンプレ（日本語）<br/>
+                    <span class="text-2xl md:text-3xl text-slate-300 font-medium">（証跡・SLAまで抜けない書き方）</span>
+                </h1>
+                
+                <!-- 導入文 -->
+                <div class="text-lg text-slate-300 leading-relaxed p-6 bg-navy-800/50 rounded-2xl border border-white/5 space-y-4">
+                    <p>OEM調査依頼（CVE影響有無）に対して「影響なし」と返すとき、<strong>結論だけを書いてしまうと追加質問が止まりません。</strong></p>
+                    
+                    <p>通る回答に必要なのは、<strong>対象版数 ／ 理由（根拠） ／ 前提条件 ／ 証跡 ／ SLA（次回更新日）</strong> の5点です。</p>
+                    
+                    <p>以下に、そのまま貼って使える日本語テンプレと、運用のコツ・よくあるNG例をまとめます。</p>
+                </div>
+            </header>
+
+            <!-- 記事本文 -->
+            <div class="glass-card p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl bg-navy-900/80 mb-16">
+                <div class="prose prose-invert prose-slate prose-lg max-w-none">
+                    
+                    <!-- 内部リンク①：前提解説 -->
+                    <div class="related-box mt-0 border-l-brand">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="map" class="w-4 h-4"></i> 導入（全体フローの確認）</div>
+                        <p class="text-sm text-slate-300 mb-2">OEM調査依頼の初動から、回答書の作成・証跡の集め方までの全体設計はこちらをご覧ください。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/audit-investigation-response-guide/" class="!text-brand-light hover:!text-brand">OEM調査依頼・監査対応 完全ガイド</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>コピペ用：“影響なし”OEM回答文テンプレ（日本語）</h2>
+                    <p><strong>使い方：</strong> メール/回答書に貼り、<span class="placeholder-text">【 】</span>だけ埋めてください。<br>
+                    <span class="text-sm text-rose-400">※「影響なし」を断定しすぎないために、前提条件と証跡を必ず入れます。</span></p>
+
+                    <div class="template-box">
+                        <div class="flex items-center gap-2 mb-4 pb-2 border-b border-cyan-500/30">
+                            <i data-lucide="copy" class="w-4 h-4 text-cyan-400"></i>
+                            <span class="font-bold text-cyan-400 text-sm">回答文テンプレート</span>
+                        </div>
+                        <div class="template-content mt-0 border-none bg-transparent p-0 shadow-none text-base">件名：【CVE-<span class="placeholder-text">____</span>】調査結果（一次回答）：影響なし（not affected）
+
+<span class="text-cyan-300 font-bold">【1. 結論】</span>
+当社製品<span class="placeholder-text">【製品名】</span>（対象版数：<span class="placeholder-text">【v__〜v__】</span>※暫定/確定）は、現時点の評価では当該CVEの影響を受けません（影響なし）。
+
+<span class="text-cyan-300 font-bold">【2. 理由（いずれかを選択）】</span>
+理由区分：<span class="placeholder-text">【A 非搭載 / B 到達性なし / C 影響範囲外 / D 緩和済み】</span>
+- A 非搭載：SBOM/構成表上、該当コンポーネント<span class="placeholder-text">【名称・版数】</span>の搭載が確認できません。
+- B 到達性なし：当該ECU/機能は外部到達経路（通信/診断/近距離IF）が成立しない前提です。
+- C 影響範囲外：当社搭載版数は影響対象外の範囲です（影響対象：<span class="placeholder-text">【__】</span>／当社搭載：<span class="placeholder-text">【__】</span>）。
+- D 緩和済み：当社構成では<span class="placeholder-text">【設定/無効化/制限】</span>により成立条件が満たされません。
+
+<span class="text-cyan-300 font-bold">【3. 前提条件（重要：条件が変わると再評価）】</span>
+- 前提：<span class="placeholder-text">【例：診断機能は出荷設定で無効／外部IFなし／特定構成のみ】</span>。
+- 前提変更（例：OTA導入、設定変更、派生構成追加）の場合は再評価します。
+
+<span class="text-cyan-300 font-bold">【4. 証跡（参照先）】</span>
+- SBOM/構成表：ID<span class="placeholder-text">【__】</span>（該当行/該当箇所：<span class="placeholder-text">【__】</span>）
+- 仕様/設定根拠：文書ID<span class="placeholder-text">【__】</span>、設定ID<span class="placeholder-text">【__】</span>、試験メモID<span class="placeholder-text">【__】</span> 等
+
+<span class="text-cyan-300 font-bold">【5. 次回更新（SLA）】</span>
+- 追加確認が不要：前提変更がない限り、本結論を維持します。
+- 追加確認が必要：次回更新日<span class="placeholder-text">【YYYY-MM-DD】</span>に、確認結果を更新連絡します。
+
+以上、よろしくお願いいたします。
+連絡先：<span class="placeholder-text">【担当部署/担当者名】</span><span class="placeholder-text">【メール/電話】</span>
+案件ID：<span class="placeholder-text">【INC-____】</span>（参照用）</div>
+                    </div>
+
+                    <div class="bg-navy-800 p-6 rounded-lg border border-white/10 my-8">
+                        <h4 class="text-white font-bold mt-0 mb-3 flex items-center gap-2">
+                            <i data-lucide="check-square" class="w-5 h-5 text-cyan-400"></i> 送付前チェックリスト（最低限）
+                        </h4>
+                        <ul class="m-0 space-y-2 pl-0 list-none text-slate-300 font-medium">
+                            <li class="flex items-center gap-3"><i data-lucide="square" class="w-5 h-5 text-slate-500"></i> 対象製品名と対象版数が書けている（暫定/確定も明記）</li>
+                            <li class="flex items-center gap-3"><i data-lucide="square" class="w-5 h-5 text-slate-500"></i> 理由区分（A〜D）が1つに寄っている</li>
+                            <li class="flex items-center gap-3"><i data-lucide="square" class="w-5 h-5 text-slate-500"></i> 前提条件が1行以上ある（設定/構成/到達性）</li>
+                            <li class="flex items-center gap-3"><i data-lucide="square" class="w-5 h-5 text-slate-500"></i> <strong>証跡（参照先ID）</strong> がある（“探せる”状態）</li>
+                            <li class="flex items-center gap-3"><i data-lucide="square" class="w-5 h-5 text-slate-500"></i> 調査中要素があるなら <strong>次回更新日（SLA）</strong> がある</li>
+                        </ul>
+                    </div>
+
+                    <!-- 途中CTA（主CTA） -->
+                    <div class="bg-navy-800/50 p-6 md:p-8 rounded-2xl border border-cyan-500/30 text-center my-10 shadow-[0_0_20px_rgba(6,182,212,0.15)]">
+                        <p class="text-slate-200 mb-6 font-medium text-lg">この記事のテンプレを自社向け（製品構成・SLA・承認線）に調整したい方はご相談ください。</p>
+                        <a href="/demo_form.html" class="inline-flex items-center gap-2 px-8 py-3.5 bg-brand hover:bg-brand-dark !text-white rounded-full font-bold transition-all hover:-translate-y-1 shadow-lg shadow-brand/20">
+                            <i data-lucide="calendar" class="w-5 h-5"></i> 【無料】オンライン相談を予約する
+                        </a>
+                    </div>
+
+                    <h2>書き方・運用のコツ（兼務でも破綻しない）</h2>
+                    <ul class="space-y-3 font-medium text-slate-200">
+                        <li class="flex items-start gap-3"><i data-lucide="info" class="w-5 h-5 text-cyan-400 shrink-0 mt-0.5"></i> <div>「影響なし」＝<strong>条件付き</strong>にする（前提を書かない断定は後で危険になります）。</div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="info" class="w-5 h-5 text-cyan-400 shrink-0 mt-0.5"></i> <div>証跡は“添付”より<strong>“参照ID”</strong>が強い（監査で確実に再現できるようになります）。</div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="info" class="w-5 h-5 text-cyan-400 shrink-0 mt-0.5"></i> <div>SLA（期限）が短いときは、<strong>一次回答＝受領＋暫定結論＋次回更新日</strong> で守ります。</div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="info" class="w-5 h-5 text-cyan-400 shrink-0 mt-0.5"></i> <div>理由区分（A〜D）を固定し、<strong>社内で言い回しを統一する</strong>とレビューが速くなります。</div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="info" class="w-5 h-5 text-cyan-400 shrink-0 mt-0.5"></i> <div>将来の構成変更（OTA/通信の追加など）を<strong>再評価トリガー</strong>に入れます。</div></li>
+                    </ul>
+
+                    <!-- 内部リンク②：使い方セクション本文 -->
+                    <div class="related-box border-l-purple-500 mt-8 mb-12">
+                        <div class="text-sm font-bold text-purple-400 mb-2 flex items-center gap-2"><i data-lucide="wifi" class="w-4 h-4"></i> 用語の補足</div>
+                        <p class="text-sm text-slate-300 mb-2">OTA導入で“閉域前提”が崩れると、影響評価が変わることがあります。OTAとは何かを確認したい方はこちら。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="#" class="!text-purple-400 hover:!text-purple-300">OTAが「？」な担当者向け解説（作成中）</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>よくあるNG例（差し戻しパターン）</h2>
+                    
+                    <div class="bg-red-500/10 p-5 rounded-lg border border-red-500/30 mb-6">
+                        <div class="flex items-start gap-2 mb-3">
+                            <span class="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">NG</span>
+                            <div class="font-mono text-slate-300 bg-navy-900 px-3 py-2 rounded w-full">「閉域なので影響なしです。」</div>
+                        </div>
+                        <p class="text-sm text-red-300 m-0 font-medium">→ どこまで閉域か／診断・OTAの例外／前提条件／証跡が無く、確実に追加質問が来ます。</p>
+                    </div>
+
+                    <div class="bg-emerald-500/10 p-5 rounded-lg border border-emerald-500/30">
+                        <div class="flex items-start gap-2 mb-3">
+                            <span class="bg-emerald-500 text-white text-xs font-bold px-2 py-1 rounded">OK (最小)</span>
+                            <div class="font-mono text-slate-300 bg-navy-900 px-3 py-2 rounded w-full">「外部IFなし（診断は整備時のみ認証ツール）という前提で到達性が成立しない。<br>根拠：IF一覧Doc-、設定Config-、SBOM-__。前提変更時は再評価。」</div>
+                        </div>
+                    </div>
+
+                    <h2 class="mt-12">Auto PSIRT Cloudに落とすポイント（運用化の設計）</h2>
+                    <p>テンプレを“属人化”させないコツは、文面より先に<strong>フィールド化（入力欄の固定）</strong>です。最低限、次を項目として固定すると回ります。</p>
+
+                    <ul class="space-y-1 bg-navy-800 p-6 rounded-xl border border-white/10">
+                        <li>案件ID ／ 相手期限 ／ 一次回答期限 ／ 次回更新日（SLA）</li>
+                        <li>対象製品・対象版数（暫定/確定）</li>
+                        <li>結論（<code>not_affected</code>） ／ 理由区分（A〜D） ／ 前提条件</li>
+                        <li>証跡リンク（SBOM行、仕様、設定、試験メモ）</li>
+                    </ul>
+                    
+                    <p class="text-brand-light font-bold mt-4">→ これが揃うと、回答文はシステムからテンプレに自動差し込みするだけになります。</p>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2>FAQ：影響なしの回答について</h2>
+                    <div class="space-y-6 mt-6">
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q1. 「影響なし」と断定して問題ないですか？</strong>
+                            <p class="m-0 text-slate-300">前提条件が不変で、証跡が揃っている場合は可能です。ただし実務では、前提条件＋再評価トリガーを添えて“条件付き影響なし”にする方が安全です。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q2. 証跡はどこまで必要ですか？</strong>
+                            <p class="m-0 text-slate-300">最低限「SBOM/構成表の参照ID」「仕様/設定の参照ID」の2点です。ファイル添付より、後から辿れる参照先が監査に強いです。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q3. SLAが短くて結論が固まりません。</strong>
+                            <p class="m-0 text-slate-300">「受領＋暫定結論（調査中でも可）＋次回更新日」を先に返してください。沈黙が最もリスクです。</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- CTA Section (副CTA) -->
+            <div class="glass-card rounded-3xl p-8 md:p-12 text-center border-t-4 border-t-cyan-500 bg-navy-800/80 shadow-[0_0_40px_-10px_rgba(6,182,212,0.2)]">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">OEMへの回答書を、ボタン一つで自動生成</h2>
+                <p class="text-slate-300 mb-8 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+                    <strong>Auto PSIRT Cloud</strong>なら、AIが判断した「影響なし」の根拠や前提条件を、このテンプレートの型に沿って自動でレポート出力します。OEM回答に費やす時間を劇的に削減できます。
+                </p>
+                <div class="flex justify-center">
+                    <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-navy-900 bg-white hover:bg-slate-200 transition-all duration-300 shadow-xl shadow-white/10 w-full sm:w-auto hover:-translate-y-1">
+                        <i data-lucide="monitor-play" class="w-5 h-5 text-cyan-600"></i>
+                        OEM回答書作成の流れをデモで確認する
+                    </a>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/5 text-center text-sm text-slate-500 mt-auto bg-navy-900/80">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span class="font-bold text-slate-400">Auto PSIRT Cloud</span>
+            </div>
+            <p>&copy; 2026 Unimobilities株式会社. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
