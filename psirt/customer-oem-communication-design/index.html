@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEOメタタグ -->
+    <title>OEM/顧客への連絡設計（誰に・いつ・何を伝える）｜PSIRT兼務でも破綻しない“連絡の型” | Auto PSIRT Cloud</title>
+    <meta name="description" content="OEM/顧客への連絡が遅い・薄い・ブレると、PSIRTは監査と照会で必ず炎上します。「誰に・いつ・何を」伝えるかを、期限（SLA）・証跡・承認線まで含めて設計する手順を解説。連絡設計シートとコピペ文面テンプレも掲載します。">
+    <meta name="keywords" content="OEM/顧客への連絡設計, OEM連絡, 連絡体制, PSIRT, OEM監査, SLA, 証跡">
+    <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/psirt/customer-oem-communication-design/">
+    
+    <!-- OGPタグ (SNSシェア用) -->
+    <meta property="og:title" content="OEM/顧客への連絡設計（誰に・いつ・何を伝える）">
+    <meta property="og:description" content="OEM連絡で炎上しないための「誰に・いつ・何を」伝える設計の型とテンプレを公開。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/psirt/customer-oem-communication-design/">
+    <meta property="og:site_name" content="Auto PSIRT Cloud">
+
+    <!-- ファビコン -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%230ea5e9%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z%22/><path d=%22m9 12 2 2 4-4%22/></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0a0f1c',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        brand: {
+                            light: '#60a5fa',
+                            DEFAULT: '#3b82f6',
+                            dark: '#2563eb',
+                        },
+                        accent: {
+                            DEFAULT: '#06b6d4',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #0ea5e9, #3b82f6); /* Sky to Blue */
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* 記事用カスタムスタイル */
+        .prose h2 {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-top: 3.5rem;
+            color: #f8fafc;
+        }
+        .prose h3 {
+            color: #e2e8f0;
+            margin-top: 2.5rem;
+            border-left: 3px solid #0ea5e9; /* Sky系アクセント */
+            padding-left: 0.75rem;
+            font-size: 1.25rem;
+        }
+        .prose a {
+            color: #38bdf8; /* sky-400 */
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .prose a:hover {
+            border-bottom-color: #38bdf8;
+        }
+        .prose strong {
+            color: #f8fafc;
+            background: linear-gradient(transparent 60%, rgba(14, 165, 233, 0.3) 40%);
+        }
+        .related-box {
+            background: rgba(30, 41, 59, 0.6);
+            border-left: 4px solid #0ea5e9;
+            padding: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 2rem 0;
+        }
+        .step-box {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(14, 165, 233, 0.3);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            position: relative;
+        }
+        .step-number {
+            position: absolute;
+            top: -1rem;
+            left: 1.5rem;
+            background: #0ea5e9;
+            color: white;
+            font-weight: bold;
+            font-size: 0.875rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            border: 4px solid #0a0f1c;
+        }
+        .template-box {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(14, 165, 233, 0.4);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        .template-content {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-size: 0.875rem;
+            line-height: 1.6;
+            color: #cbd5e1;
+            white-space: pre-wrap;
+        }
+        .placeholder-text {
+            color: #7dd3fc;
+            background: rgba(14, 165, 233, 0.1);
+            padding: 0 0.25rem;
+            border-radius: 0.25rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-sky-500 selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-brand/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-sky-500/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-accent flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="/news.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        ニュース一覧へ戻る
+                    </a>
+                    <a href="/demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                        相談 or デモ予約
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <article class="max-w-4xl mx-auto">
+            
+            <!-- パンくずリスト -->
+            <nav class="flex text-sm text-slate-400 mb-8" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/index.html" class="hover:text-white transition-colors">ホーム</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <a href="/news.html" class="hover:text-white transition-colors">ニュース・インサイト</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <span class="text-slate-500 truncate max-w-[200px] sm:max-w-none">OEM/顧客への連絡設計</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- 記事ヘッダー -->
+            <header class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-sky-500/20 border border-sky-500/30 text-sky-400 text-xs font-bold px-3 py-1 rounded-full">実務ガイド</span>
+                    <time class="text-slate-400 text-sm flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> 2026.03.08
+                    </time>
+                </div>
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
+                    OEM/顧客への連絡設計<br/>
+                    <span class="text-2xl md:text-3xl text-slate-300 font-medium">（誰に・いつ・何を伝えるか）</span>
+                </h1>
+                
+                <!-- 導入文 -->
+                <div class="text-lg text-slate-300 leading-relaxed p-6 bg-navy-800/50 rounded-2xl border border-white/5 space-y-4">
+                    <p>PSIRT運用で「技術より先に詰む」のが、OEMや顧客への連絡です。</p>
+                    
+                    <p>脆弱性（CVE）やセキュリティ事象が発生したとき、連絡がこうなると危険です。</p>
+                    <ul class="m-0 list-disc list-inside">
+                        <li><strong>遅い：</strong> 受領連絡がなく、相手が不安になって督促が来る</li>
+                        <li><strong>薄い：</strong> 「調査中」だけで、次回更新日（SLA）がない</li>
+                        <li><strong>ブレる：</strong> 担当者ごとに言い回し・結論・対象版数の書き方が違う</li>
+                        <li><strong>残らない：</strong> いつ誰に何を言ったか（証跡）が追えず、監査で再現できない</li>
+                    </ul>
+                    
+                    <p>結論、連絡は“コミュ力”ではなく <strong>設計</strong> です。</p>
+                    <p>「誰に・いつ・何を」伝えるかを <strong>手順（ステップ）×成果物（証跡・文面・ルール）</strong>に落としておくと、兼務体制でも破綻しません。</p>
+                </div>
+            </header>
+
+            <!-- 記事本文 -->
+            <div class="glass-card p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl bg-navy-900/80 mb-16">
+                <div class="prose prose-invert prose-slate prose-lg max-w-none">
+                    
+                    <!-- 内部リンク①：全体像の設計へ -->
+                    <div class="related-box mt-0 border-l-brand">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="map" class="w-4 h-4"></i> 全体像を先に見直す</div>
+                        <p class="text-sm text-slate-300 mb-2">連絡体制を含む「PSIRT運用の全体像」を先に押さえたい方はこちらをご覧ください。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/automotive-supplier-guide/" class="!text-brand-light hover:!text-brand">自動車サプライヤーのPSIRT完全ガイド</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>先に結論：連絡設計は「3枚で完成」する</h2>
+                    <p>OEM/顧客連絡の設計は、最初から大規模に作る必要はありません。最小はこの3枚です。</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-6">
+                        <div class="bg-navy-800 p-5 rounded-xl border-t-4 border-t-sky-400 shadow-lg">
+                            <h4 class="text-sky-400 font-bold mt-0 mb-2 flex items-center gap-2"><i data-lucide="users" class="w-4 h-4"></i> 連絡先マップ</h4>
+                            <p class="text-xs text-slate-400 mb-2">＝ 誰に（Who）</p>
+                            <p class="text-sm text-slate-300 m-0">相手先と社内の窓口・承認者をまとめた台帳</p>
+                        </div>
+                        <div class="bg-navy-800 p-5 rounded-xl border-t-4 border-t-blue-400 shadow-lg">
+                            <h4 class="text-blue-400 font-bold mt-0 mb-2 flex items-center gap-2"><i data-lucide="clock" class="w-4 h-4"></i> 連絡タイムライン</h4>
+                            <p class="text-xs text-slate-400 mb-2">＝ いつ（When）</p>
+                            <p class="text-sm text-slate-300 m-0">受領・中間・最終・更新の目標時間（SLA）</p>
+                        </div>
+                        <div class="bg-navy-800 p-5 rounded-xl border-t-4 border-t-indigo-400 shadow-lg">
+                            <h4 class="text-indigo-400 font-bold mt-0 mb-2 flex items-center gap-2"><i data-lucide="file-text" class="w-4 h-4"></i> 文面テンプレ</h4>
+                            <p class="text-xs text-slate-400 mb-2">＝ 何を（What）</p>
+                            <p class="text-sm text-slate-300 m-0">受領／調査中／影響なし／影響あり 等の型</p>
+                        </div>
+                    </div>
+                    
+                    <p class="text-center font-bold text-slate-200">これが揃うと、OEM監査で問われる「継続運用」「期限順守」「説明責任」を満たしやすくなります。</p>
+
+                    <h2 class="mt-12">なぜ「誰に」が難しいのか（OEM連絡の落とし穴）</h2>
+                    <p>OEM/顧客の窓口は1つに見えて、実務では複数に分かれています。</p>
+
+                    <ul class="space-y-2 my-4">
+                        <li><strong>セキュリティ窓口：</strong> CSMS/PSIRT担当</li>
+                        <li><strong>品質窓口：</strong> 品質保証、監査担当</li>
+                        <li><strong>調達窓口：</strong> 取引・契約担当</li>
+                        <li><strong>プロジェクト窓口：</strong> 車種/システム担当</li>
+                    </ul>
+
+                    <p>連絡設計がないと、「誰に出したか不明」「CC漏れ」「後から別部署から追加質問が来る」などの事故が起きます。</p>
+                    <p class="text-brand-light font-bold">→ まずは “主窓口1つ ＋ 副窓口（品質など）” に寄せて、CCルールを固定するのが現実的です。</p>
+
+                    <h2>連絡で最も大事な“いつ”（SLAの最小設計）</h2>
+                    <p>OEMが欲しいのは、完璧な最終結論より <strong>「運用が回っている安心感」</strong> です。<br>
+                    その安心感は、次の2つで作れます。</p>
+                    
+                    <ul class="font-medium text-slate-200 bg-navy-800/50 p-4 rounded-lg border border-white/5">
+                        <li><strong>受領連絡：</strong> 短い時間で返す（例：24h以内）</li>
+                        <li><strong>次回更新日：</strong> 調査中でも必ず書く（例：2営業日後に更新）</li>
+                    </ul>
+
+                    <div class="bg-navy-800 p-6 rounded-lg border border-white/10 my-6">
+                        <strong class="text-sky-300 block mb-3">推奨の最小SLA（兼務前提）例：</strong>
+                        <ul class="m-0 space-y-2 text-sm font-mono text-slate-300 list-none pl-0">
+                            <li><span class="text-white bg-white/10 px-1 rounded">T0</span> 依頼受領（案件ID付与）</li>
+                            <li><span class="text-emerald-400 bg-emerald-500/10 px-1 rounded">T+24h</span> 受領連絡（一次回答＝暫定でも可）</li>
+                            <li><span class="text-yellow-400 bg-yellow-500/10 px-1 rounded">T+72h</span> 中間報告（対象版数の暫定、論点、次回更新日）</li>
+                            <li><span class="text-red-400 bg-red-500/10 px-1 rounded">期限日</span> 最終回答（影響なし/あり、根拠、対策方針）</li>
+                        </ul>
+                    </div>
+
+                    <p class="text-sm text-slate-400">※相手の期限が短い場合は、最終回答が間に合わなくても「一次回答＋次回更新日」で期限を守る設計にします。</p>
+
+                    <h2>「何を」伝えるかは5点固定でブレなくなる</h2>
+                    <p>OEM/顧客連絡で毎回書くべき情報は、結局この5点です（ここを固定すると強い）。</p>
+
+                    <ol class="space-y-2 font-medium text-slate-200">
+                        <li><strong>案件ID</strong>（追跡の軸）</li>
+                        <li><strong>対象範囲</strong>（製品名・対象版数：暫定/確定の明記）</li>
+                        <li><strong>現時点ステータス</strong>（影響あり/なし/調査中）</li>
+                        <li><strong>根拠・前提条件</strong>（証跡の参照先ID含む）</li>
+                        <li><strong>次回更新日（SLA）</strong>（いつ確度が上がるか）</li>
+                    </ol>
+                    <p>この5点が入っていれば、受領連絡も中間報告も最終回答も「型」で回ります。</p>
+
+                    <h2 class="border-b-2 border-sky-500 pb-2 mt-12 mb-8">兼務でも破綻しない：連絡設計の手順（7ステップ）</h2>
+
+                    <div class="step-box pt-8">
+                        <div class="step-number">Step 1</div>
+                        <h4 class="text-white font-bold mt-0 mb-2">連絡対象を分類する（OEM/顧客/上流/社内）</h4>
+                        <p class="text-sm text-slate-300 mb-3">最初に「誰に出すか」の粒度を揃えます。最低限はこの4分類でOKです。</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="bg-navy-900/80 p-3 rounded border border-white/5"><strong class="text-sky-300">外部①：</strong> OEM/顧客（期限・監査の主戦場）</div>
+                            <div class="bg-navy-900/80 p-3 rounded border border-white/5"><strong class="text-sky-300">外部②：</strong> 上流（サプライヤ/ベンダ）（情報入手先）</div>
+                            <div class="bg-navy-900/80 p-3 rounded border border-white/5"><strong class="text-emerald-300">内部①：</strong> 技術（設計/開発）（根拠作り）</div>
+                            <div class="bg-navy-900/80 p-3 rounded border border-white/5"><strong class="text-emerald-300">内部②：</strong> 承認（品質/上長）（外部送付の責任）</div>
+                        </div>
+                    </div>
+
+                    <div class="step-box pt-8">
+                        <div class="step-number">Step 2</div>
+                        <h4 class="text-white font-bold mt-0 mb-2">連絡先マップ（誰に）を1枚で作る</h4>
+                        <p class="text-sm text-slate-300 mb-2">連絡先マップは“台帳”です。形式はExcelで十分。必須列はこれだけ。</p>
+                        <ul class="text-sm m-0 text-slate-300 space-y-1 bg-navy-900/80 p-3 rounded border border-white/5">
+                            <li>・相手先名 ／ 部署 ／ 役割（セキュリティ or 品質）</li>
+                            <li>・連絡チャネル（メール、ポータル、指定様式）</li>
+                            <li>・主担当（To） ／ 副担当（CC）</li>
+                            <li>・代替連絡先（不在時）</li>
+                            <li>・備考（契約上の期限、言語、時差）</li>
+                        </ul>
+                    </div>
+
+                    <div class="step-box pt-8">
+                        <div class="step-number">Step 3</div>
+                        <h4 class="text-white font-bold mt-0 mb-2">連絡タイムライン（いつ）を固定する</h4>
+                        <p class="text-sm text-slate-300 m-0">相手期限に加え、社内SLA（受領・中間・最終）を置きます。<br>“期限がない案件”でも、社内SLAを置かないと放置になります。</p>
+                    </div>
+
+                    <div class="step-box pt-8">
+                        <div class="step-number">Step 4</div>
+                        <h4 class="text-white font-bold mt-0 mb-2">文面テンプレ（何を）を3種類だけ用意する</h4>
+                        <p class="text-sm text-slate-300 m-0">最初は多すぎると回りません。まずは <strong>「受領連絡」「中間報告」「最終回答」</strong> の3つだけで良いです（文例は後述）。</p>
+                    </div>
+
+                    <div class="step-box pt-8">
+                        <div class="step-number">Step 5</div>
+                        <h4 class="text-white font-bold mt-0 mb-2">承認ルールを最小で切る（事故を防ぐ）</h4>
+                        <p class="text-sm text-slate-300 m-0">外部連絡は、最低限「承認者」を固定します。<br>兼務でも <strong>“外に出す文面の承認だけ”</strong> は別に置くと事故が減ります。</p>
+                    </div>
+
+                    <div class="step-box pt-8">
+                        <div class="step-number">Step 6</div>
+                        <h4 class="text-white font-bold mt-0 mb-2">証跡を残す（監査で勝つ）</h4>
+                        <p class="text-sm text-slate-300 mb-2">監査で効くのは「ちゃんと連絡した」証拠です。最低限これを残します。</p>
+                        <ul class="text-sm m-0 text-slate-300 space-y-1">
+                            <li>送信日時 ／ 宛先（To/CC） ／ 件名</li>
+                            <li>添付・提出物の版（v1/v2…）</li>
+                            <li>本文の要点（案件ID/対象版数/結論/根拠/SLA）</li>
+                            <li>次回更新日の履歴（守ったか）</li>
+                        </ul>
+                    </div>
+
+                    <div class="step-box pt-8 border-sky-500">
+                        <div class="step-number">Step 7</div>
+                        <h4 class="text-white font-bold mt-0 mb-2">連絡を“運用フィールド化”する（属人化を消す）</h4>
+                        <p class="text-sm text-slate-300 m-0">テンプレ文章を頑張るより、入力項目（フィールド）を固定すると回ります。<br>
+                        （案件ID、対象版数、結論、理由、証跡、次回更新日…）<br>
+                        これができると、文章は差し込みで量産できます。</p>
+                    </div>
+
+                    <!-- 内部リンク②：体制チェックリスト -->
+                    <div class="related-box border-l-emerald-500 my-8">
+                        <div class="text-sm font-bold text-emerald-400 mb-2 flex items-center gap-2"><i data-lucide="check-square" class="w-4 h-4"></i> 実務テンプレ</div>
+                        <p class="text-sm text-slate-300 mb-2">「承認者を置けない」「窓口が曖昧」など、最小体制の作り方を確認したい方はこちらのチェックリストへ。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/launch-checklist/" class="!text-emerald-400 hover:!text-emerald-300">PSIRT立上げ必須チェックリスト（雛形）</a></li>
+                        </ul>
+                    </div>
+
+                    <h2 class="border-b-2 border-sky-500 pb-2 mt-12 mb-6">コピペで使える：連絡テンプレ（受領／中間／最終）</h2>
+                    <p>ここでは「連絡設計」の要となる3テンプレを置きます（最小限）。</p>
+
+                    <div class="template-box">
+                        <h4 class="text-sky-300 font-bold mt-0 mb-3 border-b border-white/10 pb-2 flex items-center gap-2"><i data-lucide="mail" class="w-4 h-4"></i> 1) 受領連絡（一次回答テンプレ）</h4>
+                        <div class="template-content mt-0 border-none bg-transparent p-0 shadow-none text-sm">件名：【案件ID:<span class="placeholder-text">____</span>】調査依頼受領のご連絡（CVE-<span class="placeholder-text">____</span>）
+
+ご担当者様
+本件、受領し調査を開始しました。
+
+- 対象製品/版数：<span class="placeholder-text">____</span>（暫定/確定）
+- 現時点ステータス：調査中
+- 次回更新日（SLA）：<span class="placeholder-text">YYYY-MM-DD</span> に進捗をご連絡します
+
+証跡：受付記録 INC-<span class="placeholder-text">____</span></div>
+                    </div>
+
+                    <div class="template-box">
+                        <h4 class="text-sky-300 font-bold mt-0 mb-3 border-b border-white/10 pb-2 flex items-center gap-2"><i data-lucide="clock" class="w-4 h-4"></i> 2) 中間報告（調査中＋論点＋次回更新日）</h4>
+                        <div class="template-content mt-0 border-none bg-transparent p-0 shadow-none text-sm">件名：【案件ID:<span class="placeholder-text">____</span>】中間報告（調査中）／次回更新日：<span class="placeholder-text">YYYY-MM-DD</span>
+
+- 対象範囲：<span class="placeholder-text">____</span>（暫定）
+- 未確定点：<span class="placeholder-text">対象版数確定／到達性確認／上流回答待ち</span>（該当を残す）
+- 現時点の見立て：<span class="placeholder-text">____</span>（影響なし寄り/影響あり寄り/未判断）
+- 次回更新日：<span class="placeholder-text">YYYY-MM-DD</span>（この日までに<span class="placeholder-text">____</span>を確定予定）
+- 証跡：SBOM-<span class="placeholder-text">____</span>／構成表-<span class="placeholder-text">____</span></div>
+                    </div>
+
+                    <div class="template-box">
+                        <h4 class="text-sky-300 font-bold mt-0 mb-3 border-b border-white/10 pb-2 flex items-center gap-2"><i data-lucide="check-circle" class="w-4 h-4"></i> 3) 最終回答（影響なし/あり の骨格）</h4>
+                        <p class="text-xs text-slate-400 mb-2">※最終回答は別記事テンプレ（影響なし等）を使うのが安全ですが、ここでは骨格だけ示します。</p>
+                        <div class="template-content mt-0 border-none bg-transparent p-0 shadow-none text-sm">件名：【案件ID:<span class="placeholder-text">____</span>】最終回答：影響（あり/なし）
+
+- 結論：<span class="placeholder-text">____</span>（影響あり/影響なし）
+- 対象製品/版数：<span class="placeholder-text">____</span>（確定）
+- 根拠：<span class="placeholder-text">____</span>（非搭載／到達性なし／影響範囲外 等）＋証跡ID
+- 今後：<span class="placeholder-text">____</span>（再評価条件／暫定対策／恒久対策）</div>
+                    </div>
+
+                    <!-- 途中CTA（主CTA） -->
+                    <div class="bg-navy-800/50 p-6 md:p-8 rounded-2xl border border-sky-500/30 text-center my-10 shadow-[0_0_20px_rgba(14,165,233,0.15)]">
+                        <p class="text-slate-200 mb-6 font-medium text-lg">OEM調査依頼・監査対応の進め方を、自社の体制に合わせて整理したい方はご相談ください。</p>
+                        <a href="/demo_form.html" class="inline-flex items-center gap-2 px-8 py-3.5 bg-brand hover:bg-brand-dark !text-white rounded-full font-bold transition-all hover:-translate-y-1 shadow-lg shadow-brand/20">
+                            <i data-lucide="calendar" class="w-5 h-5"></i> 【無料】オンライン相談を予約する
+                        </a>
+                    </div>
+
+                    <h2>よくある失敗（連絡設計がないと起きる）</h2>
+                    <ul class="space-y-3 my-6 list-none pl-0">
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>受領連絡がなく</strong>、期限前に督促が来る</div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>「調査中」だけで、次回更新日がない</strong>（放置に見える）</div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>対象版数が書けず</strong>、毎回追加質問で止まる</div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>To/CCがブレて</strong>、後から別窓口から再依頼が来る</div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>言った言わないになり</strong>、監査で説明できない（証跡不足）</div></li>
+                    </ul>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2>FAQ：連絡設計のやり方</h2>
+                    <div class="space-y-6 mt-6">
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q1. 影響が確定していないのに連絡していいですか？</strong>
+                            <p class="m-0 text-slate-300">むしろ早い方が良いです。<strong>受領＋次回更新日（SLA）</strong>があれば運用として成立します。沈黙が一番まずいです。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q2. 「影響なし」でも連絡は必要ですか？</strong>
+                            <p class="m-0 text-slate-300">相手から照会が来ているなら必要です。結論だけでなく、対象版数・根拠・前提条件・証跡までセットで返すと追加質問が減ります。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q3. 誰をCCに入れるべきですか？</strong>
+                            <p class="m-0 text-slate-300">最初は「主窓口（セキュリティ）＋品質窓口」を基本にし、契約・プロジェクト事情で追加します。CCルールを固定するのがポイントです。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q4. 監査で連絡設計は見られますか？</strong>
+                            <p class="m-0 text-slate-300">見られます。特に「期限運用（SLA）」「継続的な更新」「証跡（送信履歴・提出物版管理）」が説明できるかが問われます。</p>
+                        </div>
+                    </div>
+
+                    <!-- 内部リンク③：次に読む -->
+                    <div class="related-box border-l-brand mt-12">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="book-open" class="w-4 h-4"></i> 次に読む</div>
+                        <p class="text-sm text-slate-300 mb-2">「PSIRTの役割」や「OEMが本当に求めていること」を根本から復習したい方はこちら。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/what-is-psirt/" class="!text-brand-light hover:!text-brand">PSIRTとは（役割・やるべきことを一言で）</a></li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- CTA Section -->
+            <div class="glass-card rounded-3xl p-8 md:p-12 text-center border-t-4 border-t-sky-500 bg-navy-800/80 shadow-[0_0_40px_-10px_rgba(14,165,233,0.2)]">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">連絡の「型」をシステム化しませんか？</h2>
+                <p class="text-slate-300 mb-8 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+                    <strong>Auto PSIRT Cloud</strong>なら、この「5点の項目」を埋めるだけで、受領連絡・中間報告・最終回答のレポートを自動生成し、期限（SLA）アラートも一元管理できます。
+                </p>
+                <div class="flex justify-center">
+                    <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-navy-900 bg-white hover:bg-slate-200 transition-all duration-300 shadow-xl shadow-white/10 w-full sm:w-auto hover:-translate-y-1">
+                        <i data-lucide="monitor-play" class="w-5 h-5 text-sky-600"></i>
+                        OEM回答書作成の流れをデモで確認する
+                    </a>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/5 text-center text-sm text-slate-500 mt-auto bg-navy-900/80">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span class="font-bold text-slate-400">Auto PSIRT Cloud</span>
+            </div>
+            <p>&copy; 2026 Unimobilities株式会社. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
