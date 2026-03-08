@@ -134,7 +134,7 @@
         }
     </style>
 </head>
-<body class="antialiased selection:bg-brand selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+<body class="antialiased selection:bg-brand selection:!text-white min-h-screen flex flex-col relative overflow-x-hidden">
 
     <!-- Background Effects -->
     <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
@@ -148,12 +148,12 @@
             <div class="flex justify-between items-center h-20">
                 <a href="/index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
                     <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-accent flex items-center justify-center">
-                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                        <i data-lucide="shield-check" class="!text-white w-5 h-5"></i>
                     </div>
                     <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
                 </a>
                 <div class="flex items-center gap-6">
-                    <a href="/news.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                    <a href="/news.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:!text-white transition-colors">
                         <i data-lucide="arrow-left" class="w-4 h-4"></i>
                         ニュース一覧へ戻る
                     </a>
@@ -173,12 +173,12 @@
             <nav class="flex text-sm text-slate-400 mb-8" aria-label="Breadcrumb">
                 <ol class="inline-flex items-center space-x-1 md:space-x-3">
                     <li class="inline-flex items-center">
-                        <a href="/index.html" class="hover:text-white transition-colors">ホーム</a>
+                        <a href="/index.html" class="hover:!text-white transition-colors">ホーム</a>
                     </li>
                     <li>
                         <div class="flex items-center">
                             <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
-                            <a href="/news.html" class="hover:text-white transition-colors">ニュース・インサイト</a>
+                            <a href="/news.html" class="hover:!text-white transition-colors">ニュース・インサイト</a>
                         </div>
                     </li>
                     <li aria-current="page">
@@ -198,7 +198,7 @@
                         <i data-lucide="calendar" class="w-4 h-4"></i> 2026.03.06
                     </time>
                 </div>
-                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight !text-white leading-tight mb-6">
                     PSIRT通知フローSOP<br/>
                     <span class="text-xl md:text-2xl text-slate-300 font-medium">（Standard Operating Procedure：標準作業手順書）テンプレ</span><br/>
                     <span class="text-2xl md:text-3xl text-slate-300 font-medium">（受付→トリアージ→公表）</span>
@@ -245,7 +245,7 @@
 
                     <div class="sop-box">
                         <div class="sop-section">
-                            <h4 class="text-white font-bold text-lg mb-4 flex items-center gap-2"><i data-lucide="file-text" class="w-5 h-5 text-indigo-400"></i> 0. 文書情報</h4>
+                            <h4 class="!text-white font-bold text-lg mb-4 flex items-center gap-2"><i data-lucide="file-text" class="w-5 h-5 text-indigo-400"></i> 0. 文書情報</h4>
                             <ul class="m-0 list-none pl-0 space-y-1.5 text-slate-300 text-base">
                                 <li>文書名：PSIRT通知フローSOP（標準作業手順書）</li>
                                 <li>版数：v<span class="placeholder-text">【1.0】</span></li>
@@ -257,13 +257,13 @@
                         </div>
 
                         <div class="sop-section">
-                            <h4 class="text-white font-bold text-lg mb-4 flex items-center gap-2"><i data-lucide="target" class="w-5 h-5 text-indigo-400"></i> 1. 目的・適用範囲</h4>
+                            <h4 class="!text-white font-bold text-lg mb-4 flex items-center gap-2"><i data-lucide="target" class="w-5 h-5 text-indigo-400"></i> 1. 目的・適用範囲</h4>
                             <p class="m-0 text-slate-300 text-base mb-2"><strong>目的：</strong>脆弱性/インシデントに関する通知を、期限内に根拠付きで処理し、OEM照会・監査に耐える証跡を残す</p>
                             <p class="m-0 text-slate-300 text-base"><strong>対象：</strong>当社製品<span class="placeholder-text">【製品群A/B…】</span>、および当社が供給するソフトウェア/電子部品に関する脆弱性通知</p>
                         </div>
 
                         <div class="sop-section">
-                            <h4 class="text-white font-bold text-lg mb-4 flex items-center gap-2"><i data-lucide="users" class="w-5 h-5 text-indigo-400"></i> 2. 役割（最小の4役）</h4>
+                            <h4 class="!text-white font-bold text-lg mb-4 flex items-center gap-2"><i data-lucide="users" class="w-5 h-5 text-indigo-400"></i> 2. 役割（最小の4役）</h4>
                             <ul class="m-0 list-none pl-0 space-y-2 text-slate-300 text-base">
                                 <li><strong>受付（窓口）：</strong> <span class="placeholder-text">【品質保証 or 情シス】</span></li>
                                 <li><strong>技術評価（影響判定）：</strong> <span class="placeholder-text">【設計/ソフト】</span></li>
@@ -274,7 +274,7 @@
                         </div>
 
                         <div class="sop-section">
-                            <h4 class="text-white font-bold text-lg mb-4 flex items-center gap-2"><i data-lucide="inbox" class="w-5 h-5 text-indigo-400"></i> 3. 受付チャネル（入口の統一）</h4>
+                            <h4 class="!text-white font-bold text-lg mb-4 flex items-center gap-2"><i data-lucide="inbox" class="w-5 h-5 text-indigo-400"></i> 3. 受付チャネル（入口の統一）</h4>
                             <ul class="m-0 list-none pl-0 space-y-2 text-slate-300 text-base">
                                 <li><strong>受付メール：</strong> <span class="placeholder-text">【psirt@xxx.co.jp】</span></li>
                                 <li><strong>代替（OEMポータル/調達窓口）：</strong> <span class="placeholder-text">【窓口】</span></li>
@@ -283,7 +283,7 @@
                         </div>
 
                         <div class="sop-section">
-                            <h4 class="text-white font-bold text-lg mb-4 flex items-center gap-2"><i data-lucide="clock" class="w-5 h-5 text-indigo-400"></i> 4. 処理SLA（社内目標：最小）</h4>
+                            <h4 class="!text-white font-bold text-lg mb-4 flex items-center gap-2"><i data-lucide="clock" class="w-5 h-5 text-indigo-400"></i> 4. 処理SLA（社内目標：最小）</h4>
                             <ul class="m-0 list-none pl-0 space-y-2 text-slate-300 text-base">
                                 <li><strong>受領確認（受付返信）：</strong> <span class="placeholder-text">【1営業日以内】</span></li>
                                 <li><strong>一次回答（影響あり/なし/調査中＋次回更新日）：</strong> <span class="placeholder-text">【3〜5営業日以内】</span></li>
@@ -293,7 +293,7 @@
                         </div>
 
                         <div class="sop-section">
-                            <h4 class="text-white font-bold text-lg mb-4 flex items-center gap-2"><i data-lucide="workflow" class="w-5 h-5 text-indigo-400"></i> 5. フロー（受付→トリアージ→公表）</h4>
+                            <h4 class="!text-white font-bold text-lg mb-4 flex items-center gap-2"><i data-lucide="workflow" class="w-5 h-5 text-indigo-400"></i> 5. フロー（受付→トリアージ→公表）</h4>
                             
                             <div class="space-y-6 pl-4 border-l-2 border-indigo-500/30 ml-2">
                                 <div class="relative">
@@ -353,7 +353,7 @@
                         </div>
 
                         <div class="sop-section">
-                            <h4 class="text-white font-bold text-lg mb-4 flex items-center gap-2"><i data-lucide="folder-check" class="w-5 h-5 text-indigo-400"></i> 6. 証跡（エビデンス）最低限の保存ルール</h4>
+                            <h4 class="!text-white font-bold text-lg mb-4 flex items-center gap-2"><i data-lucide="folder-check" class="w-5 h-5 text-indigo-400"></i> 6. 証跡（エビデンス）最低限の保存ルール</h4>
                             <p class="text-base text-slate-300 m-0 mb-2"><strong>保存場所：</strong> <span class="placeholder-text">【共通フォルダURL】</span>（案件IDごとにフォルダを作成）</p>
                             <p class="text-base text-slate-300 m-0 mb-2"><strong>推奨フォルダ構成：</strong><br>
                             00_依頼原本 ／ 01_範囲 ／ 02_調査 ／ 03_回答書 ／ 04_提出履歴 ／ 05_是正</p>
@@ -384,7 +384,7 @@
                     <!-- 途中CTA（主CTA） -->
                     <div class="bg-navy-800/50 p-6 md:p-8 rounded-2xl border border-indigo-500/30 text-center my-10 shadow-[0_0_20px_rgba(99,102,241,0.1)]">
                         <p class="text-slate-200 mb-6 font-medium text-lg">このままのテンプレを自社向けに整備し、少ない人数で回る状態にしたい方はご相談ください。</p>
-                        <a href="/demo_form.html" class="inline-flex items-center gap-2 px-8 py-3.5 bg-brand hover:bg-brand-dark text-white rounded-full font-bold transition-all hover:-translate-y-1 shadow-lg shadow-brand/20">
+                        <a href="/demo_form.html" class="inline-flex items-center gap-2 px-8 py-3.5 bg-brand hover:bg-brand-dark !text-white rounded-full font-bold transition-all hover:-translate-y-1 shadow-lg shadow-brand/20">
                             <i data-lucide="calendar" class="w-5 h-5"></i> 【無料】オンライン相談を予約する
                         </a>
                     </div>
@@ -416,7 +416,7 @@
 
             <!-- CTA Section -->
             <div class="glass-card rounded-3xl p-8 md:p-12 text-center border-t-4 border-t-indigo-500 bg-navy-800/80 shadow-[0_0_40px_-10px_rgba(99,102,241,0.2)]">
-                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">SOPをシステムに組み込んで自動化しませんか？</h2>
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 !text-white">SOPをシステムに組み込んで自動化しませんか？</h2>
                 <p class="text-slate-300 mb-8 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
                     <strong>Auto PSIRT Cloud</strong>なら、このSOPで定義した「チケット化」「一次回答の自動生成」「証跡の紐付け」「SLA管理」をすべてシステム上で迷わず実行できます。
                 </p>
