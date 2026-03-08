@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEOメタタグ -->
+    <title>期限交渉の仕方（関係を壊さない連絡文）｜OEM調査依頼のSLAを守る“交渉の型” | Auto PSIRT Cloud</title>
+    <meta name="description" content="OEM調査依頼の期限（SLA）に間に合わない時、関係を壊さず延長合意を得るには「受領・現状・不足情報・代替案・次回更新日」をセットで返すのが鉄則。兼務でも破綻しない手順と、そのまま使える連絡文テンプレ、証跡の残し方を解説します。">
+    <meta name="keywords" content="期限交渉の仕方, 期限交渉, OEM調査依頼, 証跡, SLA, PSIRT, 脆弱性管理">
+    <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/psirt/deadline-negotiation-message/">
+    
+    <!-- OGPタグ (SNSシェア用) -->
+    <meta property="og:title" content="期限交渉の仕方（関係を壊さない連絡文）｜OEM調査依頼のSLAを守る“交渉の型”">
+    <meta property="og:description" content="OEMからの調査期限に間に合わない時、関係を壊さず延長合意を得る連絡文テンプレと手順を解説。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/psirt/deadline-negotiation-message/">
+    <meta property="og:site_name" content="Auto PSIRT Cloud">
+
+    <!-- ファビコン -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23f59e0b%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z%22/><path d=%22m9 12 2 2 4-4%22/></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0a0f1c',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        brand: {
+                            light: '#60a5fa',
+                            DEFAULT: '#3b82f6',
+                            dark: '#2563eb',
+                        },
+                        accent: {
+                            DEFAULT: '#06b6d4',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #f59e0b, #f97316); /* Amber to Orange */
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* 記事用カスタムスタイル */
+        .prose h2 {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-top: 3.5rem;
+            color: #f8fafc;
+        }
+        .prose h3 {
+            color: #e2e8f0;
+            margin-top: 2.5rem;
+            border-left: 3px solid #f59e0b; /* Amber系アクセント */
+            padding-left: 0.75rem;
+            font-size: 1.25rem;
+        }
+        .prose a {
+            color: #fbbf24; /* amber-300 */
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .prose a:hover {
+            border-bottom-color: #fbbf24;
+        }
+        .prose strong {
+            color: #f8fafc;
+            background: linear-gradient(transparent 60%, rgba(245, 158, 11, 0.3) 40%);
+        }
+        .related-box {
+            background: rgba(30, 41, 59, 0.6);
+            border-left: 4px solid #f59e0b;
+            padding: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 2rem 0;
+        }
+        
+        /* テンプレートボックス用スタイル */
+        .template-box {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(245, 158, 11, 0.4);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.2);
+        }
+        .template-header {
+            color: #fbbf24;
+            font-weight: bold;
+            margin-top: 0;
+            margin-bottom: 1rem;
+            border-bottom: 1px dashed rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .template-content {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-size: 0.875rem;
+            line-height: 1.6;
+            color: #cbd5e1;
+            white-space: pre-wrap;
+        }
+        .placeholder-text {
+            color: #fde68a; /* amber-200 */
+            background: rgba(245, 158, 11, 0.1);
+            padding: 0 0.25rem;
+            border-radius: 0.25rem;
+            font-weight: 600;
+        }
+        
+        .step-box {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            position: relative;
+        }
+        .step-number {
+            position: absolute;
+            top: -1rem;
+            left: 1.5rem;
+            background: #f59e0b;
+            color: #0a0f1c;
+            font-weight: bold;
+            font-size: 0.875rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            border: 4px solid #0a0f1c;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-amber-500 selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-amber-500/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-brand/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-accent flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="/news.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        ニュース一覧へ戻る
+                    </a>
+                    <a href="/demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                        相談 or デモ予約
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <article class="max-w-4xl mx-auto">
+            
+            <!-- パンくずリスト -->
+            <nav class="flex text-sm text-slate-400 mb-8" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/index.html" class="hover:text-white transition-colors">ホーム</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <a href="/news.html" class="hover:text-white transition-colors">ニュース・インサイト</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <span class="text-slate-500 truncate max-w-[200px] sm:max-w-none">期限交渉の仕方</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- 記事ヘッダー -->
+            <header class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-amber-500/20 border border-amber-500/30 text-amber-400 text-xs font-bold px-3 py-1 rounded-full">実務テンプレ</span>
+                    <time class="text-slate-400 text-sm flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> 2026.03.08
+                    </time>
+                </div>
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
+                    期限交渉の仕方<br/>
+                    <span class="text-2xl md:text-3xl text-slate-300 font-medium">（関係を壊さない連絡文と“交渉の型”）</span>
+                </h1>
+                
+                <!-- 導入文 -->
+                <div class="text-lg text-slate-300 leading-relaxed p-6 bg-navy-800/50 rounded-2xl border border-white/5 space-y-4">
+                    <p>OEM調査依頼（脆弱性の影響有無、是正計画の提示など）は、<strong>期限（SLA）</strong>が短いほど“運用の出来”が露骨に評価されます。</p>
+                    
+                    <p>一方で、兼務体制のTier2〜Tier4では「調査が想定より重い」「上流（サプライヤー）回答待ち」「検証環境が組めない」など、期限内に最終回答が出せない場面も現実に起きます。</p>
+                    
+                    <p>このとき最悪なのは、<br>
+                    <strong>①黙る（返信が遅い） ／ ②雑に延長を頼む（理由が弱い） ／ ③期限を超える（信頼毀損）</strong><br>
+                    のどれかです。</p>
+                    
+                    <p>本記事では、関係を壊さずに期限合意を取りに行くための「手順（ステップ）」と「成果物（証跡・文面・ルール）」を、そのまま運用に落とせる型としてまとめます。</p>
+                </div>
+            </header>
+
+            <!-- 記事本文 -->
+            <div class="glass-card p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl bg-navy-900/80 mb-16">
+                <div class="prose prose-invert prose-slate prose-lg max-w-none">
+                    
+                    <!-- 内部リンク①：全体像 -->
+                    <div class="related-box mt-0 border-l-brand">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="map" class="w-4 h-4"></i> 全体像の確認</div>
+                        <p class="text-sm text-slate-300 mb-2">期限交渉が発生する前の「調査依頼の初動〜回答書作成」までの全体設計を先に押さえたい方はこちらをご覧ください。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/audit-investigation-response-guide/" class="!text-brand-light hover:!text-brand">OEM調査依頼・監査対応 完全ガイド</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>先に結論：期限交渉は「延長依頼」ではなく「合意形成」</h2>
+                    <p>期限交渉はお願いではありません。相手が欲しいのは「言い訳」ではなく、次の5点です。</p>
+
+                    <div class="bg-navy-800 p-6 rounded-lg border border-white/10 my-6">
+                        <ul class="m-0 space-y-3 font-medium text-slate-200 pl-0 list-none">
+                            <li class="flex items-start gap-3"><i data-lucide="check-circle-2" class="w-5 h-5 text-amber-400 shrink-0 mt-0.5"></i> <div><strong class="text-amber-300">受領：</strong> 依頼を理解し着手している</div></li>
+                            <li class="flex items-start gap-3"><i data-lucide="check-circle-2" class="w-5 h-5 text-amber-400 shrink-0 mt-0.5"></i> <div><strong class="text-amber-300">現状：</strong> どこまで分かったか（暫定でも良い）</div></li>
+                            <li class="flex items-start gap-3"><i data-lucide="check-circle-2" class="w-5 h-5 text-amber-400 shrink-0 mt-0.5"></i> <div><strong class="text-amber-300">不足情報：</strong> 何が足りなくて結論が出ないか（依存関係）</div></li>
+                            <li class="flex items-start gap-3"><i data-lucide="check-circle-2" class="w-5 h-5 text-amber-400 shrink-0 mt-0.5"></i> <div><strong class="text-amber-300">代替案：</strong> 期限内に出せる最小成果物 ＋ 延長後の最終成果物</div></li>
+                            <li class="flex items-start gap-3"><i data-lucide="check-circle-2" class="w-5 h-5 text-amber-400 shrink-0 mt-0.5"></i> <div><strong class="text-amber-300">次回更新日（SLA）：</strong> いつ何を更新するか</div></li>
+                        </ul>
+                    </div>
+
+                    <p class="text-center font-bold">この5点が揃うと、「期限を伸ばしてほしい」ではなく、<strong>“この条件で進める”合意</strong>になります。</p>
+
+                    <h2 class="mt-12">期限交渉が必要かの判断（交渉する／しないの基準）</h2>
+                    <p>まず、交渉の前に「交渉が必要な状況か」を切ります。</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
+                        <div class="bg-navy-800/80 p-5 rounded-xl border border-white/5 border-t-4 border-t-amber-500">
+                            <h4 class="text-amber-400 font-bold mt-0 mb-3"><i data-lucide="message-square" class="w-4 h-4 inline mr-1"></i> 交渉すべきケース</h4>
+                            <p class="text-xs text-slate-400 mb-2">＝延長合意を取りに行く</p>
+                            <ul class="text-sm m-0 space-y-2 pl-4 text-slate-300">
+                                <li>最終結論に必要な情報が<strong>外部依存</strong>（上流回答、ベンダー情報、工場工程の確認）</li>
+                                <li>期限内に最終回答を出すと、<strong>誤回答リスクが高い</strong>（対象版数が切れない等）</li>
+                                <li>期限内に“最低限の一次回答”はできる（受領＋暫定結論＋次回更新日）</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-navy-800/80 p-5 rounded-xl border border-white/5 border-t-4 border-t-brand-light">
+                            <h4 class="text-brand-light font-bold mt-0 mb-3"><i data-lucide="x-circle" class="w-4 h-4 inline mr-1"></i> 交渉せず返すケース</h4>
+                            <p class="text-xs text-slate-400 mb-2">＝期限内に（暫定でも）返す</p>
+                            <ul class="text-sm m-0 space-y-2 pl-4 text-slate-300">
+                                <li>こちらの整理不足（担当未決、社内確認漏れ）</li>
+                                <li>期限に間に合う見通しがあるのに、ただ余裕が欲しい</li>
+                                <li>期限を超えると<strong>相手の工程（監査・出荷）が止まる可能性が高い</strong></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <p class="text-center font-bold text-amber-400">ポイントは、「忙しいから」ではなく、<br class="hidden sm:block"><span class="text-white">品質（確度）と依存関係</span>で判断することです。</p>
+
+                    <h2 class="border-b-2 border-amber-500 pb-2 mt-12 mb-8">兼務でも破綻しない：期限交渉の手順（6ステップ）</h2>
+
+                    <div class="step-box pt-8">
+                        <div class="step-number">Step 1</div>
+                        <h4 class="text-white font-bold mt-0 mb-2">期限内に出せる“最小成果物”を先に決める</h4>
+                        <p class="text-sm text-slate-300 mb-3">交渉は「全部できない」では通りません。期限内に出せる最小成果物を切ります。</p>
+                        <ul class="text-sm m-0 text-slate-300 space-y-1">
+                            <li>受領（受付番号）</li>
+                            <li>対象範囲（暫定でも可：製品名・版数レンジ）</li>
+                            <li>現時点の暫定結論（影響あり/なし/調査中）</li>
+                            <li>次回更新日（いつ確度が上がるか）</li>
+                        </ul>
+                        <p class="text-sm font-bold text-brand-light mt-3 m-0">→ これが「交渉の土台」になります。</p>
+                    </div>
+
+                    <div class="step-box pt-8">
+                        <div class="step-number">Step 2</div>
+                        <h4 class="text-white font-bold mt-0 mb-2">延長後に出す“最終成果物”を定義する</h4>
+                        <p class="text-sm text-slate-300 mb-3">延長後のゴールが曖昧だと、相手は承諾できません。</p>
+                        <div class="bg-navy-900/80 p-3 rounded border border-white/5 text-sm text-slate-300 font-mono">
+                            例）<br>
+                            ・対象版数の確定<br>
+                            ・到達性（成立条件）の確認結果<br>
+                            ・対策方針（暫定/恒久）または影響なし根拠（証跡）
+                        </div>
+                    </div>
+
+                    <div class="step-box pt-8">
+                        <div class="step-number">Step 3</div>
+                        <h4 class="text-white font-bold mt-0 mb-2">「遅れる理由」を“依存関係”として書く</h4>
+                        <p class="text-sm text-slate-300 mb-3">良い理由は「調査の品質」を上げる理由です。悪い理由は「社内事情」です（言い訳化しない）。</p>
+                        <ul class="text-sm m-0 text-slate-300 space-y-2 list-none pl-0">
+                            <li><strong class="text-emerald-400">良い：</strong> 上流ベンダーの影響有無確認待ち、構成差分の検証中、派生構成の棚卸し中</li>
+                            <li><strong class="text-red-400">悪い：</strong> 担当不在、忙しい、調整が遅れている</li>
+                        </ul>
+                    </div>
+
+                    <div class="step-box pt-8">
+                        <div class="step-number">Step 4</div>
+                        <h4 class="text-white font-bold mt-0 mb-2">提案は“二案提示”が最も通る</h4>
+                        <p class="text-sm text-slate-300 mb-3">相手の選択肢を作ると合意が早いです。</p>
+                        <ul class="text-sm m-0 text-slate-300 space-y-2">
+                            <li><strong>案A：</strong> 期限内に一次回答（暫定結論＋次回更新日）、最終回答は○日</li>
+                            <li><strong>案B：</strong> 期限を○日延長し最終回答を一括提出（その代わり中間報告を○日に実施）</li>
+                        </ul>
+                    </div>
+
+                    <div class="step-box pt-8">
+                        <div class="step-number">Step 5</div>
+                        <h4 class="text-white font-bold mt-0 mb-2">メール/文書は「短く、確実に」送る（テンプレ化する）</h4>
+                        <p class="text-sm text-slate-300 m-0">長文は読まれません。1通で通すには、構造を固定します（後述テンプレ）。</p>
+                    </div>
+
+                    <div class="step-box pt-8">
+                        <div class="step-number">Step 6</div>
+                        <h4 class="text-white font-bold mt-0 mb-2">合意後に“証跡”を残し、期限管理表を更新する</h4>
+                        <p class="text-sm text-slate-300 mb-2">合意が取れたら終わりではなく、<strong>再遅延が一番まずいです。</strong></p>
+                        <p class="text-sm text-slate-300 m-0">期限管理表に「合意した新期限」と「次回更新日」を反映し、社内のOwner/承認者も固定します。</p>
+                    </div>
+
+                    <!-- 内部リンク②：関連セクション -->
+                    <div class="related-box border-l-brand my-8">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="table" class="w-4 h-4"></i> 実務テンプレ</div>
+                        <p class="text-sm text-slate-300 mb-2">合意した期限を確実に守るため、チケットや管理表の「SLA・次回更新日」の運用方法はこちらを参照してください。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/vulnerability-response-assignment-progress-template/" class="!text-brand-light hover:!text-brand">脆弱性対応業務 アサイン表＆進捗管理テンプレ</a></li>
+                        </ul>
+                    </div>
+
+                    <h2 class="border-b-2 border-amber-500 pb-2 mt-12 mb-6">コピペで使える：関係を壊さない期限交渉メール（日本語テンプレ）</h2>
+                    <p><strong>使い方：</strong> 最短で送るなら、このまま貼って<span class="placeholder-text">【 】</span>だけ埋めてください。</p>
+
+                    <div class="template-box">
+                        <h4 class="template-header"><i data-lucide="mail" class="w-4 h-4"></i> 期限交渉メール（二案提示型）</h4>
+                        <div class="template-content mt-0 border-none bg-transparent p-0 shadow-none text-base">件名：【依頼件名／CVE-<span class="placeholder-text">____</span>】調査状況のご連絡と期限のご相談（案件ID：<span class="placeholder-text">____</span>）
+
+<span class="placeholder-text">【宛先】____</span> ご担当者様
+
+いつもお世話になっております。<span class="placeholder-text">____（会社名/部署）____</span>です。
+本件（案件ID：<span class="placeholder-text">____</span>）は受領済みで、現在調査を進めております。
+
+<span class="text-amber-300 font-bold">【現状（現時点で確定していること）】</span>
+- 対象製品/版数：<span class="placeholder-text">____</span>（暫定/確定）
+- 現時点の評価：<span class="placeholder-text">____</span>（影響なし／影響あり／調査中）
+- 次に確認する事項：<span class="placeholder-text">____</span>（対象版数確定／到達性確認／上流回答待ち 等）
+
+<span class="text-amber-300 font-bold">【期限について（ご相談）】</span>
+現状、最終結論の確度を担保するために、<span class="placeholder-text">____</span>の確認が必要です（依存先：<span class="placeholder-text">____</span>）。
+つきましては、以下いずれかで進めさせていただけないでしょうか。
+
+案A：当初期限<span class="placeholder-text">【YYYY-MM-DD】</span>までに「一次回答（暫定結論＋次回更新日）」を提出し、
+     最終回答は<span class="placeholder-text">【YYYY-MM-DD】</span>に提出します。
+案B：当初期限を<span class="placeholder-text">【YYYY-MM-DD】</span>まで延長いただき、最終回答を一括で提出します。
+     なお中間報告は<span class="placeholder-text">【YYYY-MM-DD】</span>に実施します。
+
+<span class="text-amber-300 font-bold">【次回更新日（SLA）】</span>
+まずは<span class="placeholder-text">【YYYY-MM-DD】</span>に進捗を更新連絡いたします。
+
+お手数をおかけしますが、ご都合のよい進め方をご指示いただけますと幸いです。
+どうぞよろしくお願いいたします。
+
+署名（担当者名／連絡先）</div>
+                    </div>
+
+                    <h2>NGになりやすい言い回し（避ける）</h2>
+                    <ul class="space-y-2 mb-6">
+                        <li><strong class="text-red-400">×</strong> 「忙しくて間に合いません」</li>
+                        <li><strong class="text-red-400">×</strong> 「確認中です（次回更新日なし）」</li>
+                        <li><strong class="text-red-400">×</strong> 「閉域なので影響ないと思います（根拠なし）」</li>
+                    </ul>
+                    <p class="font-bold text-amber-400">→ 代わりに、「依存関係」「確度」「次回更新日」をセットで伝えます。</p>
+
+                    <!-- 途中CTA（主CTA） -->
+                    <div class="bg-navy-800/50 p-6 md:p-8 rounded-2xl border border-amber-500/30 text-center my-10 shadow-[0_0_20px_rgba(245,158,11,0.15)]">
+                        <p class="text-slate-200 mb-6 font-medium text-lg">自社の体制に合わせて、OEM調査依頼・監査対応のSLA（期限管理）や進め方を整理したい方はご相談ください。</p>
+                        <a href="/demo_form.html" class="inline-flex items-center gap-2 px-8 py-3.5 bg-brand hover:bg-brand-dark !text-white rounded-full font-bold transition-all hover:-translate-y-1 shadow-lg shadow-brand/20">
+                            <i data-lucide="calendar" class="w-5 h-5"></i> 【無料】オンライン相談を予約する
+                        </a>
+                    </div>
+
+                    <h2>よくある落とし穴：期限交渉が“信用毀損”になるパターン</h2>
+                    <ul class="space-y-3 my-6 list-none pl-0">
+                        <li class="flex items-start gap-3"><i data-lucide="alert-triangle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>期限当日に初めて連絡する</strong>（相手の工程を止めてしまう）</div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="alert-triangle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>延長後のゴールが曖昧</strong>（結局いつ終わるか相手に分からない）</div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="alert-triangle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>次回更新日を守らない</strong>（再遅延＝最悪のケース）</div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="alert-triangle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>合意の証跡が残っていない</strong>（後で「言った言わない」になる）</div></li>
+                    </ul>
+                    <p class="font-bold bg-navy-800 p-4 rounded text-center">交渉は「1回で終わらせる」設計が重要です。<br>期限管理表と更新ルールをセットにしてください。</p>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2>FAQ：SLA管理・期限交渉のやり方</h2>
+                    <div class="space-y-6 mt-6">
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q1. 期限交渉はいつ送るのが最適？</strong>
+                            <p class="m-0 text-slate-300">遅れる可能性が見えた時点で、期限より前に送るのが原則です。少なくとも「期限当日」は避け、一次回答（暫定結論＋次回更新日）を期限内に返す設計にします。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q2. “調査中”のままでも交渉できますか？</strong>
+                            <p class="m-0 text-slate-300">できます。むしろ「受領＋未確定点＋次回更新日」があれば運用として成立します。沈黙が一番まずいです。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q3. どんな理由が通りやすいですか？</strong>
+                            <p class="m-0 text-slate-300">「上流回答待ち」「対象版数の確定に検証が必要」「派生構成の棚卸しが必要」など、確度（品質）を担保するための依存関係が通りやすいです。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q4. 延長はどれくらい求めるべき？</strong>
+                            <p class="m-0 text-slate-300">“最終回答までの最短”ではなく、中間報告（次回更新日）を挟んだ現実的な日程にします。二案提示（一次回答＋最終回答 or 一括＋中間報告）が合意されやすいです。</p>
+                        </div>
+                    </div>
+
+                    <!-- 内部リンク③：次に読む -->
+                    <div class="related-box border-l-brand mt-12">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="book-open" class="w-4 h-4"></i> 次に読む</div>
+                        <p class="text-sm text-slate-300 mb-2">OTA（Over-The-Air）や通信機能が追加されると“閉域前提”が変わり、期限交渉や回答内容（影響評価）も変わり得ます。基礎知識はこちらで確認できます。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="#" class="!text-brand-light hover:!text-brand">OTAが「？」な担当者向け解説（作成中）</a></li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- CTA Section (副CTA) -->
+            <div class="glass-card rounded-3xl p-8 md:p-12 text-center border-t-4 border-t-amber-500 bg-navy-800/80 shadow-[0_0_40px_-10px_rgba(245,158,11,0.2)]">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">タスク管理とSLAアラートを、システムに任せませんか？</h2>
+                <p class="text-slate-300 mb-8 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+                    <strong>Auto PSIRT Cloud</strong>なら、OEMからの期限（SLA）や次回更新日をダッシュボードで可視化。期限が近づくとアラートが出るため、「気づいたら過ぎていた」という事故をシステムで防ぎ、回答書も自動生成できます。
+                </p>
+                <div class="flex justify-center">
+                    <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-navy-900 bg-white hover:bg-slate-200 transition-all duration-300 shadow-xl shadow-white/10 w-full sm:w-auto hover:-translate-y-1">
+                        <i data-lucide="monitor-play" class="w-5 h-5 text-amber-600"></i>
+                        OEM回答書作成・タスク管理のデモを見る
+                    </a>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/5 text-center text-sm text-slate-500 mt-auto bg-navy-900/80">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span class="font-bold text-slate-400">Auto PSIRT Cloud</span>
+            </div>
+            <p>&copy; 2026 Unimobilities株式会社. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
