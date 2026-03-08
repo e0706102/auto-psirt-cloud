@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEOメタタグ -->
+    <title>外部インターフェース有無でのトリアージ例（BT/USB/OTA等）｜まず何を見るか | Auto PSIRT Cloud</title>
+    <meta name="description" content="脆弱性トリアージでは、BT/USB/OTAなど外部インターフェースの有無が優先度を大きく左右します。どの入口があるか、既定状態で有効か、攻撃成立条件は何かを切り分け、affected/not_affected/under_investigationへ落とす手順と記録テンプレを解説します。">
+    <meta name="keywords" content="外部インターフェース有無でのトリアージ例, 外部IF, OTA, トリアージ, CVE, VEX, PSIRT">
+    <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/psirt/triage-by-external-interface/">
+    
+    <!-- OGPタグ (SNSシェア用) -->
+    <meta property="og:title" content="外部インターフェース有無でのトリアージ例（BT/USB/OTA等）｜まず何を見るか">
+    <meta property="og:description" content="CVSSだけで判断していませんか？外部IFの有無から現実的な優先度を決めるトリアージの手順を解説。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/psirt/triage-by-external-interface/">
+    <meta property="og:site_name" content="Auto PSIRT Cloud">
+
+    <!-- ファビコン -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%236366f1%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z%22/><path d=%22m9 12 2 2 4-4%22/></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0a0f1c',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        brand: {
+                            light: '#60a5fa',
+                            DEFAULT: '#3b82f6',
+                            dark: '#2563eb',
+                        },
+                        accent: {
+                            DEFAULT: '#06b6d4',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #6366f1, #3b82f6); /* Indigo to Blue */
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* 記事用カスタムスタイル */
+        .prose h2 {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-top: 3.5rem;
+            color: #f8fafc;
+        }
+        .prose h3 {
+            color: #e2e8f0;
+            margin-top: 2.5rem;
+            border-left: 3px solid #6366f1; /* Indigo系アクセント */
+            padding-left: 0.75rem;
+            font-size: 1.25rem;
+        }
+        .prose a {
+            color: #818cf8; /* indigo-400 */
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .prose a:hover {
+            border-bottom-color: #818cf8;
+        }
+        .prose strong {
+            color: #f8fafc;
+            background: linear-gradient(transparent 60%, rgba(99, 102, 241, 0.3) 40%);
+        }
+        .related-box {
+            background: rgba(30, 41, 59, 0.6);
+            border-left: 4px solid #6366f1;
+            padding: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 2rem 0;
+        }
+        
+        .step-box {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            position: relative;
+        }
+        .step-number {
+            position: absolute;
+            top: -1rem;
+            left: 1.5rem;
+            background: #6366f1;
+            color: white;
+            font-weight: bold;
+            font-size: 0.875rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            border: 4px solid #0a0f1c;
+        }
+
+        .template-box {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(99, 102, 241, 0.4);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        .template-content {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-size: 0.875rem;
+            line-height: 1.6;
+            color: #cbd5e1;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-brand selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-brand/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-indigo-500/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-accent flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="/news.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        ニュース一覧へ戻る
+                    </a>
+                    <a href="/demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                        相談 or デモ予約
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <article class="max-w-4xl mx-auto">
+            
+            <!-- パンくずリスト -->
+            <nav class="flex text-sm text-slate-400 mb-8" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/index.html" class="hover:text-white transition-colors">ホーム</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <a href="/news.html" class="hover:text-white transition-colors">ニュース・インサイト</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <span class="text-slate-500 truncate max-w-[200px] sm:max-w-none">外部IFでのトリアージ</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- 記事ヘッダー -->
+            <header class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-indigo-500/20 border border-indigo-500/30 text-indigo-400 text-xs font-bold px-3 py-1 rounded-full">実務ガイド</span>
+                    <time class="text-slate-400 text-sm flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> 2026.03.09
+                    </time>
+                </div>
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
+                    外部インターフェース有無でのトリアージ例<br/>
+                    <span class="text-2xl md:text-3xl text-slate-300 font-medium">（BT/USB/OTA等：まず何を見るか）</span>
+                </h1>
+                
+                <!-- 導入文 -->
+                <div class="text-lg text-slate-300 leading-relaxed p-6 bg-navy-800/50 rounded-2xl border border-white/5 space-y-4">
+                    <p>CVE対応で優先度判断がぶれる最大の理由の1つが、<strong>「外部から届くのか」を見ないまま深刻度だけで判断してしまうこと</strong>です。</p>
+                    
+                    <p>同じ脆弱性でも、</p>
+                    <ul class="m-0 list-disc list-inside">
+                        <li>Bluetooth が有効で近距離から触れる製品</li>
+                        <li>USB経由でしか成立しない製品</li>
+                        <li>OTAで更新経路を持つ製品</li>
+                        <li>そもそも車外からの入口が無い製品</li>
+                    </ul>
+                    
+                    <p>では、実務上の優先度が大きく変わります。<br>つまり、CVSSの点数やCVE要約だけでは足りません。</p>
+                    
+                    <p><strong>外部インターフェースの有無、既定状態、成立条件</strong> を見て、はじめて「今すぐ動くべきか」が決まります。</p>
+                </div>
+            </header>
+
+            <!-- 記事本文 -->
+            <div class="glass-card p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl bg-navy-900/80 mb-16">
+                <div class="prose prose-invert prose-slate prose-lg max-w-none">
+                    
+                    <!-- 内部リンク①：全体像の設計へ -->
+                    <div class="related-box mt-0 border-l-brand">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="map" class="w-4 h-4"></i> 導入（全体フローを押さえる）</div>
+                        <p class="text-sm text-slate-300 mb-2">この記事は「到達性（外部IF）」の判断に特化しています。CVEトリアージやVEXの全体像を先に押さえたい方はこちらをご覧ください。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/cve-triage-vex-guide/" class="!text-brand-light hover:!text-brand">CVEトリアージ＆VEX実務 完全ガイド</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>先に結論：インターフェースを見るときは「3点」だけでよい</h2>
+                    <p>外部インターフェース有無でのトリアージは、最初はこの3点だけで回せます。</p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 my-6">
+                        <div class="bg-navy-800 p-5 rounded-xl border-t-4 border-t-indigo-400 shadow-lg">
+                            <h4 class="text-indigo-300 font-bold mt-0 mb-2">① 入口があるか</h4>
+                            <p class="text-sm text-slate-300 m-0">BT / USB / OTA / Wi-Fi / 診断ポートなど、外部から接続できる経路があるか</p>
+                        </div>
+                        <div class="bg-navy-800 p-5 rounded-xl border-t-4 border-t-brand-light shadow-lg">
+                            <h4 class="text-brand-light font-bold mt-0 mb-2">② 既定状態で有効か</h4>
+                            <p class="text-sm text-slate-300 m-0">出荷状態で有効なのか、サービスモードや設定変更が必要なのか</p>
+                        </div>
+                        <div class="bg-navy-800 p-5 rounded-xl border-t-4 border-t-emerald-400 shadow-lg">
+                            <h4 class="text-emerald-400 font-bold mt-0 mb-2">③ 成立条件がそろうか</h4>
+                            <p class="text-sm text-slate-300 m-0">認証、近接、物理操作、更新権限など、攻撃に必要な条件が現実的に満たせるか</p>
+                        </div>
+                    </div>
+                    
+                    <p class="text-center font-bold text-slate-200">この3点で見れば、最初の結論は大きく外しません。</p>
+
+                    <h2 class="mt-12">なぜ外部インターフェースが重要なのか</h2>
+                    <p>サプライヤー実務で知りたいのは、「この脆弱性が存在するか」より、<strong>「車外/外部から届くのか」</strong> です。</p>
+                    <p>たとえば同じメモリ破壊の脆弱性でも、次のように前提が異なれば優先順位もOEMへの説明も変わります。</p>
+
+                    <ul class="space-y-2 mb-4">
+                        <li>OTA経由で遠隔から入力できる <span class="text-red-400 font-bold">（高優先）</span></li>
+                        <li>Bluetoothペアリング範囲でしか届かない <span class="text-orange-400 font-bold">（中優先）</span></li>
+                        <li>USBメディアを物理的に挿さないと届かない <span class="text-yellow-400 font-bold">（条件付き）</span></li>
+                        <li>工場モードでしか有効にならない <span class="text-emerald-400 font-bold">（低優先/要説明）</span></li>
+                    </ul>
+
+                    <p>この違いを整理しないと、全部が「重大」に見えて現場が回らなくなります。</p>
+
+                    <h2>まず分類：外部インターフェースは4種類で考える</h2>
+                    <p>現場で迷わないよう、入口を4つに分けると整理しやすいです。</p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-6">
+                        <div class="bg-navy-800/80 p-4 rounded-lg border-l-4 border-l-red-500">
+                            <strong class="text-red-400 block mb-1">1. リモート系</strong>
+                            <p class="text-sm text-slate-300 m-0 mb-2">OTA、テレマティクス通信、クラウド連携、Wi-Fi、セルラー</p>
+                            <p class="text-xs text-slate-400 m-0 border-t border-white/10 pt-2">特徴：遠隔から成立し得るので、一般に優先度が上がりやすいです。</p>
+                        </div>
+                        <div class="bg-navy-800/80 p-4 rounded-lg border-l-4 border-l-orange-400">
+                            <strong class="text-orange-400 block mb-1">2. 近距離無線系</strong>
+                            <p class="text-sm text-slate-300 m-0 mb-2">Bluetooth、NFC、近距離ペアリング機能</p>
+                            <p class="text-xs text-slate-400 m-0 border-t border-white/10 pt-2">特徴：物理接近が必要でも、車外から成立し得るため、「完全な閉域」とは言いにくいです。</p>
+                        </div>
+                        <div class="bg-navy-800/80 p-4 rounded-lg border-l-4 border-l-yellow-400">
+                            <strong class="text-yellow-400 block mb-1">3. 物理媒体系</strong>
+                            <p class="text-sm text-slate-300 m-0 mb-2">USB、SDカード、物理デバッグポート、サービスコネクタ</p>
+                            <p class="text-xs text-slate-400 m-0 border-t border-white/10 pt-2">特徴：物理操作が必要なので優先度は下がることがありますが、整備現場・ユーザー操作・工場工程で現実的に使われるなら無視できません。</p>
+                        </div>
+                        <div class="bg-navy-800/80 p-4 rounded-lg border-l-4 border-l-emerald-400">
+                            <strong class="text-emerald-400 block mb-1">4. 診断・工程系</strong>
+                            <p class="text-sm text-slate-300 m-0 mb-2">OBD/診断ポート、工場書き込み治具、サービスモード、開発/保守用インターフェース</p>
+                            <p class="text-xs text-slate-400 m-0 border-t border-white/10 pt-2">特徴：出荷状態では限定されていても、条件付きで成立する入口として評価が必要です。</p>
+                        </div>
+                    </div>
+
+                    <h2 class="border-b-2 border-indigo-500 pb-2 mt-12 mb-8">手順：外部インターフェース有無でトリアージする（5ステップ）</h2>
+
+                    <div class="step-box pt-8">
+                        <div class="step-number">Step 1</div>
+                        <h4 class="text-white font-bold mt-0 mb-2">該当コンポーネントが“どこで使われているか”を切る</h4>
+                        <p class="text-sm text-slate-300 mb-2">最初に見るべきは、脆弱なコンポーネントが どの製品・どのECU・どの機能 に入っているかです。ここでSBOMや部品表が効いてきます。</p>
+                        <ul class="text-sm m-0 text-slate-300 space-y-1">
+                            <li>対象製品名 ／ 対象版数</li>
+                            <li>搭載箇所（ECU/モジュール）</li>
+                            <li>関係する機能（通信、更新、メディア読込など）</li>
+                        </ul>
+                        <p class="text-sm text-indigo-300 font-bold mt-2 m-0">インターフェース評価は、対象箇所が切れて初めて意味を持ちます。</p>
+                    </div>
+
+                    <div class="step-box pt-8">
+                        <div class="step-number">Step 2</div>
+                        <h4 class="text-white font-bold mt-0 mb-2">入口があるかを Yes / No / 不明 で切る</h4>
+                        <p class="text-sm text-slate-300 mb-2">次に、その機能に対して外部インターフェースがあるかを確認します。最初から細かく書きすぎず、まずはこの3値で十分です。</p>
+                        <ul class="text-sm m-0 text-slate-300 space-y-1">
+                            <li><strong>Yes：</strong> 外部から接続可能な入口がある</li>
+                            <li><strong>No：</strong> 車外/外部から到達する入口が無い</li>
+                            <li><strong>不明：</strong> 資料や担当確認がまだ必要</li>
+                        </ul>
+                        <p class="text-sm text-emerald-400 font-bold mt-2 m-0">この段階で「No」なら、いったん <code>not_affected</code> 候補 に置けます。ただし、次のStep3で前提条件を確認します。</p>
+                    </div>
+
+                    <div class="step-box pt-8">
+                        <div class="step-number">Step 3</div>
+                        <h4 class="text-white font-bold mt-0 mb-2">既定状態で有効かを確認する</h4>
+                        <p class="text-sm text-slate-300 mb-2">入口があっても、出荷状態で有効かどうかで意味が変わります。</p>
+                        <ul class="text-sm m-0 text-slate-300 space-y-1 pl-4 list-disc">
+                            <li>Bluetooth機能があるが、標準構成では無効</li>
+                            <li>USBポートはあるが、当該モードでは読込機能が無効</li>
+                            <li>OTA機構はあるが、対象ECUは更新対象外</li>
+                            <li>診断ポートはあるが、認証ツールがないと成立しない</li>
+                        </ul>
+                        <p class="text-sm text-brand-light font-bold mt-3 m-0">ここでのポイントは、「存在する」ことと「通常状態で成立する」ことを分けることです。この違いを書けると、OEM照会でかなり強くなります。</p>
+                    </div>
+
+                    <div class="step-box pt-8">
+                        <div class="step-number">Step 4</div>
+                        <h4 class="text-white font-bold mt-0 mb-2">成立条件を短文で書ける形にする</h4>
+                        <p class="text-sm text-slate-300 mb-2">最終的に必要なのは、論文のような説明ではなく、判断の根拠が伝わる1〜3行です。</p>
+                        <div class="bg-navy-900/80 p-3 rounded border border-white/5 text-sm text-slate-300 font-mono mb-2">
+                            ・Bluetoothは搭載しているが、対象機能では未使用のため実行経路に入らない<br>
+                            ・USB経由でのみ成立するが、量産設定ではメディア読込機能を無効化<br>
+                            ・OTAは存在するが、対象モジュールは更新対象外<br>
+                            ・OBD経由で成立し得るが、認証済み整備ツールとサービスモードが必要
+                        </div>
+                        <p class="text-sm text-indigo-300 font-bold m-0">この一文があるだけで、「影響なし」の質が上がります。</p>
+                    </div>
+
+                    <div class="step-box pt-8">
+                        <div class="step-number">Step 5</div>
+                        <h4 class="text-white font-bold mt-0 mb-2">VEXの結論に落とす</h4>
+                        <p class="text-sm text-slate-300 mb-3">ここまで来れば、結論はかなり決まります。</p>
+                        <ul class="text-sm m-0 text-slate-300 space-y-3 pl-0 list-none">
+                            <li class="flex items-start gap-2"><strong class="text-emerald-400 w-32 shrink-0">not_affected</strong> 対象コンポーネントは搭載しているが、外部IFが無い。外部IFはあるが当該機能では使われない。成立に必要な設定/認証条件が通常運用では満たされない。</li>
+                            <li class="flex items-start gap-2"><strong class="text-red-400 w-32 shrink-0">affected</strong> OTAやBTなど外部から現実的に届く入口があり、出荷状態で有効で、対象機能が実行経路に入っている。</li>
+                            <li class="flex items-start gap-2"><strong class="text-yellow-400 w-32 shrink-0">under_investigation</strong> 搭載は確認できたが、入口や既定状態が未確認。診断/工程系IFの扱いが曖昧。顧客別派生やオプション構成の差分確認が必要。</li>
+                        </ul>
+                    </div>
+
+                    <h2 class="mt-12">BT / USB / OTA の具体例</h2>
+                    <p>ここは実務で使いやすいように、短く具体例で見ます。</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-6">
+                        <div class="bg-navy-800 p-5 rounded-lg border border-white/5">
+                            <h4 class="text-blue-400 font-bold mt-0 mb-3 flex items-center gap-2"><i data-lucide="bluetooth" class="w-5 h-5"></i> Bluetooth</h4>
+                            <p class="text-xs font-bold text-red-400 mb-1">影響あり寄り</p>
+                            <p class="text-sm text-slate-300 mb-3">出荷状態でBluetooth機能が有効、対象機能に直接入力が届く</p>
+                            <p class="text-xs font-bold text-emerald-400 mb-1">影響なし寄り</p>
+                            <p class="text-sm text-slate-300 m-0">Bluetooth自体はあるが、当該コンポーネントを使う経路に乗らない</p>
+                        </div>
+                        <div class="bg-navy-800 p-5 rounded-lg border border-white/5">
+                            <h4 class="text-indigo-400 font-bold mt-0 mb-3 flex items-center gap-2"><i data-lucide="usb" class="w-5 h-5"></i> USB</h4>
+                            <p class="text-xs font-bold text-red-400 mb-1">影響あり寄り</p>
+                            <p class="text-sm text-slate-300 mb-3">一般ユーザーが使えるUSBポートから、脆弱なメディア処理機能が呼ばれる</p>
+                            <p class="text-xs font-bold text-emerald-400 mb-1">影響なし寄り</p>
+                            <p class="text-sm text-slate-300 m-0">物理接続が必要で、量産設定では機能無効、またはサービスモード限定</p>
+                        </div>
+                        <div class="bg-navy-800 p-5 rounded-lg border border-white/5">
+                            <h4 class="text-purple-400 font-bold mt-0 mb-3 flex items-center gap-2"><i data-lucide="wifi" class="w-5 h-5"></i> OTA</h4>
+                            <p class="text-xs font-bold text-red-400 mb-1">影響あり寄り</p>
+                            <p class="text-sm text-slate-300 mb-3">OTAが出荷状態で有効、対象モジュールが更新対象、遠隔経路で成立</p>
+                            <p class="text-xs font-bold text-emerald-400 mb-1">影響なし寄り</p>
+                            <p class="text-sm text-slate-300 m-0">OTA基盤は存在するが、対象コンポーネントは更新対象外／別経路でしか使われない</p>
+                        </div>
+                    </div>
+
+                    <!-- 内部リンク②：判定シートテンプレ -->
+                    <div class="related-box border-l-emerald-500 my-8">
+                        <div class="text-sm font-bold text-emerald-400 mb-2 flex items-center gap-2"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> 実務テンプレ</div>
+                        <p class="text-sm text-slate-300 mb-2">判断結果（決定理由）を残すための台帳テンプレはこちらをご活用ください。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/triage-decision-sheet-template/" class="!text-emerald-400 hover:!text-emerald-300">トリアージ判定シートテンプレ</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>そのまま使える：判断メモのテンプレ</h2>
+                    <p>以下を台帳やチケットに貼っておくと便利です。</p>
+
+                    <div class="template-box">
+                        <div class="template-content">案件ID：
+対象製品：
+対象版数：
+対象ECU/機能：
+該当コンポーネント：
+外部インターフェース：BT / USB / OTA / 診断 / その他
+入口有無：Yes / No / 不明
+既定状態：有効 / 無効 / 条件付き / 不明
+成立条件：
+一次結論：affected / not_affected / under_investigation
+決定理由（1〜3行）：
+次回更新日：
+証跡リンク/ID：</div>
+                    </div>
+
+                    <!-- 途中CTA（主CTA） -->
+                    <div class="bg-navy-800/50 p-6 md:p-8 rounded-2xl border border-indigo-500/30 text-center my-10 shadow-[0_0_20px_rgba(99,102,241,0.15)]">
+                        <p class="text-slate-200 mb-6 font-medium text-lg">自社の製品構成に合わせた脆弱性トリアージの判断基準を整理したい方はご相談ください。</p>
+                        <a href="/demo_form.html" class="inline-flex items-center gap-2 px-8 py-3.5 bg-brand hover:bg-brand-dark !text-white rounded-full font-bold transition-all hover:-translate-y-1 shadow-lg shadow-brand/20">
+                            <i data-lucide="calendar" class="w-5 h-5"></i> 【無料】オンライン相談を予約する
+                        </a>
+                    </div>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2>FAQ：外部IFでのトリアージについて</h2>
+                    <div class="space-y-6 mt-6">
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q1. 外部インターフェースがあるだけで“影響あり”ですか？</strong>
+                            <p class="m-0 text-slate-300">いいえ。重要なのは、存在することではなく、通常状態で有効か・実行経路に入るか・成立条件が現実的かです。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q2. BluetoothやUSBがあると、閉域とは言えませんか？</strong>
+                            <p class="m-0 text-slate-300">少なくとも「完全な閉域」とは言いにくくなります。ただし、機能無効・未使用・認証必須などの条件があれば、not_affected の根拠になり得ます。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q3. OTAがあるだけで最優先にすべきですか？</strong>
+                            <p class="m-0 text-slate-300">遠隔更新経路があるため優先度は上がりやすいですが、対象モジュールが更新対象か、通常状態で有効かを確認してから判断します。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q4. 診断ポートや工場インターフェースはどう扱いますか？</strong>
+                            <p class="m-0 text-slate-300">量産時は閉じていても、条件付きで成立する入口として扱うのが安全です。「通常運用では成立しない」なら、その前提を書いた上で判断します。</p>
+                        </div>
+                    </div>
+
+                    <!-- 内部リンク③：次に読む -->
+                    <div class="related-box border-l-brand mt-12">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="book-open" class="w-4 h-4"></i> 次に読む</div>
+                        <p class="text-sm text-slate-300 mb-2">OTAなどの更新方法についての前提知識や、SLAへの影響について確認したい方はこちら。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="#" class="!text-brand-light hover:!text-brand">OTAとは（作成中）</a></li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- CTA Section (副CTA) -->
+            <div class="glass-card rounded-3xl p-8 md:p-12 text-center border-t-4 border-t-indigo-500 bg-navy-800/80 shadow-[0_0_40px_-10px_rgba(99,102,241,0.2)]">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">自社の判断基準をシステムに組み込みませんか？</h2>
+                <p class="text-slate-300 mb-8 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+                    <strong>Auto PSIRT Cloud</strong>なら、製品ごとの「外部IFの有無」や「機能の有効/無効」を事前に登録しておくことで、新たなCVEが発見された際、AIが自動で到達性を推測し、一次トリアージを行います。
+                </p>
+                <div class="flex justify-center">
+                    <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-navy-900 bg-white hover:bg-slate-200 transition-all duration-300 shadow-xl shadow-white/10 w-full sm:w-auto hover:-translate-y-1">
+                        <i data-lucide="monitor-play" class="w-5 h-5 text-indigo-600"></i>
+                        CVEトリアージと影響判定の流れをデモで確認する
+                    </a>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/5 text-center text-sm text-slate-500 mt-auto bg-navy-900/80">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span class="font-bold text-slate-400">Auto PSIRT Cloud</span>
+            </div>
+            <p>&copy; 2026 Unimobilities株式会社. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
