@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEOメタタグ -->
+    <title>“影響あり”OEM回答文テンプレ（暫定/恒久の書き分け）｜証跡とSLAまで抜けない書き方 | Auto PSIRT Cloud</title>
+    <meta name="description" content="OEM照会に「影響あり」と回答する際の日本語テンプレを掲載。暫定対策と恒久対策の書き分け、対象版数、成立条件、証跡、次回更新日（SLA）まで“抜けない”文面の作り方と、運用のコツ・よくあるNG例を解説します。">
+    <meta name="keywords" content="“影響あり”OEM回答文テンプレ, 影響あり 回答, 暫定対策, 恒久対策, OEM調査依頼, 証跡, SLA, PSIRT">
+    <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/psirt/affected-response-template-ja/">
+    
+    <!-- OGPタグ (SNSシェア用) -->
+    <meta property="og:title" content="“影響あり”OEM回答文テンプレ（暫定/恒久の書き分け）｜証跡とSLAまで抜けない書き方">
+    <meta property="og:description" content="OEM照会で一番炎上しやすい「影響あり」の回答。暫定・恒久対策の切り分け方とすぐ使える回答テンプレを公開。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/psirt/affected-response-template-ja/">
+    <meta property="og:site_name" content="Auto PSIRT Cloud">
+
+    <!-- ファビコン -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23ef4444%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z%22/><path d=%22m9 12 2 2 4-4%22/></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0a0f1c',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        brand: {
+                            light: '#60a5fa',
+                            DEFAULT: '#3b82f6',
+                            dark: '#2563eb',
+                        },
+                        accent: {
+                            DEFAULT: '#06b6d4',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #ef4444, #f97316); /* Red to Orange gradient */
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* 記事用カスタムスタイル */
+        .prose h2 {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-top: 3.5rem;
+            color: #f8fafc;
+        }
+        .prose h3 {
+            color: #e2e8f0;
+            margin-top: 2.5rem;
+            border-left: 3px solid #ef4444; /* Red系アクセント */
+            padding-left: 0.75rem;
+            font-size: 1.25rem;
+        }
+        .prose a {
+            color: #f87171; /* red-400 */
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .prose a:hover {
+            border-bottom-color: #f87171;
+        }
+        .prose strong {
+            color: #f8fafc;
+            background: linear-gradient(transparent 60%, rgba(239, 68, 68, 0.3) 40%);
+        }
+        .related-box {
+            background: rgba(30, 41, 59, 0.6);
+            border-left: 4px solid #ef4444;
+            padding: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 2rem 0;
+        }
+        .template-box {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.2);
+        }
+        .template-content {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-size: 0.875rem;
+            line-height: 1.6;
+            color: #cbd5e1;
+            white-space: pre-wrap;
+        }
+        .placeholder-text {
+            color: #fca5a5; /* red-300 */
+            background: rgba(239, 68, 68, 0.1);
+            padding: 0 0.25rem;
+            border-radius: 0.25rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-red-500 selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-brand/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-red-500/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-accent flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="/news.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        ニュース一覧へ戻る
+                    </a>
+                    <a href="/demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                        相談 or デモ予約
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <article class="max-w-4xl mx-auto">
+            
+            <!-- パンくずリスト -->
+            <nav class="flex text-sm text-slate-400 mb-8" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/index.html" class="hover:text-white transition-colors">ホーム</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <a href="/news.html" class="hover:text-white transition-colors">ニュース・インサイト</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <span class="text-slate-500 truncate max-w-[200px] sm:max-w-none">“影響あり”OEM回答文テンプレ</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- 記事ヘッダー -->
+            <header class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-red-500/20 border border-red-500/30 text-red-400 text-xs font-bold px-3 py-1 rounded-full">実務テンプレ</span>
+                    <time class="text-slate-400 text-sm flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> 2026.03.08
+                    </time>
+                </div>
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
+                    “影響あり”OEM回答文テンプレ<br/>
+                    <span class="text-2xl md:text-3xl text-slate-300 font-medium">（暫定/恒久の書き分け）</span>
+                </h1>
+                
+                <!-- 導入文 -->
+                <div class="text-lg text-slate-300 leading-relaxed p-6 bg-navy-800/50 rounded-2xl border border-white/5 space-y-4 border-l-4 border-l-red-500">
+                    <p>OEM調査依頼で一番難しいのは、「影響あり」と分かった後の返し方です。</p>
+                    
+                    <p>雑に返すと、相手は次の3つを必ず聞いてきます。</p>
+                    <ul class="m-0 list-disc list-inside">
+                        <li>どの製品・どの版数が対象か</li>
+                        <li>いま何ができるか（暫定対策）</li>
+                        <li>いつ何で直るのか（恒久対策）</li>
+                    </ul>
+                    
+                    <p>つまり「影響あり」の回答は、結論だけでは成立しません。<br>
+                    <strong>対象範囲、成立条件、暫定対策、恒久対策、次回更新日（SLA）、証跡</strong> まで含めて、初めて“通る回答”になります。</p>
+                </div>
+            </header>
+
+            <!-- 記事本文 -->
+            <div class="glass-card p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl bg-navy-900/80 mb-16">
+                <div class="prose prose-invert prose-slate prose-lg max-w-none">
+                    
+                    <!-- 内部リンク①：前提解説 -->
+                    <div class="related-box mt-0 border-l-brand">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="map" class="w-4 h-4"></i> 全体像の確認</div>
+                        <p class="text-sm text-slate-300 mb-2">OEM調査依頼の初動から、回答書の作成・証跡の集め方までの全体設計はこちらをご覧ください。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/audit-investigation-response-guide/" class="!text-brand-light hover:!text-brand">OEM調査依頼・監査対応 完全ガイド</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>まず整理：暫定対策と恒久対策は別物</h2>
+                    <p>混同すると炎上しやすいので、最初に分けます。</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
+                        <div class="bg-navy-800/80 p-5 rounded-xl border border-white/5 border-t-4 border-t-orange-400">
+                            <h4 class="text-orange-400 font-bold mt-0 mb-2 flex items-center gap-2">
+                                <i data-lucide="shield-half" class="w-5 h-5"></i> 暫定対策（Mitigation）
+                            </h4>
+                            <p class="text-sm text-slate-300 m-0 mb-3">いま止血するための対策</p>
+                            <ul class="text-sm m-0 text-slate-300 space-y-1 pl-4">
+                                <li>機能無効化、設定変更</li>
+                                <li>アクセス制限、運用回避 など</li>
+                            </ul>
+                            <p class="text-sm font-bold text-orange-300 mt-3 m-0 bg-orange-500/10 p-2 rounded">
+                                ポイントは「成立しにくくする」ことであって、完全修正ではない
+                            </p>
+                        </div>
+                        
+                        <div class="bg-navy-800/80 p-5 rounded-xl border border-white/5 border-t-4 border-t-brand-light">
+                            <h4 class="text-brand-light font-bold mt-0 mb-2 flex items-center gap-2">
+                                <i data-lucide="shield-check" class="w-5 h-5"></i> 恒久対策（Remediation）
+                            </h4>
+                            <p class="text-sm text-slate-300 m-0 mb-3">原因を除去する本命対策</p>
+                            <ul class="text-sm m-0 text-slate-300 space-y-1 pl-4">
+                                <li>パッチ適用、修正版リリース</li>
+                                <li>設計変更、ライブラリアップデート など</li>
+                            </ul>
+                            <p class="text-sm font-bold text-brand-light mt-3 m-0 bg-brand/10 p-2 rounded">
+                                ポイントは「いつ・どの版で直るか」を示すこと
+                            </p>
+                        </div>
+                    </div>
+
+                    <p class="text-center font-bold text-slate-200">OEMが欲しいのは、この2つを分けたうえで、<strong>次回更新日</strong> がある回答です。</p>
+
+                    <h2 class="border-b-2 border-red-500 pb-2 mt-12 mb-6">コピペ用：“影響あり”OEM回答文テンプレ（日本語）</h2>
+                    <p><strong>使い方：</strong> メール/回答書に貼って、<span class="placeholder-text">【 】</span>だけ埋めてください。<br>
+                    <span class="text-sm text-slate-400">※一次回答でも使えるよう、暫定対策 と 恒久対策 を両方書ける形にしています。</span></p>
+
+                    <div class="template-box">
+                        <div class="flex items-center gap-2 mb-4 pb-2 border-b border-red-500/30">
+                            <i data-lucide="copy" class="w-4 h-4 text-red-400"></i>
+                            <span class="font-bold text-red-400 text-sm">回答文テンプレート</span>
+                        </div>
+                        <div class="template-content mt-0 border-none bg-transparent p-0 shadow-none text-base">件名：【CVE-<span class="placeholder-text">____</span>】調査結果（一次回答）：影響あり
+
+<span class="text-red-300 font-bold">【1. 結論】</span>
+当社製品<span class="placeholder-text">【製品名】</span>（対象版数：<span class="placeholder-text">【v__〜v__】</span>※暫定/確定）は、現時点の評価では当該事象の影響を受けます（影響あり）。
+
+<span class="text-red-300 font-bold">【2. 対象範囲】</span>
+- 対象製品：<span class="placeholder-text">【製品名】</span>
+- 対象版数：<span class="placeholder-text">【v__〜v__】</span>（暫定/確定）
+- 対象箇所：<span class="placeholder-text">【ECU/モジュール/機能名】</span>
+
+<span class="text-red-300 font-bold">【3. 影響概要】</span>
+- 影響内容：<span class="placeholder-text">【例：外部IF経由で成立し得る／機能停止リスク／情報改ざんの可能性 等】</span>
+- 成立条件：<span class="placeholder-text">【例：特定設定が有効／診断経路が有効／近距離IFが存在 等】</span>
+
+<span class="text-orange-300 font-bold">【4. 暫定対策（Mitigation）】</span>
+- 現時点で可能な対策：<span class="placeholder-text">【機能無効化／アクセス制限／運用回避／監視強化 等】</span>
+- 前提条件：<span class="placeholder-text">【例：設定Yを無効のまま維持】</span>
+- 実施状況：<span class="placeholder-text">【実施済み／実施中／未実施（理由：____）】</span>
+
+<span class="text-brand-light font-bold">【5. 恒久対策（Remediation）】</span>
+- 方針：<span class="placeholder-text">【パッチ適用／修正版リリース／ライブラリアップデート／設計変更】</span>
+- 予定版数：<span class="placeholder-text">【v____】</span>
+- 予定日：<span class="placeholder-text">【YYYY-MM-DD】</span>（確度：高/中/低）
+- 配布方法：<span class="placeholder-text">【工場更新／現地更新／OTA 等】</span>
+
+<span class="text-red-300 font-bold">【6. 証跡（参照先）】</span>
+- SBOM/構成表：<span class="placeholder-text">【ID____】</span>
+- 設定/仕様根拠：<span class="placeholder-text">【ID____】</span>
+- 修正チケット/試験結果：<span class="placeholder-text">【ID____】</span>
+
+<span class="text-red-300 font-bold">【7. 次回更新（SLA）】</span>
+- 次回更新日：<span class="placeholder-text">【YYYY-MM-DD】</span>
+- 更新予定内容：<span class="placeholder-text">【対象版数確定／暫定対策の進捗／恒久対策の確定 等】</span>
+
+以上、よろしくお願いいたします。
+連絡先：<span class="placeholder-text">【担当部署／担当者名／メール】</span>
+案件ID：<span class="placeholder-text">【INC-____】</span></div>
+                    </div>
+
+                    <h2>使い方のコツ（ここだけ押さえると通りやすい）</h2>
+
+                    <div class="space-y-4 my-6">
+                        <div class="bg-navy-800 p-4 rounded-lg border-l-4 border-l-red-500">
+                            <strong class="text-white block mb-1">1. 先に「対象版数」を書く</strong>
+                            <p class="text-sm text-slate-300 m-0">影響ありでも、版数が曖昧だと差し戻されます。暫定でもよいので、まず対象範囲を切ってください。</p>
+                        </div>
+                        <div class="bg-navy-800 p-4 rounded-lg border-l-4 border-l-red-500">
+                            <strong class="text-white block mb-1">2. 暫定対策は「止血」、恒久対策は「直る予定」</strong>
+                            <p class="text-sm text-slate-300 m-0">暫定対策を「修正完了」と書かないこと。恒久対策には、<strong>予定版数</strong> と <strong>予定日</strong> を書きます。</p>
+                        </div>
+                        <div class="bg-navy-800 p-4 rounded-lg border-l-4 border-l-red-500">
+                            <strong class="text-white block mb-1">3. 次回更新日を必ず入れる</strong>
+                            <p class="text-sm text-slate-300 m-0">一次回答で確定できない情報があるなら、次回更新日（SLA）が必須です。沈黙より、更新予告の方が信頼されます。</p>
+                        </div>
+                        <div class="bg-navy-800 p-4 rounded-lg border-l-4 border-l-red-500">
+                            <strong class="text-white block mb-1">4. 証跡は“添付できなくても参照できる”形にする</strong>
+                            <p class="text-sm text-slate-300 m-0">ファイル添付が難しい場合でも、証跡ID／保管場所／対象版数 を残してください。監査や追加質問で効きます。</p>
+                        </div>
+                        <div class="bg-navy-800 p-4 rounded-lg border-l-4 border-l-red-500">
+                            <strong class="text-white block mb-1">5. OTAが絡むなら、配布方法を先に書く</strong>
+                            <p class="text-sm text-slate-300 m-0">影響あり回答では「どうやって直すか」がよく聞かれます。配布方法がOTA/工場/現地で変わる場合は、最初から書いた方が強いです。</p>
+                        </div>
+                    </div>
+
+                    <!-- 内部リンク②：OTAの解説 -->
+                    <div class="related-box border-l-purple-500 my-8">
+                        <div class="text-sm font-bold text-purple-400 mb-2 flex items-center gap-2"><i data-lucide="wifi" class="w-4 h-4"></i> 用語の補足</div>
+                        <p class="text-sm text-slate-300 mb-2">配布方法に「OTA」が絡む場合、OEMからの質問が複雑化しやすくなります。OTAの前提知識はこちら。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="#" class="!text-purple-400 hover:!text-purple-300">OTAが「？」な担当者向け解説（作成中）</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- 途中CTA（主CTA） -->
+                    <div class="bg-navy-800/50 p-6 md:p-8 rounded-2xl border border-red-500/30 text-center my-10 shadow-[0_0_20px_rgba(239,68,68,0.15)]">
+                        <p class="text-slate-200 mb-6 font-medium text-lg">この記事のテンプレを自社向け（製品構成・承認線）に調整したい方はご相談ください。</p>
+                        <a href="/demo_form.html" class="inline-flex items-center gap-2 px-8 py-3.5 bg-brand hover:bg-brand-dark !text-white rounded-full font-bold transition-all hover:-translate-y-1 shadow-lg shadow-brand/20">
+                            <i data-lucide="calendar" class="w-5 h-5"></i> 【無料】オンライン相談を予約する
+                        </a>
+                    </div>
+
+                    <h2>よくあるNG例（影響ありで炎上する典型）</h2>
+                    
+                    <div class="space-y-4 my-6">
+                        <div class="bg-red-500/10 p-4 rounded-lg border border-red-500/30">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded">NG 1</span>
+                                <span class="font-mono text-slate-300">「影響ありです。以上。」</span>
+                            </div>
+                            <p class="text-sm text-red-300 m-0">→ 対象版数、暫定対策、恒久対策、SLAが無く差し戻されます。</p>
+                        </div>
+                        <div class="bg-red-500/10 p-4 rounded-lg border border-red-500/30">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded">NG 2</span>
+                                <span class="font-mono text-slate-300">「恒久対策は検討中です。」</span>
+                            </div>
+                            <p class="text-sm text-red-300 m-0">→ いつ更新するか不明。次回更新日が必須です。</p>
+                        </div>
+                        <div class="bg-red-500/10 p-4 rounded-lg border border-red-500/30">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded">NG 3</span>
+                                <span class="font-mono text-slate-300">「暫定対策で解決済みです。」</span>
+                            </div>
+                            <p class="text-sm text-red-300 m-0">→ 暫定対策（止血）と恒久対策（修正）が混ざっています。</p>
+                        </div>
+                        <div class="bg-red-500/10 p-4 rounded-lg border border-red-500/30">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded">NG 4</span>
+                                <span class="font-mono text-slate-300">「証跡は後で出します。」</span>
+                            </div>
+                            <p class="text-sm text-red-300 m-0">→ 参照IDだけでも先に残すべきです。</p>
+                        </div>
+                    </div>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2>FAQ：影響あり回答の書き方について</h2>
+                    <div class="space-y-6 mt-6">
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q1. 影響ありのとき、一次回答でどこまで書けばいいですか？</strong>
+                            <p class="m-0 text-slate-300">最低限、結論、対象版数、暫定対策、恒久対策の方針、次回更新日を書いてください。全部確定していなくても構いません。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q2. 恒久対策の予定日が未定でも回答できますか？</strong>
+                            <p class="m-0 text-slate-300">はい。その場合は「予定日未定」とせず、<strong>次回更新日</strong> を置き、「その時点で予定版数/日付を更新する」と書いた方が安全です。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q3. 暫定対策が無い場合はどう書けばいいですか？</strong>
+                            <p class="m-0 text-slate-300">「暫定対策なし」とだけ書かず、代替の管理策（監視、運用回避、更新待ち） を書くと相手の理解が得やすくなります。</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- CTA Section (副CTA) -->
+            <div class="glass-card rounded-3xl p-8 md:p-12 text-center border-t-4 border-t-red-500 bg-navy-800/80 shadow-[0_0_40px_-10px_rgba(239,68,68,0.2)]">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">影響ありの回答書も、ボタン一つで自動生成</h2>
+                <p class="text-slate-300 mb-8 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+                    <strong>Auto PSIRT Cloud</strong>なら、影響判定の結果に基づいて「暫定対策」や「恒久対策の予定」を入力するだけで、このテンプレートの型に沿ってOEM提出用の回答レポートを自動出力します。
+                </p>
+                <div class="flex justify-center">
+                    <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-navy-900 bg-white hover:bg-slate-200 transition-all duration-300 shadow-xl shadow-white/10 w-full sm:w-auto hover:-translate-y-1">
+                        <i data-lucide="monitor-play" class="w-5 h-5 text-red-600"></i>
+                        OEM回答書作成の流れをデモで確認する
+                    </a>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/5 text-center text-sm text-slate-500 mt-auto bg-navy-900/80">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span class="font-bold text-slate-400">Auto PSIRT Cloud</span>
+            </div>
+            <p>&copy; 2026 Unimobilities株式会社. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
