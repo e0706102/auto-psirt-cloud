@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEOメタタグ -->
+    <title>組込み・車載ソフトのSBOM作成で起きるポイント10選｜差し戻し防止チェックリスト | Auto PSIRT Cloud</title>
+    <meta name="description" content="組込み・車載ソフトのSBOM作成で起きがちなミスを10項目でチェックリスト化。OEM照会・監査で差し戻されやすい「対象版数」「依存の抜け」「フォーク/バックポート」「提出版の切り分け」などを、原因と直し方つきで整理します。">
+    <meta name="keywords" content="組込み・車載ソフトのSBOM, SBOM, チェックリスト, 脆弱性管理, PSIRT, 自動車セキュリティ">
+    <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/psirt/embedded-automotive-sbom-checklist-10/">
+    
+    <!-- OGPタグ (SNSシェア用) -->
+    <meta property="og:title" content="組込み・車載ソフトのSBOM作成で起きるポイント10選｜差し戻し防止チェックリスト">
+    <meta property="og:description" content="OEM照会・監査での差し戻しを未然に防ぐ。車載特有のSBOM作成時の罠と直し方を10項目で整理。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/psirt/embedded-automotive-sbom-checklist-10/">
+    <meta property="og:site_name" content="Auto PSIRT Cloud">
+
+    <!-- ファビコン -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%2310b981%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z%22/><path d=%22m9 12 2 2 4-4%22/></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0a0f1c',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        brand: {
+                            light: '#60a5fa',
+                            DEFAULT: '#3b82f6',
+                            dark: '#2563eb',
+                        },
+                        accent: {
+                            DEFAULT: '#06b6d4',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #10b981, #3b82f6); /* Emerald to Blue */
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* 記事用カスタムスタイル */
+        .prose h2 {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-top: 3.5rem;
+            color: #f8fafc;
+        }
+        .prose h3 {
+            color: #e2e8f0;
+            margin-top: 2.5rem;
+            border-left: 3px solid #10b981; /* Emerald系アクセント */
+            padding-left: 0.75rem;
+            font-size: 1.25rem;
+        }
+        .prose a {
+            color: #34d399; /* emerald-400 */
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .prose a:hover {
+            border-bottom-color: #34d399;
+        }
+        .prose strong {
+            color: #f8fafc;
+            background: linear-gradient(transparent 60%, rgba(16, 185, 129, 0.3) 40%);
+        }
+        .related-box {
+            background: rgba(30, 41, 59, 0.6);
+            border-left: 4px solid #10b981;
+            padding: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-emerald-500 selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-brand/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-emerald-500/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-accent flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="/news.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        ニュース一覧へ戻る
+                    </a>
+                    <a href="/demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                        相談 or デモ予約
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <article class="max-w-4xl mx-auto">
+            
+            <!-- パンくずリスト -->
+            <nav class="flex text-sm text-slate-400 mb-8" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/index.html" class="hover:text-white transition-colors">ホーム</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <a href="/news.html" class="hover:text-white transition-colors">ニュース・インサイト</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <span class="text-slate-500 truncate max-w-[200px] sm:max-w-none">車載ソフトSBOM作成チェックリスト</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- 記事ヘッダー -->
+            <header class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-xs font-bold px-3 py-1 rounded-full">実務テンプレ</span>
+                    <time class="text-slate-400 text-sm flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> 2026.03.08
+                    </time>
+                </div>
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
+                    組込み・車載ソフトのSBOM作成で起きるポイント10選<br/>
+                    <span class="text-2xl md:text-3xl text-slate-300 font-medium">（差し戻し防止チェックリスト）</span>
+                </h1>
+                
+                <!-- 導入文 -->
+                <div class="text-lg text-slate-300 leading-relaxed p-6 bg-navy-800/50 rounded-2xl border border-white/5 space-y-4">
+                    <p>組込み・車載ソフトのSBOMは、一般ITよりも「差し戻し」が起きやすいです。</p>
+                    
+                    <p>理由は単純で、製品の版数（派生モデル/構成違い）が多いことと、ベンダー提供バイナリ・独自改変・ビルド条件などが複雑に絡み、<strong>SBOMが“現物”とズレやすい</strong>からです。</p>
+                    
+                    <p>このページでは、OEM照会・監査でよく刺さる「SBOMあるある」を <strong>10項目のチェックリスト</strong> にしました。提出前・照会回答前の最終確認に使ってください。</p>
+                </div>
+            </header>
+
+            <!-- 記事本文 -->
+            <div class="glass-card p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl bg-navy-900/80 mb-16">
+                <div class="prose prose-invert prose-slate prose-lg max-w-none">
+                    
+                    <h2>まずはテンプレを先に入手（列を固定しないと必ず崩れます）</h2>
+                    <p>SBOM品質の差は、ツールより <strong>「列が固定されているか」</strong> で決まります。<br>最初にテンプレ（社内の正本）を作って、表記ゆれ・入力漏れを潰すのが先です。</p>
+
+                    <!-- 内部リンク①：全体像 -->
+                    <div class="related-box mt-0 border-l-brand">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="map" class="w-4 h-4"></i> 全体像と運用ルールの設計</div>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/sbom-complete-guide/" class="!text-brand-light hover:!text-brand">SBOM完全ガイド（SPDX/CycloneDX/Excel運用・提出と機密の現実解）</a></li>
+                        </ul>
+                    </div>
+
+                    <h2 class="border-b-2 border-emerald-500 pb-2 mt-12 mb-8">チェックリスト：SBOM作成で起きるポイント10選（原因と直し方）</h2>
+                    
+                    <p>Excelで回す場合は、あらかじめチェック欄つきのテンプレに寄せておくと修正が早いです。</p>
+
+                    <!-- 内部リンク②：Excelテンプレ -->
+                    <div class="related-box border-l-emerald-500 mb-8">
+                        <div class="text-sm font-bold text-emerald-400 mb-2 flex items-center gap-2"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> 最小項目テンプレ</div>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/sbom-excel-template-minimum/" class="!text-emerald-400 hover:!text-emerald-300">SBOM Excelテンプレ（最小項目版）</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- チェックリスト10項目 -->
+                    <div class="space-y-5 my-6">
+                        
+                        <!-- Item 1 -->
+                        <div class="bg-navy-800/80 p-5 rounded-xl border border-white/10 relative overflow-hidden transition-colors hover:bg-navy-800">
+                            <div class="absolute left-0 top-0 bottom-0 w-1 bg-emerald-500"></div>
+                            <h4 class="text-white font-bold mt-0 mb-3 flex items-start gap-2">
+                                <i data-lucide="square" class="w-5 h-5 text-slate-400 mt-0.5 shrink-0"></i>
+                                <span>1) 対象スコープ（製品名×製品版数×派生）が曖昧</span>
+                            </h4>
+                            <div class="ml-7 space-y-2 text-sm">
+                                <div class="flex items-start gap-2">
+                                    <span class="bg-red-500/20 text-red-400 font-bold px-2 py-0.5 rounded text-xs shrink-0">なぜNG？</span>
+                                    <span class="text-slate-300">「どの版のSBOM？」で照会が止まるため。</span>
+                                </div>
+                                <div class="flex items-start gap-2">
+                                    <span class="bg-emerald-500/20 text-emerald-400 font-bold px-2 py-0.5 rounded text-xs shrink-0">直し方</span>
+                                    <span class="text-slate-200">製品名・製品版数・派生条件（顧客向け/機能ON/OFF）を1行で固定して明記する。</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Item 2 -->
+                        <div class="bg-navy-800/80 p-5 rounded-xl border border-white/10 relative overflow-hidden transition-colors hover:bg-navy-800">
+                            <div class="absolute left-0 top-0 bottom-0 w-1 bg-emerald-500"></div>
+                            <h4 class="text-white font-bold mt-0 mb-3 flex items-start gap-2">
+                                <i data-lucide="square" class="w-5 h-5 text-slate-400 mt-0.5 shrink-0"></i>
+                                <span>2) 直接依存だけで、間接依存（transitive）が抜ける</span>
+                            </h4>
+                            <div class="ml-7 space-y-2 text-sm">
+                                <div class="flex items-start gap-2">
+                                    <span class="bg-red-500/20 text-red-400 font-bold px-2 py-0.5 rounded text-xs shrink-0">なぜNG？</span>
+                                    <span class="text-slate-300">CVE突合で、裏側で使われている脆弱なライブラリの“見逃し”が出るため。</span>
+                                </div>
+                                <div class="flex items-start gap-2">
+                                    <span class="bg-emerald-500/20 text-emerald-400 font-bold px-2 py-0.5 rounded text-xs shrink-0">直し方</span>
+                                    <span class="text-slate-200">主要OSSはパッケージマネージャやSCAツールで依存ツリーまで拾う（拾えない場合は“対象外の理由/限界”を備考に残す）。</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Item 3 -->
+                        <div class="bg-navy-800/80 p-5 rounded-xl border border-white/10 relative overflow-hidden transition-colors hover:bg-navy-800">
+                            <div class="absolute left-0 top-0 bottom-0 w-1 bg-emerald-500"></div>
+                            <h4 class="text-white font-bold mt-0 mb-3 flex items-start gap-2">
+                                <i data-lucide="square" class="w-5 h-5 text-slate-400 mt-0.5 shrink-0"></i>
+                                <span>3) ベンダー提供バイナリ（SDK/ドライバ）を「自社製」扱いにしている</span>
+                            </h4>
+                            <div class="ml-7 space-y-2 text-sm">
+                                <div class="flex items-start gap-2">
+                                    <span class="bg-red-500/20 text-red-400 font-bold px-2 py-0.5 rounded text-xs shrink-0">なぜNG？</span>
+                                    <span class="text-slate-300">インシデント時に問い合わせ先が不明になり、対策責任が宙に浮くため。</span>
+                                </div>
+                                <div class="flex items-start gap-2">
+                                    <span class="bg-emerald-500/20 text-emerald-400 font-bold px-2 py-0.5 rounded text-xs shrink-0">直し方</span>
+                                    <span class="text-slate-200">供給元（ベンダー名/型番/版数）を別列で明示し、ブラックボックスであることを明確にする。</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Item 4 -->
+                        <div class="bg-navy-800/80 p-5 rounded-xl border border-white/10 relative overflow-hidden transition-colors hover:bg-navy-800">
+                            <div class="absolute left-0 top-0 bottom-0 w-1 bg-emerald-500"></div>
+                            <h4 class="text-white font-bold mt-0 mb-3 flex items-start gap-2">
+                                <i data-lucide="square" class="w-5 h-5 text-slate-400 mt-0.5 shrink-0"></i>
+                                <span>4) フォーク/バックポートがあるのに、上流版数だけで記載</span>
+                            </h4>
+                            <div class="ml-7 space-y-2 text-sm">
+                                <div class="flex items-start gap-2">
+                                    <span class="bg-red-500/20 text-red-400 font-bold px-2 py-0.5 rounded text-xs shrink-0">なぜNG？</span>
+                                    <span class="text-slate-300">「上流は脆弱だが当社は独自に対策済み」であることを証明できず、OEMから差し戻し（パッチ適用要求）を受けるため。</span>
+                                </div>
+                                <div class="flex items-start gap-2">
+                                    <span class="bg-emerald-500/20 text-emerald-400 font-bold px-2 py-0.5 rounded text-xs shrink-0">直し方</span>
+                                    <span class="text-slate-200">独自パッチの有無・根拠（チケットID等）を備考に残し、必要なら識別子（コミットハッシュ等）を併記する。</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Item 5 -->
+                        <div class="bg-navy-800/80 p-5 rounded-xl border border-white/10 relative overflow-hidden transition-colors hover:bg-navy-800">
+                            <div class="absolute left-0 top-0 bottom-0 w-1 bg-emerald-500"></div>
+                            <h4 class="text-white font-bold mt-0 mb-3 flex items-start gap-2">
+                                <i data-lucide="square" class="w-5 h-5 text-slate-400 mt-0.5 shrink-0"></i>
+                                <span>5) コンポーネント名の表記ゆれ（OpenSSL/openssl等）</span>
+                            </h4>
+                            <div class="ml-7 space-y-2 text-sm">
+                                <div class="flex items-start gap-2">
+                                    <span class="bg-red-500/20 text-red-400 font-bold px-2 py-0.5 rounded text-xs shrink-0">なぜNG？</span>
+                                    <span class="text-slate-300">機械的な突合で同一コンポーネントが別物扱いになり、検知漏れや二重管理が起きるため。</span>
+                                </div>
+                                <div class="flex items-start gap-2">
+                                    <span class="bg-emerald-500/20 text-emerald-400 font-bold px-2 py-0.5 rounded text-xs shrink-0">直し方</span>
+                                    <span class="text-slate-200">PURLやCPE等の標準フォーマットか、社内の正規名辞書（表記ルール）を決め、登録時に必ず寄せる。</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Item 6 -->
+                        <div class="bg-navy-800/80 p-5 rounded-xl border border-white/10 relative overflow-hidden transition-colors hover:bg-navy-800">
+                            <div class="absolute left-0 top-0 bottom-0 w-1 bg-emerald-500"></div>
+                            <h4 class="text-white font-bold mt-0 mb-3 flex items-start gap-2">
+                                <i data-lucide="square" class="w-5 h-5 text-slate-400 mt-0.5 shrink-0"></i>
+                                <span>6) ビルド条件（機能ON/OFF）でSBOMが版数と一致していない</span>
+                            </h4>
+                            <div class="ml-7 space-y-2 text-sm">
+                                <div class="flex items-start gap-2">
+                                    <span class="bg-red-500/20 text-red-400 font-bold px-2 py-0.5 rounded text-xs shrink-0">なぜNG？</span>
+                                    <span class="text-slate-300">製品版数と“実際に入っているもの”が一致せず、監査で再現できなくなるため。</span>
+                                </div>
+                                <div class="flex items-start gap-2">
+                                    <span class="bg-emerald-500/20 text-emerald-400 font-bold px-2 py-0.5 rounded text-xs shrink-0">直し方</span>
+                                    <span class="text-slate-200">「このSBOMが対応する構成条件」を1行で残す（例：Bluetoothモジュール=OFF 版 等）。</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Item 7 -->
+                        <div class="bg-navy-800/80 p-5 rounded-xl border border-white/10 relative overflow-hidden transition-colors hover:bg-navy-800">
+                            <div class="absolute left-0 top-0 bottom-0 w-1 bg-emerald-500"></div>
+                            <h4 class="text-white font-bold mt-0 mb-3 flex items-start gap-2">
+                                <i data-lucide="square" class="w-5 h-5 text-slate-400 mt-0.5 shrink-0"></i>
+                                <span>7) 版数が曖昧（latest／range／空欄）</span>
+                            </h4>
+                            <div class="ml-7 space-y-2 text-sm">
+                                <div class="flex items-start gap-2">
+                                    <span class="bg-red-500/20 text-red-400 font-bold px-2 py-0.5 rounded text-xs shrink-0">なぜNG？</span>
+                                    <span class="text-slate-300">CVEは特定バージョンにヒットするため、版数が曖昧だと影響有無の判断が不能になるため。</span>
+                                </div>
+                                <div class="flex items-start gap-2">
+                                    <span class="bg-emerald-500/20 text-emerald-400 font-bold px-2 py-0.5 rounded text-xs shrink-0">直し方</span>
+                                    <span class="text-slate-200">比較可能な識別子に統一する（OSS固定版数／商用リビジョン／自社ビルド番号等）。</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Item 8 -->
+                        <div class="bg-navy-800/80 p-5 rounded-xl border border-white/10 relative overflow-hidden transition-colors hover:bg-navy-800">
+                            <div class="absolute left-0 top-0 bottom-0 w-1 bg-emerald-500"></div>
+                            <h4 class="text-white font-bold mt-0 mb-3 flex items-start gap-2">
+                                <i data-lucide="square" class="w-5 h-5 text-slate-400 mt-0.5 shrink-0"></i>
+                                <span>8) 生成時点・更新日・更新者が分からない</span>
+                            </h4>
+                            <div class="ml-7 space-y-2 text-sm">
+                                <div class="flex items-start gap-2">
+                                    <span class="bg-red-500/20 text-red-400 font-bold px-2 py-0.5 rounded text-xs shrink-0">なぜNG？</span>
+                                    <span class="text-slate-300">“継続的に運用している”証拠にならず、監査で最新版管理の説明ができないため。</span>
+                                </div>
+                                <div class="flex items-start gap-2">
+                                    <span class="bg-emerald-500/20 text-emerald-400 font-bold px-2 py-0.5 rounded text-xs shrink-0">直し方</span>
+                                    <span class="text-slate-200">SBOMスナップショットID、更新日/更新者、参照した成果物（ソース/バイナリ等）をヘッダ等に残す。</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Item 9 -->
+                        <div class="bg-navy-800/80 p-5 rounded-xl border border-white/10 relative overflow-hidden transition-colors hover:bg-navy-800">
+                            <div class="absolute left-0 top-0 bottom-0 w-1 bg-emerald-500"></div>
+                            <h4 class="text-white font-bold mt-0 mb-3 flex items-start gap-2">
+                                <i data-lucide="square" class="w-5 h-5 text-slate-400 mt-0.5 shrink-0"></i>
+                                <span>9) 提出版と社内正本が混ざる（マスキングルールなし）</span>
+                            </h4>
+                            <div class="ml-7 space-y-2 text-sm">
+                                <div class="flex items-start gap-2">
+                                    <span class="bg-red-500/20 text-red-400 font-bold px-2 py-0.5 rounded text-xs shrink-0">なぜNG？</span>
+                                    <span class="text-slate-300">IP観点で情報を出しすぎる、あるいは逆に出さなすぎてOEM照会に答えられなくなるため。</span>
+                                </div>
+                                <div class="flex items-start gap-2">
+                                    <span class="bg-emerald-500/20 text-emerald-400 font-bold px-2 py-0.5 rounded text-xs shrink-0">直し方</span>
+                                    <span class="text-slate-200">「社内正本（フルデータ）」と「提出版（抜粋）」を分け、マスキングルールを固定する。</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Item 10 -->
+                        <div class="bg-navy-800/80 p-5 rounded-xl border border-white/10 relative overflow-hidden transition-colors hover:bg-navy-800">
+                            <div class="absolute left-0 top-0 bottom-0 w-1 bg-emerald-500"></div>
+                            <h4 class="text-white font-bold mt-0 mb-3 flex items-start gap-2">
+                                <i data-lucide="square" class="w-5 h-5 text-slate-400 mt-0.5 shrink-0"></i>
+                                <span>10) 提出前の“最低限の検証”をしていない</span>
+                            </h4>
+                            <div class="ml-7 space-y-2 text-sm">
+                                <div class="flex items-start gap-2">
+                                    <span class="bg-red-500/20 text-red-400 font-bold px-2 py-0.5 rounded text-xs shrink-0">なぜNG？</span>
+                                    <span class="text-slate-300">OEM指定フォーマットのエラーや必須列の不足で、一発で差し戻されるため。</span>
+                                </div>
+                                <div class="flex items-start gap-2">
+                                    <span class="bg-emerald-500/20 text-emerald-400 font-bold px-2 py-0.5 rounded text-xs shrink-0">直し方</span>
+                                    <span class="text-slate-200">提出先の必須列チェック＋サンプル照会（直近のCVEを1件当てて対象を検索できるか）を事前に実施する。</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <h2>最後に：差し戻しを減らす「最小3点」</h2>
+                    <p>チェックリストを回したら、提出・回答前にこの3点だけ再確認してください。これだけで致命的な事故は防げます。</p>
+
+                    <div class="bg-navy-800 p-6 rounded-lg border border-white/10 my-6">
+                        <ul class="m-0 space-y-3 pl-0 list-none font-bold text-slate-200">
+                            <li class="flex items-center gap-3"><i data-lucide="check-circle" class="w-5 h-5 text-emerald-400"></i> 対象版数が言い切れる（暫定/確定も明記）</li>
+                            <li class="flex items-center gap-3"><i data-lucide="check-circle" class="w-5 h-5 text-emerald-400"></i> 根拠が残っている（SBOM行・構成表・チケットIDなど）</li>
+                            <li class="flex items-center gap-3"><i data-lucide="check-circle" class="w-5 h-5 text-emerald-400"></i> いつ時点のSBOMか説明できる（更新日/スナップショット）</li>
+                        </ul>
+                    </div>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2>FAQ：車載ソフトのSBOM作成について</h2>
+                    <div class="space-y-6 mt-6">
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q1. 組込み・車載ソフトのSBOMで差し戻しが多いのはなぜ？</strong>
+                            <p class="m-0 text-slate-300">派生構成が多く、ベンダー提供バイナリや独自改変が混ざり、<strong>「現物とSBOMのズレ」</strong> が起きやすいからです。まず対象版数と構成条件を固定すると事故が減ります。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q2. ExcelでSBOMを作っても大丈夫ですか？</strong>
+                            <p class="m-0 text-slate-300">MVP段階は問題ありません。重要なのは形式より、列の固定・表記ゆれ防止・更新運用です。まずはテンプレに寄せて運用を回してください。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q3. フォーク/バックポートがある場合、どう書けばいい？</strong>
+                            <p class="m-0 text-slate-300">上流版数の表記だけで断定せず、<strong>独自パッチの有無と根拠（チケットID等）</strong>を残してください。「上流は脆弱だが当社は対策済み」を説明できる形にするのがポイントです。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q4. 提出版はどこまで出せばいいですか？</strong>
+                            <p class="m-0 text-slate-300">目的（照会回答/契約/監査）で変わります。社内正本と混ぜず、抜粋区分とマスキングルールを決めて再現可能にしておくのが安全です。</p>
+                        </div>
+                    </div>
+
+                    <!-- 内部リンク③：次に読む -->
+                    <div class="related-box border-l-brand mt-12">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="book-open" class="w-4 h-4"></i> 次に読む</div>
+                        <p class="text-sm text-slate-300 mb-2">そもそもSBOMを何のために作るのか、基本に立ち返りたい方はこちらをご覧ください。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/what-is-sbom/" class="!text-brand-light hover:!text-brand">SBOMとは？自動車サプライヤー向けにわかりやすく解説</a></li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- CTA Section -->
+            <div class="glass-card rounded-3xl p-8 md:p-12 text-center border-t-4 border-t-emerald-500 bg-navy-800/80 shadow-[0_0_40px_-10px_rgba(16,185,129,0.2)]">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">SBOMの作成と提出、AIで効率化しませんか？</h2>
+                <p class="text-slate-300 mb-8 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+                    SBOMの整備方針やOEM提出範囲でつまずいている方は、無料のオンライン相談をご利用ください。<br><br>
+                    <strong>Auto PSIRT Cloud</strong>なら、既存のExcel部品表をアップロードするだけで、表記ゆれの吸収から脆弱性チェック、OEM指定フォーマットへの自動出力までを一気通貫でサポートします。
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-navy-900 bg-white hover:bg-slate-200 transition-all duration-300 shadow-xl shadow-white/10 w-full sm:w-auto hover:-translate-y-1">
+                        <i data-lucide="message-square" class="w-5 h-5 text-emerald-600"></i>
+                        【無料】オンライン相談を予約する
+                    </a>
+                    <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-white bg-emerald-500/20 hover:bg-emerald-500 border border-emerald-500/30 transition-all duration-300 w-full sm:w-auto hover:-translate-y-1">
+                        <i class="w-5 h-5" data-lucide="monitor-play"></i>
+                        SBOM全体から安全に整備する流れをデモで見る
+                    </a>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/5 text-center text-sm text-slate-500 mt-auto bg-navy-900/80">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span class="font-bold text-slate-400">Auto PSIRT Cloud</span>
+            </div>
+            <p>&copy; 2026 Unimobilities株式会社. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
