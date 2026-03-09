@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEOメタタグ -->
+    <title>OEM回答期限（SLA）管理表テンプレ（スプレッドシート）｜期限漏れを防ぐ最小運用 | Auto PSIRT Cloud</title>
+    <meta name="description" content="OEM調査依頼の回答期限（SLA）を管理するためのスプレッドシートテンプレを公開。受領確認・一次回答・最終回答・次回更新日を一元管理し、証跡や担当、承認状況まで追える最小構成を解説します。">
+    <meta name="keywords" content="OEM回答期限, SLA管理表, OEM調査依頼, 証跡, SLA, PSIRT, スプレッドシート">
+    <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/psirt/oem-response-sla-sheet-template/">
+    
+    <!-- OGPタグ (SNSシェア用) -->
+    <meta property="og:title" content="OEM回答期限（SLA）管理表テンプレ（スプレッドシート）｜期限漏れを防ぐ最小運用">
+    <meta property="og:description" content="OEM調査依頼の期限漏れを防ぐスプレッドシート管理表。4つの期限で管理する最小運用テンプレを公開。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/psirt/oem-response-sla-sheet-template/">
+    <meta property="og:site_name" content="Auto PSIRT Cloud">
+
+    <!-- ファビコン -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%233b82f6%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z%22/><path d=%22m9 12 2 2 4-4%22/></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0a0f1c',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        brand: {
+                            light: '#60a5fa',
+                            DEFAULT: '#3b82f6',
+                            dark: '#2563eb',
+                        },
+                        accent: {
+                            DEFAULT: '#06b6d4',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #60a5fa, #06b6d4);
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* 記事用カスタムスタイル */
+        .prose h2 {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-top: 3.5rem;
+            color: #f8fafc;
+        }
+        .prose h3 {
+            color: #e2e8f0;
+            margin-top: 2.5rem;
+            border-left: 3px solid #3b82f6; /* Blue系アクセント */
+            padding-left: 0.75rem;
+            font-size: 1.25rem;
+        }
+        .prose a {
+            color: #60a5fa;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .prose a:hover {
+            border-bottom-color: #60a5fa;
+        }
+        .prose strong {
+            color: #f8fafc;
+            background: linear-gradient(transparent 60%, rgba(59, 130, 246, 0.3) 40%);
+        }
+        .related-box {
+            background: rgba(30, 41, 59, 0.6);
+            border-left: 4px solid #3b82f6;
+            padding: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 2rem 0;
+        }
+        
+        .template-container {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            border-radius: 0.75rem;
+            overflow: hidden;
+            margin: 2rem 0;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.2);
+        }
+        .template-header {
+            background: rgba(59, 130, 246, 0.1);
+            border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .template-content {
+            padding: 1.5rem;
+            overflow-x: auto;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            color: #e2e8f0;
+            white-space: pre;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-brand selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-brand/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-cyan-500/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-accent flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="/news.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        ニュース一覧へ戻る
+                    </a>
+                    <a href="/demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                        相談 or デモ予約
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <article class="max-w-4xl mx-auto">
+            
+            <!-- パンくずリスト -->
+            <nav class="flex text-sm text-slate-400 mb-8" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/index.html" class="hover:text-white transition-colors">ホーム</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <a href="/news.html" class="hover:text-white transition-colors">ニュース・インサイト</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <span class="text-slate-500 truncate max-w-[200px] sm:max-w-none">OEM回答期限管理表テンプレ</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- 記事ヘッダー -->
+            <header class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-blue-500/20 border border-blue-500/30 text-blue-400 text-xs font-bold px-3 py-1 rounded-full">実務テンプレ</span>
+                    <time class="text-slate-400 text-sm flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> 2026.03.09
+                    </time>
+                </div>
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
+                    OEM回答期限（SLA）管理表テンプレ<br/>
+                    <span class="text-2xl md:text-3xl text-slate-300 font-medium">（スプレッドシート対応：最小運用）</span>
+                </h1>
+                
+                <!-- 導入文 -->
+                <div class="text-lg text-slate-300 leading-relaxed p-6 bg-navy-800/50 rounded-2xl border border-white/5 space-y-4">
+                    <p>OEMからの調査依頼や監査対応で、一番起きやすい事故は「技術判断のミス」よりも <strong>期限管理の崩壊</strong> です。</p>
+                    
+                    <p>現場では、次のようなことがよく起きます。</p>
+                    <ul class="m-0 list-disc list-inside">
+                        <li>受領確認は返したが、一次回答期限が台帳に無い</li>
+                        <li>調査中の案件に「次回更新日」が無く、放置に見える</li>
+                        <li>最終回答の期限だけを見て、途中の社内締切が抜ける</li>
+                        <li>担当者しか進捗を把握しておらず、承認待ちで止まる</li>
+                        <li>期限を過ぎた理由が残らず、監査で説明できない</li>
+                    </ul>
+                    
+                    <p>こうした事故を防ぐには、<strong>SLAを“見える化”した1枚の管理表</strong> が必要です。<br>
+                    このページでは、そのまま使える OEM回答期限（SLA）管理表テンプレ（スプレッドシート） を掲載し、書き方・運用のコツ・NG例までまとめます。</p>
+                </div>
+            </header>
+
+            <!-- 記事本文 -->
+            <div class="glass-card p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl bg-navy-900/80 mb-16">
+                <div class="prose prose-invert prose-slate prose-lg max-w-none">
+                    
+                    <!-- 内部リンク①：全体像 -->
+                    <div class="related-box mt-0 border-l-brand">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="map" class="w-4 h-4"></i> 導入（前提の確認）</div>
+                        <p class="text-sm text-slate-300 mb-2">OEM調査依頼の受領から回答書作成までの全体の流れと、SLAの考え方を先に押さえたい方はこちらをご覧ください。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/audit-investigation-response-guide/" class="!text-brand-light hover:!text-brand">OEM調査依頼・監査対応 完全ガイド</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>まず結論：管理表は「4つの期限」を持てば回る</h2>
+                    <p>OEM回答期限の管理表は、細かく作り込みすぎると更新が止まります。<br>
+                    最小限、次の4つの期限だけ持てば十分です。</p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-6">
+                        <div class="bg-navy-800 p-5 rounded-xl border-l-4 border-l-blue-400">
+                            <h4 class="text-blue-400 font-bold mt-0 mb-2 flex items-center gap-2"><i data-lucide="mail-check" class="w-5 h-5"></i> 受領確認期限</h4>
+                            <p class="text-sm text-slate-300 m-0">依頼を受け取ったことを返す期限</p>
+                        </div>
+                        <div class="bg-navy-800 p-5 rounded-xl border-l-4 border-l-cyan-400">
+                            <h4 class="text-cyan-400 font-bold mt-0 mb-2 flex items-center gap-2"><i data-lucide="message-square" class="w-5 h-5"></i> 一次回答期限</h4>
+                            <p class="text-sm text-slate-300 m-0">影響あり/なし/調査中の暫定結論を返す期限</p>
+                        </div>
+                        <div class="bg-navy-800 p-5 rounded-xl border-l-4 border-l-brand-light">
+                            <h4 class="text-brand-light font-bold mt-0 mb-2 flex items-center gap-2"><i data-lucide="check-circle" class="w-5 h-5"></i> 最終回答期限</h4>
+                            <p class="text-sm text-slate-300 m-0">根拠・証跡込みで最終回答する期限</p>
+                        </div>
+                        <div class="bg-navy-800 p-5 rounded-xl border-l-4 border-l-orange-400">
+                            <h4 class="text-orange-400 font-bold mt-0 mb-2 flex items-center gap-2"><i data-lucide="refresh-cw" class="w-5 h-5"></i> 次回更新日</h4>
+                            <p class="text-sm text-slate-300 m-0">調査中案件で「次にいつ進捗を返すか」を示す日</p>
+                        </div>
+                    </div>
+
+                    <p class="text-center font-bold text-slate-200">この4つが並ぶだけで、案件の健康状態がかなり見えるようになります。</p>
+
+                    <h2 class="border-b-2 border-blue-500 pb-2 mt-12 mb-6">コピペ用：OEM回答期限（SLA）管理表テンプレ（TSV）</h2>
+                    <p><strong>使い方：</strong> 下の枠内をそのままコピーして、Excelやスプレッドシートの「A1」セルに貼り付けてください（タブ区切りで展開されます）。<br>
+                    最初は列を増やさず、この形で回すのがおすすめです。</p>
+
+                    <!-- TSV Template Container -->
+                    <div class="template-container">
+                        <div class="template-header">
+                            <span class="text-sm font-bold text-blue-400 flex items-center gap-2">
+                                <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> oem_sla_tracker.tsv
+                            </span>
+                            <button onclick="copyToClipboard('tsv-content', this)" class="flex items-center gap-1.5 px-3 py-1.5 bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 rounded text-xs font-bold transition-colors">
+                                <i data-lucide="copy" class="w-3.5 h-3.5"></i> コピーする
+                            </button>
+                        </div>
+                        <div class="template-content" id="tsv-content">案件ID	OEM/顧客名	案件名/テーマ	受領日	相手期限	受領確認期限	受領確認日	一次回答期限	一次回答日	最終回答期限	最終回答日	次回更新日	現在ステータス	対象製品	対象版数（暫定/確定）	担当	承認者	証跡リンク/ID	期限超過理由	備考
+例:INC-2026-0101	○○自動車	CVE-2026-XXXX照会	2026-09-25	2026-09-30	2026-09-26	2026-09-25	2026-09-27	2026-09-27	2026-09-30		2026-09-29	調査中	メーターパネル	v2.3.1（暫定）	山田	佐藤	SBOM-12/CHG-88		一次回答済み、版数確定待ち</div>
+                    </div>
+
+                    <h2>各列の意味（最初にここだけ決める）</h2>
+                    <p>全ての列を完璧にする必要はありませんが、以下の列は運用上不可欠です。</p>
+
+                    <div class="space-y-4 my-6">
+                        <div class="bg-navy-800/50 p-4 rounded-lg border border-white/5">
+                            <strong class="text-brand-light block mb-1">案件ID</strong>
+                            <p class="text-sm text-slate-300 m-0">案件を一意に追うための番号です。メール件名、回答書、証跡フォルダ名もこれに合わせると追跡が楽になります。</p>
+                        </div>
+                        <div class="bg-navy-800/50 p-4 rounded-lg border border-white/5">
+                            <strong class="text-brand-light block mb-1">相手期限</strong>
+                            <p class="text-sm text-slate-300 m-0">OEMや顧客が指定した期限です。これだけを見ると社内の動きが遅れるので、必ず次の社内期限も持ちます。</p>
+                        </div>
+                        <div class="bg-navy-800/50 p-4 rounded-lg border border-white/5">
+                            <strong class="text-brand-light block mb-1">受領確認期限 / 一次回答期限 / 最終回答期限</strong>
+                            <p class="text-sm text-slate-300 m-0">社内用のSLAです。相手期限より前に切ることで、「気づいたら間に合わない」を防ぎます。</p>
+                        </div>
+                        <div class="bg-navy-800/50 p-4 rounded-lg border border-white/5">
+                            <strong class="text-brand-light block mb-1">次回更新日</strong>
+                            <p class="text-sm text-slate-300 m-0">調査中案件で最重要です。結論が出ていなくても、更新日があれば“放置ではない”と説明できます。</p>
+                        </div>
+                        <div class="bg-navy-800/50 p-4 rounded-lg border border-white/5">
+                            <strong class="text-brand-light block mb-1">証跡リンク/ID</strong>
+                            <p class="text-sm text-slate-300 m-0">SBOM、構成表、仕様書、試験結果、提出履歴などの参照先です。監査では、ここがあるだけで強くなります。</p>
+                        </div>
+                    </div>
+
+                    <h2>使い方のコツ</h2>
+
+                    <div class="space-y-6 my-8">
+                        <div class="bg-navy-800/80 p-5 rounded-xl border-l-4 border-l-blue-400">
+                            <h4 class="text-white font-bold mt-0 mb-2">1. 最初は“色分け”だけで十分</h4>
+                            <p class="text-sm text-slate-300 mb-2">スプレッドシート運用なら、まずは以下の色分け（条件付き書式）だけで回ります。</p>
+                            <ul class="text-sm m-0 space-y-1 pl-4 list-disc">
+                                <li><strong class="text-emerald-400">緑：</strong> 期限内</li>
+                                <li><strong class="text-yellow-400">黄：</strong> 3営業日以内に期限</li>
+                                <li><strong class="text-red-400">赤：</strong> 期限超過</li>
+                                <li><strong class="text-slate-500">灰：</strong> クローズ</li>
+                            </ul>
+                            <p class="text-sm text-slate-300 mt-2 m-0">見た目で危ない案件が分かるだけで、管理の質がかなり上がります。</p>
+                        </div>
+
+                        <div class="bg-navy-800/80 p-5 rounded-xl border-l-4 border-l-orange-400">
+                            <h4 class="text-white font-bold mt-0 mb-2">2. 調査中の案件ほど「次回更新日」を重く見る</h4>
+                            <p class="text-sm text-slate-300 m-0">一次回答や最終回答よりも、実務で崩れやすいのは「調査中」の案件です。調査中のまま更新日が過ぎると、相手から見ると放置に見えます。</p>
+                        </div>
+
+                        <div class="bg-navy-800/80 p-5 rounded-xl border-l-4 border-l-red-500">
+                            <h4 class="text-white font-bold mt-0 mb-2">3. 期限超過理由を1行残す</h4>
+                            <p class="text-sm text-slate-300 mb-2">期限を守れないこと自体より、<strong>なぜ守れなかったかを説明できないこと</strong> が監査では問題になります。たとえば次のように短く残します。</p>
+                            <ul class="text-sm m-0 space-y-1 pl-4 list-disc text-slate-300">
+                                <li>上流回答待ち</li>
+                                <li>対象版数未確定</li>
+                                <li>承認待ち</li>
+                                <li>試験未完了</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <h2>OTAが絡む案件は“最終回答期限”が伸びやすい</h2>
+                    <p>更新や配布方法が絡む案件では、暫定対策は出せても、最終回答の確定に時間がかかることがあります。</p>
+                    <p>特に <strong>OTA / 現地更新 / 工場更新</strong> で配布方式が異なる場合、最終回答期限と次回更新日の設計が重要です。最終期限が見えない場合は、一次回答で「OTA配信方針を検討中。次回更新日（XX月XX日）に進捗を報告」のように刻むと安全です。</p>
+
+                    <!-- 内部リンク②：OTAの補足 -->
+                    <div class="related-box border-l-purple-500 my-6">
+                        <div class="text-sm font-bold text-purple-400 mb-2 flex items-center gap-2"><i data-lucide="info" class="w-4 h-4"></i> 用語の補足</div>
+                        <p class="text-sm text-slate-300 mb-2">回答期限に影響を与えやすいOTA（Over-The-Air）更新の基本知識はこちらで確認できます。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="#" class="!text-purple-400 hover:!text-purple-300">OTAが「？」な担当者向け解説（作成中）</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- 途中CTA（主CTA） -->
+                    <div class="bg-navy-800/50 p-6 md:p-8 rounded-2xl border border-blue-500/30 text-center my-10 shadow-[0_0_20px_rgba(59,130,246,0.15)]">
+                        <p class="text-slate-200 mb-6 font-medium text-lg">この記事のテンプレを自社向け（承認体制やSLA）に調整して導入したい方はご相談ください。</p>
+                        <a href="/demo_form.html" class="inline-flex items-center gap-2 px-8 py-3.5 bg-brand hover:bg-brand-dark !text-white rounded-full font-bold transition-all hover:-translate-y-1 shadow-lg shadow-brand/20">
+                            <i data-lucide="calendar" class="w-5 h-5"></i> 【無料】オンライン相談を予約する
+                        </a>
+                    </div>
+
+                    <h2>よくあるNG例（管理表が機能しなくなる原因）</h2>
+                    <ul class="space-y-4 my-6 list-none pl-0">
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>NG1：相手期限しか管理していない</strong><br><span class="text-sm text-slate-400">社内の受領確認期限・一次回答期限が無いと、全部が後ろ倒しになります。</span></div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>NG2：次回更新日が空欄</strong><br><span class="text-sm text-slate-400">調査中案件が放置され、OEMからの督促や監査で弱くなります。</span></div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>NG3：証跡リンク/IDが無い</strong><br><span class="text-sm text-slate-400">期限を守れても、「何を根拠に返したか」が追えません。</span></div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>NG4：担当はいるが承認者が無い</strong><br><span class="text-sm text-slate-400">最後の対外送付で止まります。承認列は小さくても必須です。</span></div></li>
+                    </ul>
+
+                    <h2>Auto PSIRT Cloudで運用する時のポイント</h2>
+                    <p>この管理表で使っている列は、そのままシステムのワークフロー項目にも落とせます。</p>
+                    <ul class="font-medium text-slate-200">
+                        <li>相手期限</li>
+                        <li>受領確認期限</li>
+                        <li>一次回答期限</li>
+                        <li>最終回答期限</li>
+                        <li>次回更新日</li>
+                        <li>現在ステータス</li>
+                        <li>証跡リンク/ID</li>
+                    </ul>
+                    <p class="text-brand-light font-bold">この形で項目を固定すると、期限管理が人依存になりにくくなります。</p>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2>FAQ：OEM回答期限の管理について</h2>
+                    <div class="space-y-6 mt-6">
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q1. OEM回答期限の管理表は、最初に何列あれば十分ですか？</strong>
+                            <p class="m-0 text-slate-300">最低限、案件ID、相手期限、受領確認期限、一次回答期限、最終回答期限、次回更新日、担当、証跡リンク/IDがあれば始められます。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q2. 次回更新日は毎回必要ですか？</strong>
+                            <p class="m-0 text-slate-300">調査中案件では必須です。結論が未確定でも、次にいつ更新するかを示すことで、放置ではなく運用中だと説明できます。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q3. スプレッドシートでも運用できますか？</strong>
+                            <p class="m-0 text-slate-300">はい。最初は十分です。むしろ項目を固定して更新できることの方が重要で、ツール移行は後からで構いません。</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- CTA Section (副CTA) -->
+            <div class="glass-card rounded-3xl p-8 md:p-12 text-center border-t-4 border-t-blue-500 bg-navy-800/80 shadow-[0_0_40px_-10px_rgba(59,130,246,0.2)]">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">SLAアラートとタスク管理をシステム化しませんか？</h2>
+                <p class="text-slate-300 mb-8 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+                    <strong>Auto PSIRT Cloud</strong>なら、スプレッドシートでの手動管理から脱却し、期限が迫ったタスクのアラート通知や、OEM提出用の回答書（レポート）の自動出力を一つの画面で行うことができます。
+                </p>
+                <div class="flex justify-center">
+                    <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-navy-900 bg-white hover:bg-slate-200 transition-all duration-300 shadow-xl shadow-white/10 w-full sm:w-auto hover:-translate-y-1">
+                        <i data-lucide="monitor-play" class="w-5 h-5 text-blue-600"></i>
+                        OEM回答書作成とタスク管理のデモを見る
+                    </a>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/5 text-center text-sm text-slate-500 mt-auto bg-navy-900/80">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span class="font-bold text-slate-400">Auto PSIRT Cloud</span>
+            </div>
+            <p>&copy; 2026 Unimobilities株式会社. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Copy to clipboard function for TSV template
+        function copyToClipboard(contentId, button) {
+            const content = document.getElementById(contentId).textContent;
+            
+            const textarea = document.createElement('textarea');
+            textarea.value = content;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            
+            try {
+                document.execCommand('copy');
+                const originalHtml = button.innerHTML;
+                button.innerHTML = '<i data-lucide="check" class="w-3.5 h-3.5"></i> コピーしました';
+                button.classList.remove('bg-blue-500/20', 'text-blue-300');
+                button.classList.add('bg-brand/20', 'text-brand-light');
+                lucide.createIcons();
+                
+                setTimeout(() => {
+                    button.innerHTML = originalHtml;
+                    button.classList.remove('bg-brand/20', 'text-brand-light');
+                    button.classList.add('bg-blue-500/20', 'text-blue-300');
+                    lucide.createIcons();
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy', err);
+            } finally {
+                document.body.removeChild(textarea);
+            }
+        }
+    </script>
+</body>
+</html>
