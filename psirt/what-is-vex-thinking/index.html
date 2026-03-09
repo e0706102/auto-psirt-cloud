@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEOメタタグ -->
+    <title>VEXとは何か？「対応不要」を言語化するための考え方｜サプライヤー向け | Auto PSIRT Cloud</title>
+    <meta name="description" content="VEXとは、脆弱性がその製品で実際に悪用可能かを文脈つきで示すための考え方です。not_affected / affected / under_investigation / fixed の意味、なぜ「対応不要」を根拠付きで言語化する必要があるのか、OEM照会に通る書き方まで解説します。">
+    <meta name="keywords" content="VEXとは何か：「対応不要」を言語化するための考え方, VEX, 脆弱性管理, PSIRT, トリアージ, 自動車セキュリティ">
+    <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/psirt/what-is-vex-thinking/">
+    
+    <!-- OGPタグ (SNSシェア用) -->
+    <meta property="og:title" content="VEXとは何か？「対応不要」を言語化するための考え方">
+    <meta property="og:description" content="VEXは「対応不要」をOEMへ説明するための強力な武器です。実務での考え方と書き方を解説します。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/psirt/what-is-vex-thinking/">
+    <meta property="og:site_name" content="Auto PSIRT Cloud">
+
+    <!-- ファビコン -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23a855f7%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z%22/><path d=%22m9 12 2 2 4-4%22/></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0a0f1c',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        brand: {
+                            light: '#60a5fa',
+                            DEFAULT: '#3b82f6',
+                            dark: '#2563eb',
+                        },
+                        accent: {
+                            DEFAULT: '#06b6d4',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #a855f7, #3b82f6); /* Purple to Blue */
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* 記事用カスタムスタイル */
+        .prose h2 {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-top: 3.5rem;
+            color: #f8fafc;
+        }
+        .prose h3 {
+            color: #e2e8f0;
+            margin-top: 2.5rem;
+            border-left: 3px solid #a855f7; /* Purple系アクセント */
+            padding-left: 0.75rem;
+            font-size: 1.25rem;
+        }
+        .prose a {
+            color: #c084fc; /* purple-400 */
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .prose a:hover {
+            border-bottom-color: #c084fc;
+        }
+        .prose strong {
+            color: #f8fafc;
+            background: linear-gradient(transparent 60%, rgba(168, 85, 247, 0.3) 40%);
+        }
+        .related-box {
+            background: rgba(30, 41, 59, 0.6);
+            border-left: 4px solid #a855f7;
+            padding: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-purple-500 selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-brand/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-purple-500/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-accent flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="/news.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        ニュース一覧へ戻る
+                    </a>
+                    <a href="/demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                        相談 or デモ予約
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <article class="max-w-4xl mx-auto">
+            
+            <!-- パンくずリスト -->
+            <nav class="flex text-sm text-slate-400 mb-8" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/index.html" class="hover:text-white transition-colors">ホーム</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <a href="/news.html" class="hover:text-white transition-colors">ニュース・インサイト</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <span class="text-slate-500 truncate max-w-[200px] sm:max-w-none">VEXとは何か</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- 記事ヘッダー -->
+            <header class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-purple-500/20 border border-purple-500/30 text-purple-400 text-xs font-bold px-3 py-1 rounded-full">入門解説</span>
+                    <time class="text-slate-400 text-sm flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> 2026.03.09
+                    </time>
+                </div>
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
+                    VEXとは何か：<br/>
+                    <span class="text-2xl md:text-3xl text-slate-300 font-medium">「対応不要」を言語化するための考え方</span>
+                </h1>
+                
+                <!-- 導入文 -->
+                <div class="text-lg text-slate-300 leading-relaxed p-6 bg-navy-800/50 rounded-2xl border border-white/5 space-y-4">
+                    <p>VEXとは <strong>Vulnerability Exploitability eXchange</strong> のことで、脆弱性が「その製品の、その文脈で、本当に悪用可能か」を伝えるための考え方です。</p>
+                    
+                    <p>CycloneDXはVEXを、製品の文脈における脆弱性の exploitability を伝える仕組みとして説明しており、一般的な脆弱性公開と違って「その製品で実際に問題になるのか」に焦点を当てる点が重要だとしています。さらにCycloneDXは、VEXによって不要な緩和やパッチ適用を減らし、現実のリスクに応じた優先順位付けがしやすくなると説明しています。</p>
+                    
+                    <p>自動車サプライヤーの実務で言い換えると、VEXは <strong>「このCVE、うちの製品には関係あるのか、ないのか、まだ調査中なのか」を根拠付きで表明するための型</strong> です。<br>
+                    OEMが求めているのは、CVEの要約文やCVSSの点数ではなく、<strong>対象製品・対象版数・理由・次回更新日</strong> が入った判断です。そのためVEXは、単なる用語ではなく、PSIRTの回答品質をそろえるための“言語”だと考えると分かりやすくなります。</p>
+                </div>
+            </header>
+
+            <!-- 記事本文 -->
+            <div class="glass-card p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl bg-navy-900/80 mb-16">
+                <div class="prose prose-invert prose-slate prose-lg max-w-none">
+                    
+                    <!-- 内部リンク①：全体像 -->
+                    <div class="related-box mt-0 border-l-brand">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="map" class="w-4 h-4"></i> 全体像を押さえる</div>
+                        <p class="text-sm text-slate-300 mb-2">VEXを使って実際にどうトリアージを行うか、実務全体のフローはこちらのガイドで解説しています。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/cve-triage-vex-guide/" class="!text-brand-light hover:!text-brand">CVEトリアージ＆VEX実務 完全ガイド</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>VEXが必要になる理由</h2>
+                    <p>「CVEが存在する」ことと、「その脆弱性が自社製品で成立する」ことは同じではありません。</p>
+                    <p>CycloneDXも、VEXは特定の文脈で exploitability を伝えるものだと明記しており、これによって組織は remediation の優先順位を付けやすくなり、不要な対応を減らせるとしています。<br>つまり、<strong>VEXが無いと、現場は「全部危険そう」に見える通知に引っ張られ、逆に本当に優先すべき案件を見失いやすくなります。</strong></p>
+
+                    <p>サプライヤー実務でVEXが特に効くのは、<strong>「対応不要（not affected）」を言語化したい時</strong> です。</p>
+                    <p>CISAのVEX minimum requirements では、VEXのステータスとして <code>not_affected</code> / <code>affected</code> / <code>fixed</code> / <code>under_investigation</code> の4つが示されており、特に <code>not_affected</code> では、justification が無い場合は impact statement が必要、justifcation がある場合はそれに基づいて説明すべきと整理されています。<br>
+                    つまり<strong>「影響なしです」とだけ返すのではなく、なぜ影響しないのか を構造化して示す必要があります。</strong></p>
+
+                    <h2>VEXの4つの基本ステータス</h2>
+                    <p>VEXでまず押さえるべき状態は4つです。CISAの minimum requirements に沿うと、意味は次のように理解できます。</p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-6">
+                        <div class="bg-navy-800 p-4 rounded-lg border-l-4 border-l-emerald-500">
+                            <strong class="text-emerald-400 block mb-1">not_affected</strong>
+                            <span class="text-sm text-slate-300">その脆弱性は製品に影響しない（対応不要）</span>
+                        </div>
+                        <div class="bg-navy-800 p-4 rounded-lg border-l-4 border-l-red-500">
+                            <strong class="text-red-400 block mb-1">affected</strong>
+                            <span class="text-sm text-slate-300">製品に影響する（対応必須）</span>
+                        </div>
+                        <div class="bg-navy-800 p-4 rounded-lg border-l-4 border-l-blue-400">
+                            <strong class="text-blue-400 block mb-1">fixed</strong>
+                            <span class="text-sm text-slate-300">修正済み（過去バージョンは影響するが今は直っている）</span>
+                        </div>
+                        <div class="bg-navy-800 p-4 rounded-lg border-l-4 border-l-yellow-400">
+                            <strong class="text-yellow-400 block mb-1">under_investigation</strong>
+                            <span class="text-sm text-slate-300">まだ調査中（要確認）</span>
+                        </div>
+                    </div>
+
+                    <p>この4つのうち、実務で特に重要なのは <strong>not_affected</strong> と <strong>under_investigation</strong> です。</p>
+                    <p>なぜなら、サプライヤーは「すぐには断定できないが、期限は守らなければならない」ケースが多いからです。CISAの “When to Issue VEX Information” でも、最初に under_investigation を出し、調査が終わった時点で affected か not_affected に更新するやり方が一般的だと説明されています。<br>
+                    またVEXは、状況が変わればステータスを更新し、タイムスタンプで現在の状態を再確認できる点も重要です。</p>
+
+                    <h2>「対応不要」をどう言語化するか</h2>
+                    <p>CISAの minimum requirements では、<code>not_affected</code> の justification（正当化の理由）として代表的に次のような考え方が示されています。</p>
+
+                    <ul class="space-y-4 my-6 list-none pl-0">
+                        <li class="bg-navy-800/50 p-4 rounded-xl border border-white/5">
+                            <strong class="text-purple-300 font-mono block mb-1">Component_not_present</strong>
+                            <span class="text-sm text-slate-300">そもそもその部品が製品に入っていない</span>
+                        </li>
+                        <li class="bg-navy-800/50 p-4 rounded-xl border border-white/5">
+                            <strong class="text-purple-300 font-mono block mb-1">Vulnerable_code_not_present</strong>
+                            <span class="text-sm text-slate-300">同名部品はあるが、脆弱なコード部分が含まれていない</span>
+                        </li>
+                        <li class="bg-navy-800/50 p-4 rounded-xl border border-white/5">
+                            <strong class="text-purple-300 font-mono block mb-1">Vulnerable_code_not_in_execute_path</strong>
+                            <span class="text-sm text-slate-300">脆弱コードはあるが、この製品の実行経路（呼び出し）に乗らない</span>
+                        </li>
+                        <li class="bg-navy-800/50 p-4 rounded-xl border border-white/5">
+                            <strong class="text-purple-300 font-mono block mb-1">Vulnerable_code_cannot_be_controlled_by_adversary</strong>
+                            <span class="text-sm text-slate-300">攻撃者がそのコードの実行を外部から制御・到達できない</span>
+                        </li>
+                        <li class="bg-navy-800/50 p-4 rounded-xl border border-white/5">
+                            <strong class="text-purple-300 font-mono block mb-1">Inline_mitigations_already_exist</strong>
+                            <span class="text-sm text-slate-300">既に緩和策（設定無効化など）が製品に組み込まれている</span>
+                        </li>
+                    </ul>
+
+                    <p>実務上は、これをそのまま英語で出す必要はありません。むしろ日本語で、<strong>「対象版数／前提条件／根拠」</strong>をセットにして書く方が通りやすいです。</p>
+                    <p>たとえば、<br>
+                    <span class="bg-white/10 px-3 py-1 rounded inline-block my-1 text-sm">「対象製品 v2.3.1 は当該ライブラリを搭載していない」</span><br>
+                    <span class="bg-white/10 px-3 py-1 rounded inline-block my-1 text-sm">「対象ECUは外部IFを持たず、当該機能は出荷設定で無効」</span><br>
+                    <span class="bg-white/10 px-3 py-1 rounded inline-block my-1 text-sm">「成立条件として必要な入力経路が通常運用では存在しない」</span><br>
+                    といった表現に落とすと、OEM照会でも監査でも説明しやすくなります。</p>
+
+                    <h2>VEXは“文書フォーマット”より“運用の型”</h2>
+                    <p>VEXという言葉を聞くと、ファイル形式（JSON等）や標準仕様を先に連想しがちですが、立ち上げ段階で重要なのは <strong>フォーマットより運用の型</strong> です。</p>
+                    <p>CISAも、VEXをいつ出すかは多くのサプライヤーにとって business decision だとしており、重要なのは<strong>「いつ、誰が、どのステータスで、どの理由を付けるか」</strong>を決めておくことだと読めます。</p>
+
+                    <p>そのため、最初に必要なのは次の3点です。</p>
+                    <div class="bg-navy-800 p-6 rounded-lg border border-white/10 my-4 text-center">
+                        <strong class="text-brand-light text-lg block mb-2">1. 対象版数を切る</strong>
+                        <strong class="text-emerald-400 text-lg block mb-2">2. ステータスを4つから選ぶ</strong>
+                        <strong class="text-purple-400 text-lg block">3. 理由と次回更新日を残す</strong>
+                    </div>
+                    <p class="text-center font-bold">これだけで、VEXは“運用できる考え方”になります。</p>
+
+                    <!-- 内部リンク②：テンプレへ -->
+                    <div class="related-box border-l-purple-500 my-8">
+                        <div class="text-sm font-bold text-purple-400 mb-2 flex items-center gap-2"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> すぐに実務で使う</div>
+                        <p class="text-sm text-slate-300 mb-2">このVEXの考え方を、OEM回答や社内記録としてそのまま使える「テンプレ」に落とし込んだ記事はこちらです。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/vex-writing-template/" class="!text-purple-400 hover:!text-purple-300">VEX記述テンプレ（not_affected / affected / under_investigation）</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>よくある誤解</h2>
+                    
+                    <div class="space-y-4 my-6">
+                        <div class="bg-navy-800/50 p-4 rounded-xl border border-white/5 border-l-4 border-l-yellow-500">
+                            <strong class="text-slate-200 block mb-1">誤解：VEXは「影響なし宣言のための言い訳」である</strong>
+                            <p class="text-sm text-slate-300 m-0">違います。VEXは、影響の有無を文脈付きで整理する仕組みです。affected や under_investigation も同じくらい重要です。</p>
+                        </div>
+                        <div class="bg-navy-800/50 p-4 rounded-xl border border-white/5 border-l-4 border-l-yellow-500">
+                            <strong class="text-slate-200 block mb-1">誤解：VEXがあれば全部自動で判断できる</strong>
+                            <p class="text-sm text-slate-300 m-0">違います。CycloneDXもVEXは contextual analysis のための仕組みだとしていますが、前提になるのは対象製品・対象版数・構成の把握です。つまりSBOMや構成表が無いと、VEXだけでは成立しません。</p>
+                        </div>
+                        <div class="bg-navy-800/50 p-4 rounded-xl border border-white/5 border-l-4 border-l-yellow-500">
+                            <strong class="text-slate-200 block mb-1">誤解：under_investigation は逃げである</strong>
+                            <p class="text-sm text-slate-300 m-0">違います。CISAのガイダンスでも、最初に under_investigation を出し、後から更新するのは自然な運用です。問題は“調査中のまま放置すること”であって、next update date（次回更新日）が無いことです。</p>
+                        </div>
+                    </div>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2>FAQ：VEXとは</h2>
+                    <div class="space-y-6 mt-6">
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q1. VEXとは何ですか？</strong>
+                            <p class="m-0 text-slate-300">VEXは、脆弱性がその製品の文脈で本当に悪用可能かを示すための考え方です。単なるCVE情報ではなく、製品ごとの影響有無を表明するために使います。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q2. VEXの基本ステータスは何ですか？</strong>
+                            <p class="m-0 text-slate-300">not_affected、affected、fixed、under_investigation の4つです。CISAの minimum requirements で整理されています。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q3. 「対応不要」はどう書けばよいですか？</strong>
+                            <p class="m-0 text-slate-300">対象版数、理由（非搭載や実行経路外など）、前提条件、証跡をセットで書くのが基本です。justification（根拠）が無い場合は impact statement（影響声明）が必要という考え方が参考になります。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q4. VEXはいつ出すべきですか？</strong>
+                            <p class="m-0 text-slate-300">CISAのガイダンスでは、いつ出すかは多くのサプライヤーにとってビジネス判断とされています。実務では、OEM照会があった際などに、まず under_investigation を出し、調査結果に応じて更新する運用が現実的です。</p>
+                        </div>
+                    </div>
+
+                    <!-- 内部リンク③：次に読む（仮リンク） -->
+                    <div class="related-box border-l-brand mt-12">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="book-open" class="w-4 h-4"></i> 次に読む</div>
+                        <p class="text-sm text-slate-300 mb-2">VEXの仕様や構造について、より詳しく知りたい方はこちらをご覧ください。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="#" class="!text-brand-light hover:!text-brand">VEXとは（作成中）</a></li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- CTA Section (相談のみ) -->
+            <div class="glass-card rounded-3xl p-8 md:p-12 text-center border-t-4 border-t-purple-500 bg-navy-800/80 shadow-[0_0_40px_-10px_rgba(168,85,247,0.2)]">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">自社製品のVEX判断基準、整理しませんか？</h2>
+                <p class="text-slate-300 mb-8 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+                    「この構成なら影響なしと言い切っていいのか」「OEMにどう説明すれば納得してもらえるか」など、脆弱性トリアージとVEXの判断基準を自社向けに整理したい方はご相談ください。
+                </p>
+                <div class="flex justify-center">
+                    <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-white bg-brand hover:bg-brand-dark transition-all duration-300 shadow-lg shadow-brand/20 w-full sm:w-auto hover:-translate-y-1">
+                        <i data-lucide="message-square" class="w-5 h-5"></i>
+                        【無料】オンライン相談を予約する
+                    </a>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/5 text-center text-sm text-slate-500 mt-auto bg-navy-900/80">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span class="font-bold text-slate-400">Auto PSIRT Cloud</span>
+            </div>
+            <p>&copy; 2026 Unimobilities株式会社. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
