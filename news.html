@@ -2483,7 +2483,8 @@
                     </div>
                 </a>
 
-                <!-- 記事72：CWEとは -->
+                
+                <!-- 記事73：CWEとは -->
                 <a href="/psirt/what-is-cwe/" data-category="入門解説" class="article-card glass-card rounded-2xl overflow-hidden group hover:-translate-y-1 hover:border-purple-500/50 transition-all duration-300 flex flex-col h-full bg-navy-900/60">
                     <div class="relative h-48 overflow-hidden bg-navy-800 border-b border-white/5">
                         <div class="absolute inset-0 bg-gradient-to-br from-purple-500/20 to-indigo-500/20 group-hover:scale-105 transition-transform duration-500"></div>
@@ -2512,7 +2513,44 @@
                                 ✨ AI要約
                             </button>
                         </div>
-                        <div class="ai-summary-container hidden mt-4 p-3 bg-navy-800/90 rounded-lg border border
+                        <div class="ai-summary-container hidden mt-4 p-3 bg-navy-800/90 rounded-lg border border-white/10 text-sm text-slate-300 relative z-10 shadow-inner"></div>
+                    </div>
+                </a>
+
+                <!-- 記事73：PSIRTとQAの役割分担 -->
+                <a href="/psirt/psirt-qa-raci/" data-category="実務ガイド" class="article-card glass-card rounded-2xl overflow-hidden group hover:-translate-y-1 hover:border-indigo-500/50 transition-all duration-300 flex flex-col h-full bg-navy-900/60">
+                    <div class="relative h-48 overflow-hidden bg-navy-800 border-b border-white/5">
+                        <div class="absolute inset-0 bg-gradient-to-br from-indigo-500/20 to-blue-500/20 group-hover:scale-105 transition-transform duration-500"></div>
+                        <div class="absolute inset-0 flex items-center justify-center opacity-50 group-hover:opacity-80 transition-opacity">
+                            <i data-lucide="git-compare" class="w-16 h-16 text-white"></i>
+                        </div>
+                        <div class="absolute top-3 left-3 flex gap-2">
+                            <span class="bg-indigo-500/80 backdrop-blur-md text-white text-xs font-bold px-2.5 py-1 rounded">実務ガイド</span>
+                        </div>
+                    </div>
+                    <div class="p-6 flex flex-col flex-grow">
+                        <time class="text-xs text-slate-400 font-medium mb-3 flex items-center gap-1.5">
+                            <i data-lucide="calendar" class="w-3.5 h-3.5"></i> 2026.03.09
+                        </time>
+                        <h2 class="text-lg font-bold text-slate-100 mb-3 group-hover:text-indigo-400 transition-colors line-clamp-2">
+                            PSIRTと品質保証（QA）を衝突させない役割分担｜兼務でも破綻しない決め方
+                        </h2>
+                        <p class="text-sm text-slate-400 leading-relaxed line-clamp-3 mb-4 flex-grow">
+                            PSIRTとQAの役割がぶつかると、OEM照会で炎上しがちです。設計・QA・PSIRT窓口・承認者の責任分界をRACIで整理し、兼務でも回る手順とテンプレを解説します。
+                        </p>
+                        <div class="flex items-center justify-between w-full mt-auto pt-4 border-t border-white/5">
+                            <div class="flex items-center text-indigo-400 text-sm font-bold group-hover:gap-2 transition-all">
+                                続きを読む <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i>
+                            </div>
+                            <button onclick="event.preventDefault(); summarizeArticle(this, 'PSIRTと品質保証（QA）を衝突させない役割分担')" class="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 rounded-lg transition-colors text-xs font-bold z-10 relative">
+                                ✨ AI要約
+                            </button>
+                        </div>
+                        <div class="ai-summary-container hidden mt-4 p-3 bg-navy-800/90 rounded-lg border border-white/10 text-sm text-slate-300 relative z-10 shadow-inner"></div>
+                    </div>
+                </a>
+
+               
 
                 
 
