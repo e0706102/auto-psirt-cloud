@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEOメタタグ -->
+    <title>SBOMの更新頻度と版管理｜リリース・修正・部品変更で迷わない運用設計 | Auto PSIRT Cloud</title>
+    <meta name="description" content="SBOMは作成より更新が本番です。リリース、修正、部品変更の3つを起点に、いつ更新し、どう版管理し、どの証跡を残すかを実務手順で解説。兼務でも破綻しない運用ルールと、提出版/社内版の分け方まで整理します。">
+    <meta name="keywords" content="SBOMの更新頻度と版管理, SBOM, ソフトウェア部品表, 脆弱性管理, PSIRT, バージョン管理">
+    <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/psirt/update-frequency-version-control/">
+    
+    <!-- OGPタグ (SNSシェア用) -->
+    <meta property="og:title" content="SBOMの更新頻度と版管理｜リリース・修正・部品変更で迷わない運用設計">
+    <meta property="og:description" content="SBOMは作成より更新が本番。いつ更新し、どう版管理するか、兼務でも破綻しない実務の型を解説します。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/psirt/update-frequency-version-control/">
+    <meta property="og:site_name" content="Auto PSIRT Cloud">
+
+    <!-- ファビコン -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%2310b981%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z%22/><path d=%22m9 12 2 2 4-4%22/></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0a0f1c',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        brand: {
+                            light: '#60a5fa',
+                            DEFAULT: '#3b82f6',
+                            dark: '#2563eb',
+                        },
+                        accent: {
+                            DEFAULT: '#06b6d4',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #10b981, #3b82f6);
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* 記事用カスタムスタイル */
+        .prose h2 {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-top: 3.5rem;
+            color: #f8fafc;
+        }
+        .prose h3 {
+            color: #e2e8f0;
+            margin-top: 2.5rem;
+            border-left: 3px solid #10b981; /* Emerald系アクセント */
+            padding-left: 0.75rem;
+            font-size: 1.25rem;
+        }
+        .prose a {
+            color: #34d399; /* emerald-400 */
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .prose a:hover {
+            border-bottom-color: #34d399;
+        }
+        .prose strong {
+            color: #f8fafc;
+            background: linear-gradient(transparent 60%, rgba(16, 185, 129, 0.3) 40%);
+        }
+        .related-box {
+            background: rgba(30, 41, 59, 0.6);
+            border-left: 4px solid #10b981;
+            padding: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 2rem 0;
+        }
+        .step-box {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            position: relative;
+        }
+        .step-number {
+            position: absolute;
+            top: -1rem;
+            left: 1.5rem;
+            background: #10b981;
+            color: white;
+            font-weight: bold;
+            font-size: 0.875rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            border: 4px solid #0a0f1c;
+        }
+        
+        .template-container {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            border-radius: 0.75rem;
+            overflow: hidden;
+            margin: 2rem 0;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.2);
+        }
+        .template-header {
+            background: rgba(16, 185, 129, 0.1);
+            border-bottom: 1px solid rgba(16, 185, 129, 0.2);
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .template-content {
+            padding: 1.5rem;
+            overflow-x: auto;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            color: #e2e8f0;
+            white-space: pre;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-emerald-500 selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-brand/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-emerald-500/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-accent flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="/news.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        ニュース一覧へ戻る
+                    </a>
+                    <a href="/demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                        相談 or デモ予約
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <article class="max-w-4xl mx-auto">
+            
+            <!-- パンくずリスト -->
+            <nav class="flex text-sm text-slate-400 mb-8" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/index.html" class="hover:text-white transition-colors">ホーム</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <a href="/news.html" class="hover:text-white transition-colors">ニュース・インサイト</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <span class="text-slate-500 truncate max-w-[200px] sm:max-w-none">SBOMの更新頻度と版管理</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- 記事ヘッダー -->
+            <header class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-xs font-bold px-3 py-1 rounded-full">実務ガイド</span>
+                    <time class="text-slate-400 text-sm flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> 2026.03.09
+                    </time>
+                </div>
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
+                    SBOMの更新頻度と版管理<br/>
+                    <span class="text-2xl md:text-3xl text-slate-300 font-medium">（リリース/修正/部品変更で迷わない）</span>
+                </h1>
+                
+                <!-- 導入文 -->
+                <div class="text-lg text-slate-300 leading-relaxed p-6 bg-navy-800/50 rounded-2xl border border-white/5 space-y-4">
+                    <p>SBOMは「作ったら終わり」ではありません。</p>
+                    
+                    <p>現場で本当に効いてくるのは、<strong>「いつ更新するか」</strong>と<strong>「どの版が最新版か」</strong>を説明できることです。<br>
+                    実際、OEM照会や監査で詰まりやすいのは次のような場面です。</p>
+                    
+                    <ul class="m-0 list-disc list-inside">
+                        <li>CVE照会が来たが、どの製品版のSBOMを見ればいいか分からない</li>
+                        <li>提出したSBOMと社内で持っているSBOMが食い違っている</li>
+                        <li>修正版を出したのに、SBOMの更新が追いついていない</li>
+                        <li>部品変更はしたが、製品版数は変えておらず、どこに反映されたか説明できない</li>
+                    </ul>
+                    
+                    <p>つまりSBOM運用の本質は、一覧表を作ること ではなく、<strong>変化を追い続けること</strong>です。</p>
+                </div>
+            </header>
+
+            <!-- 記事本文 -->
+            <div class="glass-card p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl bg-navy-900/80 mb-16">
+                <div class="prose prose-invert prose-slate prose-lg max-w-none">
+                    
+                    <!-- 内部リンク①：全体像 -->
+                    <div class="related-box mt-0 border-l-brand">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="map" class="w-4 h-4"></i> 導入（全体像の補足）</div>
+                        <p class="text-sm text-slate-300 mb-2">SBOMの基本から、提出版/社内版の切り分け、SPDX/CycloneDXなどツール連携を含めた運用全体像を先に押さえたい方はこちらをご覧ください。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/sbom-complete-guide/" class="!text-brand-light hover:!text-brand">SBOM完全ガイド（SPDX/CycloneDX/Excel運用・提出と機密の現実解）</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>まず結論：更新トリガーは「3つ」に絞る</h2>
+                    <p>SBOM運用が止まる原因は、更新ルールを細かくしすぎることです。<br>
+                    最初は、次の3つだけを更新トリガーにすると回りやすくなります。</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-6">
+                        <div class="bg-navy-800 p-5 rounded-xl border-t-4 border-t-emerald-500 shadow-lg">
+                            <h4 class="text-emerald-400 font-bold mt-0 mb-2 flex items-center gap-2">
+                                <i data-lucide="package" class="w-5 h-5"></i> リリース
+                            </h4>
+                            <p class="text-sm text-slate-300 m-0">製品版数が変わる時。最も基本の更新タイミングです。</p>
+                        </div>
+                        <div class="bg-navy-800 p-5 rounded-xl border-t-4 border-t-blue-400 shadow-lg">
+                            <h4 class="text-blue-400 font-bold mt-0 mb-2 flex items-center gap-2">
+                                <i data-lucide="wrench" class="w-5 h-5"></i> 修正
+                            </h4>
+                            <p class="text-sm text-slate-300 m-0">バグ修正、セキュリティパッチ、設定変更、恒久対策の反映時。</p>
+                        </div>
+                        <div class="bg-navy-800 p-5 rounded-xl border-t-4 border-t-purple-400 shadow-lg">
+                            <h4 class="text-purple-400 font-bold mt-0 mb-2 flex items-center gap-2">
+                                <i data-lucide="git-merge" class="w-5 h-5"></i> 部品変更
+                            </h4>
+                            <p class="text-sm text-slate-300 m-0">OSS/商用部品/自社モジュールの版数や供給元が変わる時。</p>
+                        </div>
+                    </div>
+                    
+                    <p class="text-center font-bold text-slate-200">この3つに反応できれば、最低限のSBOM運用は成立します。</p>
+
+                    <h2 class="mt-12">リリース時に更新する理由</h2>
+                    <p>リリースは、SBOM更新の最も分かりやすい起点です。<br>
+                    理由は単純で、<strong>製品版数が変わる＝説明責任の単位が変わるから</strong>です。</p>
+                    
+                    <p>たとえば OEM から<br>
+                    <span class="bg-white/10 px-3 py-1 rounded inline-block my-2">「v2.3.1 はこのCVEの影響を受けますか？」</span><br>
+                    と聞かれた時、必要なのは <strong>“v2.3.1 のSBOM”</strong> です。</p>
+                    
+                    <p>最新版だけを上書き保存していると、過去版数の構成が追えず、毎回ゼロから調査することになります。<br>
+                    このため、リリース時は必ず</p>
+                    
+                    <ul class="font-medium text-emerald-400 bg-emerald-500/10 p-4 rounded-lg border border-emerald-500/20">
+                        <li>製品版数</li>
+                        <li>SBOMスナップショット</li>
+                        <li>更新日</li>
+                        <li>更新者</li>
+                    </ul>
+                    <p>をセットで残すのが基本です。</p>
+
+                    <h2>修正時に更新する理由</h2>
+                    <p>修正は「製品版数が変わらないのに、SBOMが変わる」ことがあるため厄介です。<br>
+                    たとえば次のようなケースです。</p>
+                    
+                    <ul class="space-y-1 text-slate-300">
+                        <li>セキュリティパッチを当てた</li>
+                        <li>ライブラリだけ差し替えた</li>
+                        <li>設定変更で機能を無効化した</li>
+                        <li>バックポートを入れた</li>
+                    </ul>
+                    
+                    <p>この時、製品側の表向きの版数は変わっていなくても、<strong>実質的には構成が変わっている</strong> ことがあります。<br>
+                    ここをSBOMに残さないと、「うちのv2.3.1は対策済み」を説明できません。</p>
+                    
+                    <p>実務では、製品版数を変えない場合でも<br>
+                    <strong>SBOMスナップショットID ／ 内部リビジョン ／ 修正チケットID</strong><br>
+                    などで差分を追えるようにしておくと強いです。</p>
+
+                    <h2>部品変更時に更新する理由</h2>
+                    <p>部品変更は、意外と見落とされやすい更新トリガーです。しかも自社変更でなくても起きます。</p>
+                    
+                    <div class="bg-navy-800 p-4 rounded-lg border-l-4 border-l-purple-500 my-4">
+                        <strong class="text-slate-200 block mb-2">例：</strong>
+                        <ul class="text-sm m-0 text-slate-300 space-y-1">
+                            <li>ベンダー提供ライブラリの更新</li>
+                            <li>BSP/SDK差し替え</li>
+                            <li>商用ミドルウェアの版上げ</li>
+                            <li>OSS依存の更新</li>
+                            <li>供給元変更</li>
+                        </ul>
+                    </div>
+                    
+                    <p>この場合、製品版数が変わっていなくても、脆弱性照会の前提が変わるため、SBOMの更新対象です。<br>
+                    特に供給元変更は、後から問い合わせ先や影響範囲の説明に効いてきます。</p>
+
+                    <h2 class="border-b-2 border-emerald-500 pb-2 mt-12 mb-6">版管理は「3層」で持つと分かりやすい</h2>
+                    <p>SBOMの版管理が崩れる理由は、1つの番号に全部を押し込めようとすることです。<br>
+                    おすすめは、次の3層に分けるやり方です。</p>
+
+                    <div class="space-y-4 my-6">
+                        <div class="bg-navy-900/80 p-4 rounded border border-white/10 flex flex-col md:flex-row md:items-center gap-4">
+                            <div class="md:w-1/3">
+                                <strong class="text-brand-light flex items-center gap-2"><i data-lucide="tag" class="w-4 h-4"></i> 1. 製品版数</strong>
+                            </div>
+                            <div class="md:w-2/3">
+                                <p class="text-sm text-slate-300 m-0">ユーザーやOEMに見せる製品の版数<br><span class="text-slate-400 font-mono">例：v2.3.1</span></p>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-navy-900/80 p-4 rounded border border-white/10 flex flex-col md:flex-row md:items-center gap-4">
+                            <div class="md:w-1/3">
+                                <strong class="text-emerald-400 flex items-center gap-2"><i data-lucide="camera" class="w-4 h-4"></i> 2. SBOMスナップショットID</strong>
+                            </div>
+                            <div class="md:w-2/3">
+                                <p class="text-sm text-slate-300 m-0">その製品版数に対応するSBOMの確定版（社内正本）<br><span class="text-slate-400 font-mono">例：SBOM-ProductA-v2.3.1-20260929</span></p>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-navy-900/80 p-4 rounded border border-white/10 flex flex-col md:flex-row md:items-center gap-4">
+                            <div class="md:w-1/3">
+                                <strong class="text-purple-400 flex items-center gap-2"><i data-lucide="file-output" class="w-4 h-4"></i> 3. 提出版ID</strong>
+                            </div>
+                            <div class="md:w-2/3">
+                                <p class="text-sm text-slate-300 m-0">提出先向けに抜粋・マスキングした提出物の識別子<br><span class="text-slate-400 font-mono">例：DELIVERY-SBOM-OEMX-v2.3.1-20260929</span></p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <p class="font-bold text-center">こう分けておくと、<strong>「社内正本」「提出版」「過去版の履歴」</strong>が混ざらず、監査で説明しやすくなります。</p>
+
+                    <!-- 内部リンク②：ルール雛形 -->
+                    <div class="related-box border-l-emerald-500 my-8">
+                        <div class="text-sm font-bold text-emerald-400 mb-2 flex items-center gap-2"><i data-lucide="file-check" class="w-4 h-4"></i> 社内ルールの型へ</div>
+                        <p class="text-sm text-slate-300 mb-2">この3層管理を実際の社内ルール（運用ポリシー）に落とし込むためのテンプレはこちらをご活用ください。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/sbom-update-versioning-rules-template/" class="!text-emerald-400 hover:!text-emerald-300">SBOM更新・版管理ルール設計（テンプレ）｜3つの用途パターン</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>兼務でも破綻しない運用手順（5ステップ）</h2>
+
+                    <div class="step-box">
+                        <div class="step-number">Step 1</div>
+                        <h4 class="text-white font-bold mt-0 mb-2">正本を1つに決める</h4>
+                        <p class="text-sm text-slate-300 m-0">Excelでもよいので、「これが正本」という1ファイル/1台帳を決めます。複数人が別々に持つと、どれが正しいか分からなくなります。</p>
+                    </div>
+
+                    <div class="step-box">
+                        <div class="step-number">Step 2</div>
+                        <h4 class="text-white font-bold mt-0 mb-2">更新トリガーを3つに固定する</h4>
+                        <p class="text-sm text-slate-300 m-0"><strong>リリース ／ 修正 ／ 部品変更</strong><br>この3つ以外では原則更新しない、と決めるだけでも運用が軽くなります。</p>
+                    </div>
+
+                    <div class="step-box">
+                        <div class="step-number">Step 3</div>
+                        <h4 class="text-white font-bold mt-0 mb-2">更新時に残す項目を固定する</h4>
+                        <p class="text-sm text-slate-300 m-0">最低限残すべき項目：対象製品 ／ 対象版数 ／ 変更理由（リリース/修正/部品変更）／ 更新日 ／ 更新者 ／ 証跡（チケット/承認/構成表など）</p>
+                    </div>
+
+                    <div class="step-box">
+                        <div class="step-number">Step 4</div>
+                        <h4 class="text-white font-bold mt-0 mb-2">提出版は正本から切り出す</h4>
+                        <p class="text-sm text-slate-300 m-0">提出用に正本を書き換えないこと。社内正本から必要範囲を抜き出して提出版を作ると、矛盾が減ります。</p>
+                    </div>
+
+                    <div class="step-box">
+                        <div class="step-number">Step 5</div>
+                        <h4 class="text-white font-bold mt-0 mb-2">月1回だけ棚卸しする</h4>
+                        <p class="text-sm text-slate-300 m-0">毎週の細かい見直しより、まずは月1回<strong>「更新漏れがないか」「提出版と正本がずれていないか」「古い版数が追えるか」</strong>を確認するだけで十分です。</p>
+                    </div>
+
+                    <h2 class="border-b-2 border-emerald-500 pb-2 mt-12 mb-6">そのまま使える：更新ログの最小テンプレ（TSV）</h2>
+                    <p>以下の列をSBOM管理の別シート（更新履歴タブなど）に1枚追加するだけでも、運用がかなり安定します。<br>
+                    下の枠内をコピーして、ExcelのA1セルに貼り付けてください。</p>
+
+                    <!-- TSV Template Container -->
+                    <div class="template-container">
+                        <div class="template-header">
+                            <span class="text-sm font-bold text-emerald-400 flex items-center gap-2">
+                                <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> sbom_update_log.tsv
+                            </span>
+                            <button onclick="copyToClipboard('tsv-content', this)" class="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 rounded text-xs font-bold transition-colors">
+                                <i data-lucide="copy" class="w-3.5 h-3.5"></i> コピーする
+                            </button>
+                        </div>
+                        <div class="template-content" id="tsv-content">更新日	製品名	製品版数	SBOMスナップショットID	変更区分（リリース/修正/部品変更）	変更内容	更新者	証跡ID	提出版作成有無	備考
+2026-04-15	メーターパネル	v2.3.1	SBOM-Meter-v2.3.1-20260415	リリース	初期リリース版作成	山田	REL-001	作成済	OEM提出版(DELIVERY-001)を生成
+2026-05-20	メーターパネル	v2.3.1	SBOM-Meter-v2.3.1-20260520	部品変更	OpenSSLを3.0.13へ更新	佐藤	CHG-088	作成済	CVE-2026-XXXX対応による版上げ</div>
+                    </div>
+
+                    <p class="font-bold mt-4">このログがあると、「いつ変わったか」「なぜ変わったか」「どのSBOMを見ればいいか」がすぐ追えます。</p>
+
+                    <!-- 途中CTA（主CTA） -->
+                    <div class="bg-navy-800/50 p-6 md:p-8 rounded-2xl border border-emerald-500/30 text-center my-10 shadow-[0_0_20px_rgba(16,185,129,0.15)]">
+                        <p class="text-slate-200 mb-6 font-medium text-lg">SBOM整備・提出運用をどこから始めるか（更新体制やツール選定など）整理したい方はご相談ください。</p>
+                        <a href="/demo_form.html" class="inline-flex items-center gap-2 px-8 py-3.5 bg-brand hover:bg-brand-dark !text-white rounded-full font-bold transition-all hover:-translate-y-1 shadow-lg shadow-brand/20">
+                            <i data-lucide="calendar" class="w-5 h-5"></i> 【無料】オンライン相談を予約する
+                        </a>
+                    </div>
+
+                    <h2>よくあるNG例（更新運用が崩れるパターン）</h2>
+                    <ul class="space-y-4 my-6 list-none pl-0">
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>NG1：最新版だけ上書き保存</strong><br><span class="text-sm text-slate-400">過去版数の説明ができず、照会時に毎回調査し直すことになります。</span></div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>NG2：製品版数は同じだから更新しない</strong><br><span class="text-sm text-slate-400">修正や部品変更が反映されず、「対策済み」や「供給元変更」が説明できません。</span></div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>NG3：提出版を正本として扱う</strong><br><span class="text-sm text-slate-400">マスキングや抜粋が混ざり、社内正本と提出版で矛盾が出ます。</span></div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>NG4：変更理由が残っていない</strong><br><span class="text-sm text-slate-400">監査で「なぜこの版が変わったのか」が説明できません。</span></div></li>
+                    </ul>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2>FAQ：SBOMの更新・版管理について</h2>
+                    <div class="space-y-6 mt-6">
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q1. SBOMはどのタイミングで更新すべきですか？</strong>
+                            <p class="m-0 text-slate-300">最低限、リリース・修正・部品変更 の3つです。これだけ固定すれば、最小の運用は回せます。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q2. 製品版数が変わらない修正でもSBOM更新は必要ですか？</strong>
+                            <p class="m-0 text-slate-300">必要です。特にセキュリティパッチやライブラリ差し替えは、構成が変わるためSBOM更新対象です。内部リビジョンやスナップショットIDで差分を管理します。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q3. 提出版と社内版は分けるべきですか？</strong>
+                            <p class="m-0 text-slate-300">はい。正本（社内版）と提出版を分けると、監査や照会で「どの版を誰に出したか」を説明しやすくなり、機密情報漏洩のリスクも減ります。</p>
+                        </div>
+                    </div>
+
+                    <!-- 内部リンク③：次に読む -->
+                    <div class="related-box border-l-brand mt-12">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="book-open" class="w-4 h-4"></i> 次に読む</div>
+                        <p class="text-sm text-slate-300 mb-2">SBOMの定義・目的から改めて復習したい方はこちらをご覧ください。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/what-is-sbom/" class="!text-brand-light hover:!text-brand">SBOMとは？提出物ではなく運用資産として理解する</a></li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- CTA Section (副CTA) -->
+            <div class="glass-card rounded-3xl p-8 md:p-12 text-center border-t-4 border-t-emerald-500 bg-navy-800/80 shadow-[0_0_40px_-10px_rgba(16,185,129,0.2)]">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">版管理と履歴追跡をシステムで自動化しませんか？</h2>
+                <p class="text-slate-300 mb-8 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+                    <strong>Auto PSIRT Cloud</strong>なら、製品バージョンとSBOMの紐づけがシステム上で管理され、過去のスナップショットや変更履歴も一元的に追跡できます。
+                </p>
+                <div class="flex justify-center">
+                    <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-navy-900 bg-white hover:bg-slate-200 transition-all duration-300 shadow-xl shadow-white/10 w-full sm:w-auto hover:-translate-y-1">
+                        <i data-lucide="monitor-play" class="w-5 h-5 text-emerald-600"></i>
+                        SBOM登録から突合・管理までの流れを見る
+                    </a>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/5 text-center text-sm text-slate-500 mt-auto bg-navy-900/80">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span class="font-bold text-slate-400">Auto PSIRT Cloud</span>
+            </div>
+            <p>&copy; 2026 Unimobilities株式会社. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Copy to clipboard function for TSV template
+        function copyToClipboard(contentId, button) {
+            const content = document.getElementById(contentId).textContent;
+            
+            const textarea = document.createElement('textarea');
+            textarea.value = content;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            
+            try {
+                document.execCommand('copy');
+                const originalHtml = button.innerHTML;
+                button.innerHTML = '<i data-lucide="check" class="w-3.5 h-3.5"></i> コピーしました';
+                button.classList.remove('bg-emerald-500/20', 'text-emerald-300');
+                button.classList.add('bg-brand/20', 'text-brand-light');
+                lucide.createIcons();
+                
+                setTimeout(() => {
+                    button.innerHTML = originalHtml;
+                    button.classList.remove('bg-brand/20', 'text-brand-light');
+                    button.classList.add('bg-emerald-500/20', 'text-emerald-300');
+                    lucide.createIcons();
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy', err);
+            } finally {
+                document.body.removeChild(textarea);
+            }
+        }
+    </script>
+</body>
+</html>
