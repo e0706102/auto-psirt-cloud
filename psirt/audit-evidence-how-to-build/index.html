@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEOメタタグ -->
+    <title>監査で求められるエビデンス一覧（提出物の作り方）｜OEM監査で差し戻されない型 | Auto PSIRT Cloud</title>
+    <meta name="description" content="OEM監査で求められるエビデンス（証跡）は、量よりも「何の主張を、どの文書で、どの版で証明するか」が重要です。提出物の作り方を、兼務でも破綻しない手順、証跡一覧、命名ルール、差し戻しを防ぐチェックポイントまで実務目線で解説します。">
+    <meta name="keywords" content="監査で求められるエビデンス一覧, OEM調査依頼, 証跡, SLA, PSIRT, 監査対応">
+    <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/psirt/audit-evidence-how-to-build/">
+    
+    <!-- OGPタグ (SNSシェア用) -->
+    <meta property="og:title" content="監査で求められるエビデンス一覧（提出物の作り方）｜OEM監査で差し戻されない型">
+    <meta property="og:description" content="OEM監査で求められるエビデンスの作り方を手順化。量より「紐づけ」で勝負する実務の型を公開。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/psirt/audit-evidence-how-to-build/">
+    <meta property="og:site_name" content="Auto PSIRT Cloud">
+
+    <!-- ファビコン -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%2314b8a6%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z%22/><path d=%22m9 12 2 2 4-4%22/></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0a0f1c',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        brand: {
+                            light: '#60a5fa',
+                            DEFAULT: '#3b82f6',
+                            dark: '#2563eb',
+                        },
+                        accent: {
+                            DEFAULT: '#06b6d4',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #14b8a6, #3b82f6); /* Teal to Blue */
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* 記事用カスタムスタイル */
+        .prose h2 {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-top: 3.5rem;
+            color: #f8fafc;
+        }
+        .prose h3 {
+            color: #e2e8f0;
+            margin-top: 2.5rem;
+            border-left: 3px solid #14b8a6; /* Teal系アクセント */
+            padding-left: 0.75rem;
+            font-size: 1.25rem;
+        }
+        .prose a {
+            color: #2dd4bf; /* teal-400 */
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .prose a:hover {
+            border-bottom-color: #2dd4bf;
+        }
+        .prose strong {
+            color: #f8fafc;
+            background: linear-gradient(transparent 60%, rgba(20, 184, 166, 0.3) 40%);
+        }
+        .related-box {
+            background: rgba(30, 41, 59, 0.6);
+            border-left: 4px solid #14b8a6;
+            padding: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 2rem 0;
+        }
+        
+        .step-box {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(20, 184, 166, 0.3);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            position: relative;
+        }
+        .step-number {
+            position: absolute;
+            top: -1rem;
+            left: 1.5rem;
+            background: #14b8a6;
+            color: white;
+            font-weight: bold;
+            font-size: 0.875rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            border: 4px solid #0a0f1c;
+        }
+
+        .template-box {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(20, 184, 166, 0.4);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.2);
+        }
+        .template-header {
+            color: #2dd4bf;
+            font-weight: bold;
+            margin-top: 0;
+            margin-bottom: 1rem;
+            border-bottom: 1px dashed rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .template-content {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-size: 0.875rem;
+            line-height: 1.6;
+            color: #cbd5e1;
+            white-space: pre;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-teal-500 selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-brand/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-teal-500/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-accent flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="/news.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        ニュース一覧へ戻る
+                    </a>
+                    <a href="/demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                        相談 or デモ予約
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <article class="max-w-4xl mx-auto">
+            
+            <!-- パンくずリスト -->
+            <nav class="flex text-sm text-slate-400 mb-8" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/index.html" class="hover:text-white transition-colors">ホーム</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <a href="/news.html" class="hover:text-white transition-colors">ニュース・インサイト</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <span class="text-slate-500 truncate max-w-[200px] sm:max-w-none">エビデンスの作り方</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- 記事ヘッダー -->
+            <header class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-teal-500/20 border border-teal-500/30 text-teal-400 text-xs font-bold px-3 py-1 rounded-full">実務ガイド</span>
+                    <time class="text-slate-400 text-sm flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> 2026.03.09
+                    </time>
+                </div>
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
+                    監査で求められるエビデンス一覧<br/>
+                    <span class="text-2xl md:text-3xl text-slate-300 font-medium">（提出物の作り方と差し戻されない型）</span>
+                </h1>
+                
+                <!-- 導入文 -->
+                <div class="text-lg text-slate-300 leading-relaxed p-6 bg-navy-800/50 rounded-2xl border border-white/5 space-y-4">
+                    <p>OEM監査で一番困るのは、「何を出せば合格に近づくかが分からない」ことです。</p>
+                    
+                    <p>現場で起きがちな失敗はだいたい次の通りです。</p>
+                    <ul class="m-0 list-disc list-inside">
+                        <li>とりあえず資料を大量に集めるが、何の証明になっているか分からない</li>
+                        <li>文書はあるが、対象版数や改訂日が曖昧で差し戻される</li>
+                        <li>口頭運用は回っているのに、証跡として残っていない</li>
+                        <li>担当者しか場所を知らず、提出直前に探し物が始まる</li>
+                        <li>監査で求められた提出物の“粒度”と、こちらの資料の粒度が合わない</li>
+                    </ul>
+                    
+                    <p>結論から言うと、監査エビデンスは <strong>「量」ではなく「紐づけ」</strong> です。<br>
+                    相手が見たいのは、大量のPDFではなく、<br>
+                    <strong>「どの要求に対して」「どの文書で」「どの版数・時点を」「どう証明するか」</strong>が一目で分かることです。</p>
+                </div>
+            </header>
+
+            <!-- 記事本文 -->
+            <div class="glass-card p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl bg-navy-900/80 mb-16">
+                <div class="prose prose-invert prose-slate prose-lg max-w-none">
+                    
+                    <!-- 内部リンク①：前提解説 -->
+                    <div class="related-box mt-0 border-l-brand">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="map" class="w-4 h-4"></i> 導入（全体フローの確認）</div>
+                        <p class="text-sm text-slate-300 mb-2">エビデンス（証跡）作成を含む、OEM調査依頼・監査対応の全体的な流れはこちらをご覧ください。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/audit-investigation-response-guide/" class="!text-brand-light hover:!text-brand">OEM調査依頼・監査対応 完全ガイド</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>先に結論：監査エビデンスは「5分類」で整理すると崩れない</h2>
+                    <p>まず、エビデンスを種類で分けます。<br>最初から文書名で考えると迷うので、<strong>「何を証明するか」</strong>で分類します。</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
+                        <div class="bg-navy-800 p-5 rounded-xl border-l-4 border-l-blue-400">
+                            <h4 class="text-blue-400 font-bold mt-0 mb-2">1. 体制を示すエビデンス</h4>
+                            <ul class="text-sm m-0 text-slate-300 space-y-1">
+                                <li>役割分担表</li>
+                                <li>窓口情報</li>
+                                <li>承認ルール</li>
+                                <li>エスカレーションフロー</li>
+                            </ul>
+                        </div>
+                        <div class="bg-navy-800 p-5 rounded-xl border-l-4 border-l-emerald-400">
+                            <h4 class="text-emerald-400 font-bold mt-0 mb-2">2. 運用を示すエビデンス</h4>
+                            <ul class="text-sm m-0 text-slate-300 space-y-1">
+                                <li>チケット/案件台帳</li>
+                                <li>一次回答履歴</li>
+                                <li>次回更新日を含む進捗管理</li>
+                                <li>定例会議の議事メモ</li>
+                            </ul>
+                        </div>
+                        <div class="bg-navy-800 p-5 rounded-xl border-l-4 border-l-orange-400">
+                            <h4 class="text-orange-400 font-bold mt-0 mb-2">3. 技術的根拠を示すエビデンス</h4>
+                            <ul class="text-sm m-0 text-slate-300 space-y-1">
+                                <li>SBOM/部品表</li>
+                                <li>構成表</li>
+                                <li>設定値</li>
+                                <li>仕様書 ／ 試験結果</li>
+                            </ul>
+                        </div>
+                        <div class="bg-navy-800 p-5 rounded-xl border-l-4 border-l-purple-400">
+                            <h4 class="text-purple-400 font-bold mt-0 mb-2">4. 対外対応を示すエビデンス</h4>
+                            <ul class="text-sm m-0 text-slate-300 space-y-1">
+                                <li>OEM回答書</li>
+                                <li>提出履歴</li>
+                                <li>差し戻し対応履歴</li>
+                                <li>是正計画（必要時）</li>
+                            </ul>
+                        </div>
+                        <div class="bg-navy-800 p-5 rounded-xl border-l-4 border-l-teal-400 md:col-span-2">
+                            <h4 class="text-teal-400 font-bold mt-0 mb-2">5. 更新・配布を示すエビデンス</h4>
+                            <ul class="text-sm m-0 text-slate-300 space-y-1">
+                                <li>リリースノート ／ 更新履歴</li>
+                                <li>配布手順 ／ 完了確認ログ</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <p class="text-center font-bold text-slate-200">この5分類で揃えると、監査で「何の証明か」が説明しやすくなります。</p>
+
+                    <h2>監査でよく求められる提出物一覧（最小セット）</h2>
+                    <p>すべての監査で同じではありませんが、サプライヤー実務で頻出なのは次のようなものです。</p>
+
+                    <div class="space-y-4 my-8">
+                        <details class="group bg-navy-800/80 rounded-lg open:bg-navy-800">
+                            <summary class="flex cursor-pointer items-center justify-between p-4 font-bold text-white">
+                                体制・運用系
+                                <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 transition-transform group-open:rotate-180"></i>
+                            </summary>
+                            <div class="px-4 pb-4">
+                                <ul class="text-sm text-slate-300 m-0 space-y-2">
+                                    <li>PSIRT窓口/連絡先</li>
+                                    <li>役割分担表（受付、技術評価、対外回答、承認）</li>
+                                    <li>SLAや期限運用のルール</li>
+                                    <li>調査依頼の社内エスカレーション手順</li>
+                                    <li>監査/照会の案件管理台帳</li>
+                                </ul>
+                            </div>
+                        </details>
+                        
+                        <details class="group bg-navy-800/80 rounded-lg open:bg-navy-800">
+                            <summary class="flex cursor-pointer items-center justify-between p-4 font-bold text-white">
+                                技術系
+                                <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 transition-transform group-open:rotate-180"></i>
+                            </summary>
+                            <div class="px-4 pb-4">
+                                <ul class="text-sm text-slate-300 m-0 space-y-2">
+                                    <li>対象製品の版数一覧</li>
+                                    <li>SBOMまたは簡易部品表</li>
+                                    <li>構成図/IF一覧</li>
+                                    <li>設定値や機能有効・無効の根拠</li>
+                                    <li>試験結果、確認メモ、検証ログ</li>
+                                </ul>
+                            </div>
+                        </details>
+
+                        <details class="group bg-navy-800/80 rounded-lg open:bg-navy-800">
+                            <summary class="flex cursor-pointer items-center justify-between p-4 font-bold text-white">
+                                対外対応系
+                                <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 transition-transform group-open:rotate-180"></i>
+                            </summary>
+                            <div class="px-4 pb-4">
+                                <ul class="text-sm text-slate-300 m-0 space-y-2">
+                                    <li>OEM/顧客向け回答書</li>
+                                    <li>影響あり/なしの判断根拠</li>
+                                    <li>調査中の中間回答（次回更新日付き）</li>
+                                    <li>是正計画や恒久対策の提出物</li>
+                                </ul>
+                            </div>
+                        </details>
+
+                        <details class="group bg-navy-800/80 rounded-lg open:bg-navy-800">
+                            <summary class="flex cursor-pointer items-center justify-between p-4 font-bold text-white">
+                                更新/配布系
+                                <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 transition-transform group-open:rotate-180"></i>
+                            </summary>
+                            <div class="px-4 pb-4">
+                                <ul class="text-sm text-slate-300 m-0 space-y-2">
+                                    <li>修正版リリース計画</li>
+                                    <li>配布方式（工場/現地/OTA）</li>
+                                    <li>更新完了の確認方法</li>
+                                    <li>更新履歴</li>
+                                </ul>
+                            </div>
+                        </details>
+                    </div>
+
+                    <p class="text-brand-light font-bold text-center">この一覧を見て分かる通り、監査は「セキュリティツールのスクリーンショット」を見たいわけではありません。<br>運用が本当に回っていることを証明する材料が必要です。</p>
+
+                    <h2 class="border-b-2 border-teal-500 pb-2 mt-12 mb-8">手順：提出物を作る時の進め方（5ステップ）</h2>
+                    <p>ここからは“やり方”です。兼務でも破綻しないよう、最小の順番で整理します。</p>
+
+                    <div class="step-box pt-8">
+                        <div class="step-number">Step 1</div>
+                        <h4 class="text-white font-bold mt-0 mb-2">監査要求を“証明すべき主張”に分解する</h4>
+                        <p class="text-sm text-slate-300 mb-3">まず、監査項目をそのまま受け取らず、次のように翻訳します。</p>
+                        <div class="bg-navy-900/80 p-4 rounded border border-white/5 space-y-3">
+                            <div class="flex items-center gap-4">
+                                <div class="w-1/2 text-sm text-slate-200">「脆弱性対応ができるか」</div>
+                                <div class="w-1/2 text-sm text-teal-400 font-medium">→ 窓口、台帳、期限、回答例、証跡が必要</div>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <div class="w-1/2 text-sm text-slate-200">「構成を把握しているか」</div>
+                                <div class="w-1/2 text-sm text-teal-400 font-medium">→ 製品版数、SBOM、構成表が必要</div>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <div class="w-1/2 text-sm text-slate-200">「更新を管理できるか」</div>
+                                <div class="w-1/2 text-sm text-teal-400 font-medium">→ 更新手順、配布記録、完了確認が必要</div>
+                            </div>
+                        </div>
+                        <p class="text-sm text-slate-300 mt-3 m-0 font-bold">つまり、監査要求 → 証明したい主張 → 必要文書 に変換します。</p>
+                    </div>
+
+                    <div class="step-box pt-8">
+                        <div class="step-number">Step 2</div>
+                        <h4 class="text-white font-bold mt-0 mb-2">エビデンス一覧表を先に作る</h4>
+                        <p class="text-sm text-slate-300 mb-2">いきなりファイルを集めないこと。先に “一覧表” を作ると、足りないものが見えます。</p>
+                        <ul class="text-sm m-0 text-slate-300 space-y-1 list-none pl-4 bg-navy-900/50 p-3 rounded">
+                            <li>・監査項目</li>
+                            <li>・証明したい主張</li>
+                            <li>・文書名</li>
+                            <li>・文書ID/保存場所</li>
+                            <li>・版数/改訂日</li>
+                            <li>・所有者（誰の管理か）</li>
+                            <li>・提出可否（社内のみ/提出可）</li>
+                            <li>・備考（どこを見せるか）</li>
+                        </ul>
+                    </div>
+
+                    <!-- 内部リンク②：関連セクション -->
+                    <div class="related-box my-4">
+                        <div class="text-sm font-bold text-teal-400 mb-2 flex items-center gap-2"><i data-lucide="check-square" class="w-4 h-4"></i> 監査証跡のチェック</div>
+                        <p class="text-sm text-slate-300 m-0">PSIRTの立ち上げ時に、あらかじめこれらの証跡を想定した「型」を作っておくためのリストはこちらをご参照ください。<br>
+                        <a href="#" class="!text-teal-400 hover:!text-teal-300 font-bold mt-1 inline-block">監査証跡チェックリスト（作成中）</a></p>
+                    </div>
+
+                    <div class="step-box pt-8">
+                        <div class="step-number">Step 3</div>
+                        <h4 class="text-white font-bold mt-0 mb-2">提出版と社内版を分ける</h4>
+                        <p class="text-sm text-slate-300 mb-3">ここが非常に重要です。監査で使う証跡は、すべてをそのまま出す必要はありません。</p>
+                        <ul class="text-sm m-0 text-slate-300 space-y-2">
+                            <li><strong>社内版（正本）：</strong> 詳細情報、設定値、内部コメントまで含む</li>
+                            <li><strong>提出版：</strong> 必要範囲だけ抜粋した版</li>
+                            <li><strong>参照版：</strong> 存在は示すが、現物は監査当日に提示する版</li>
+                        </ul>
+                        <p class="text-sm text-red-400 font-bold mt-3 m-0">この切り分けがないと、出しすぎるか、逆に何も出せなくなります。</p>
+                    </div>
+
+                    <div class="step-box pt-8">
+                        <div class="step-number">Step 4</div>
+                        <h4 class="text-white font-bold mt-0 mb-2">提出物に「版数」と「時点」を付ける</h4>
+                        <p class="text-sm text-slate-300 mb-2">監査で差し戻される最大要因の1つが、どの時点の文書なのか分からないことです。最低限、各提出物には次を入れます。</p>
+                        <ul class="text-sm m-0 text-slate-300 space-y-1 list-none pl-4">
+                            <li>・版数（v1.0 等）</li>
+                            <li>・改訂日</li>
+                            <li>・対象製品/対象版数</li>
+                            <li>・作成者/承認者</li>
+                        </ul>
+                        <p class="text-sm text-slate-200 mt-2 m-0 bg-white/5 p-2 rounded">“最新版です”という説明だけでは弱いです。<strong>いつ、誰が、どの製品版に対して作ったか</strong> が必要です。</p>
+                    </div>
+
+                    <div class="step-box pt-8">
+                        <div class="step-number">Step 5</div>
+                        <h4 class="text-white font-bold mt-0 mb-2">提出前に“ストーリー”として読めるか確認する</h4>
+                        <p class="text-sm text-slate-300 mb-3">最後に重要なのが、提出物同士がつながっているかです。</p>
+                        <div class="bg-navy-900/80 p-4 rounded border border-white/5 space-y-2 font-medium">
+                            <div class="flex items-center gap-2"><i data-lucide="arrow-right" class="w-4 h-4 text-teal-400"></i> <span class="text-slate-200 text-sm">台帳に案件IDがある</span></div>
+                            <div class="flex items-center gap-2"><i data-lucide="arrow-right" class="w-4 h-4 text-teal-400"></i> <span class="text-slate-200 text-sm">OEM回答書にその案件IDがある</span></div>
+                            <div class="flex items-center gap-2"><i data-lucide="arrow-right" class="w-4 h-4 text-teal-400"></i> <span class="text-slate-200 text-sm">判断根拠としてSBOM/設定/試験結果のIDがある</span></div>
+                            <div class="flex items-center gap-2"><i data-lucide="arrow-right" class="w-4 h-4 text-teal-400"></i> <span class="text-slate-200 text-sm">更新対策の文書に同じ案件IDがある</span></div>
+                        </div>
+                        <p class="text-sm text-brand-light mt-3 m-0 font-bold">この一本の線があると、監査側から見て “運用が本当に回っている” と伝わります。</p>
+                    </div>
+
+                    <h2>そのまま使える：エビデンス一覧テンプレ（TSV）</h2>
+                    <p>以下は、そのままExcelやスプレッドシートへ貼れる形の雛形です。（タブ区切りになっています）</p>
+
+                    <div class="template-box">
+                        <div class="template-header">
+                            <span class="text-sm flex items-center gap-2">
+                                <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> audit_evidence_list.tsv
+                            </span>
+                            <button onclick="copyToClipboard('tsv-content', this)" class="flex items-center gap-1.5 px-3 py-1.5 bg-teal-500/20 hover:bg-teal-500/30 text-teal-300 rounded text-xs transition-colors">
+                                <i data-lucide="copy" class="w-3.5 h-3.5"></i> コピーする
+                            </button>
+                        </div>
+                        <div class="template-content" id="tsv-content">監査項目	証明したい主張	文書名	文書ID・保存場所	版数・改訂日	対象製品版数	所有者	提出可否	備考
+例：脆弱性対応体制	窓口と期限運用がある	PSIRT運用手順	SOP-001	v1.2 2026-09-01	共通	品質保証	提出可	SLA記載あり
+例：構成把握	対象版数の構成を把握している	SBOM	SBOM-123	v2.0 2026-09-10	v3.2.1	開発	要抜粋	行IDを回答書に参照
+例：影響判定	根拠付きで判断している	トリアージ記録	TRI-889	2026-09-11	v3.2.1	PSIRT	提出可	次回更新日あり</div>
+                    </div>
+
+                    <!-- 途中CTA（主CTA） -->
+                    <div class="bg-navy-800/50 p-6 md:p-8 rounded-2xl border border-teal-500/30 text-center my-10 shadow-[0_0_20px_rgba(20,184,166,0.15)]">
+                        <p class="text-slate-200 mb-6 font-medium text-lg">OEM調査依頼・監査対応の進め方を、自社の現状に合わせて整理したい方はご相談ください。</p>
+                        <a href="/demo_form.html" class="inline-flex items-center gap-2 px-8 py-3.5 bg-brand hover:bg-brand-dark !text-white rounded-full font-bold transition-all hover:-translate-y-1 shadow-lg shadow-brand/20">
+                            <i data-lucide="calendar" class="w-5 h-5"></i> 【無料】オンライン相談を予約する
+                        </a>
+                    </div>
+
+                    <h2>よくあるNG例（監査で刺されるポイント）</h2>
+                    <ul class="space-y-4 my-6 list-none pl-0">
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>ファイルを集めるだけで一覧表が無い</strong><br><span class="text-sm text-slate-400">→ 監査項目との対応が説明できない</span></div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>文書に版数/改訂日が無い</strong><br><span class="text-sm text-slate-400">→ “いつの情報か”が不明で差し戻される</span></div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>社内版と提出版が混ざる</strong><br><span class="text-sm text-slate-400">→ 情報を出しすぎる／逆に説明できなくなる</span></div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>案件IDでつながっていない</strong><br><span class="text-sm text-slate-400">→ 運用している証拠が一本の線にならない</span></div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>OTAや更新関連の証跡が抜ける</strong><br><span class="text-sm text-slate-400">→ 修正版をどう届けるか説明できない</span></div></li>
+                    </ul>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2>FAQ：監査エビデンスの作り方</h2>
+                    <div class="space-y-6 mt-6">
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q1. 監査で一番大事なエビデンスは何ですか？</strong>
+                            <p class="m-0 text-slate-300">単体で最重要な1枚というより、台帳・回答書・根拠資料・更新記録が「案件ID等でつながっていること」が重要です。監査は“運用の再現性”を見ています。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q2. 証跡は全部提出しないといけませんか？</strong>
+                            <p class="m-0 text-slate-300">いいえ。提出版と社内版を分け、必要な範囲だけ提出するのが現実的です。重要なのは、必要時に参照できる状態になっていることです。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q3. 版数や改訂日は本当に必要ですか？</strong>
+                            <p class="m-0 text-slate-300">必須です。監査で「どの時点の文書か」が曖昧だと、運用している証拠として弱くなります。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q4. OTAや更新関連の資料はなぜ必要ですか？</strong>
+                            <p class="m-0 text-slate-300">影響ありの案件では、最終的に「どう修正版を届けるか」が問われるためです。更新経路を説明できると、監査でもOEM照会でも強くなります。</p>
+                        </div>
+                    </div>
+
+                    <!-- 内部リンク③：次に読む -->
+                    <div class="related-box border-l-brand mt-12">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="book-open" class="w-4 h-4"></i> 次に読む</div>
+                        <p class="text-sm text-slate-300 mb-2">OTAなどの更新の仕組みについて、OEMから聞かれた場合の前提知識はこちらで確認できます。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="#" class="!text-brand-light hover:!text-brand">OTAとは（作成中）</a></li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- CTA Section -->
+            <div class="glass-card rounded-3xl p-8 md:p-12 text-center border-t-4 border-t-teal-500 bg-navy-800/80 shadow-[0_0_40px_-10px_rgba(20,184,166,0.2)]">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">「エビデンス集め」をシステムで自動化しませんか？</h2>
+                <p class="text-slate-300 mb-8 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+                    <strong>Auto PSIRT Cloud</strong>なら、案件のチケット化、影響判定の履歴、SBOMの参照先、OEM回答書の出力履歴がすべて1つのシステム上で紐づいて保存されます。監査の際に探し回る必要はありません。
+                </p>
+                <div class="flex justify-center">
+                    <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-navy-900 bg-white hover:bg-slate-200 transition-all duration-300 shadow-xl shadow-white/10 w-full sm:w-auto hover:-translate-y-1">
+                        <i data-lucide="monitor-play" class="w-5 h-5 text-teal-600"></i>
+                        OEM回答書作成フローをデモで確認する
+                    </a>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/5 text-center text-sm text-slate-500 mt-auto bg-navy-900/80">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span class="font-bold text-slate-400">Auto PSIRT Cloud</span>
+            </div>
+            <p>&copy; 2026 Unimobilities株式会社. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Copy to clipboard function for TSV template
+        function copyToClipboard(contentId, button) {
+            const content = document.getElementById(contentId).textContent;
+            
+            const textarea = document.createElement('textarea');
+            textarea.value = content;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            
+            try {
+                document.execCommand('copy');
+                const originalHtml = button.innerHTML;
+                button.innerHTML = '<i data-lucide="check" class="w-3.5 h-3.5"></i> コピーしました';
+                button.classList.remove('bg-teal-500/20', 'text-teal-300');
+                button.classList.add('bg-brand/20', 'text-brand-light');
+                lucide.createIcons();
+                
+                setTimeout(() => {
+                    button.innerHTML = originalHtml;
+                    button.classList.remove('bg-brand/20', 'text-brand-light');
+                    button.classList.add('bg-teal-500/20', 'text-teal-300');
+                    lucide.createIcons();
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy', err);
+            } finally {
+                document.body.removeChild(textarea);
+            }
+        }
+    </script>
+</body>
+</html>
