@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEOメタタグ -->
+    <title>PSIRTのKPIとSLA（OEM回答期限を守る管理術）｜兼務でも回る最小設計 | Auto PSIRT Cloud</title>
+    <meta name="description" content="PSIRTのKPIとSLAを、OEM回答期限を守るための最小構成で解説。兼務でも破綻しないように、受領確認・一次回答・最終回答のSLA、測るべきKPI、証跡の残し方、期限超過時の運用までをテンプレつきで整理します。">
+    <meta name="keywords" content="PSIRTのKPIとSLA, PSIRT, SLA, KPI, 期限管理, OEM調査依頼, 脆弱性管理">
+    <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/psirt/kpi-sla-management/">
+    
+    <!-- OGPタグ (SNSシェア用) -->
+    <meta property="og:title" content="PSIRTのKPIとSLA（OEM回答期限を守る管理術）｜兼務でも回る最小設計">
+    <meta property="og:description" content="兼務体制でも破綻しないPSIRTのSLA・KPI設計。OEM回答期限を守るための管理術をテンプレ付きで解説。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/psirt/kpi-sla-management/">
+    <meta property="og:site_name" content="Auto PSIRT Cloud">
+
+    <!-- ファビコン -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%233b82f6%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z%22/><path d=%22m9 12 2 2 4-4%22/></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0a0f1c',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        brand: {
+                            light: '#60a5fa',
+                            DEFAULT: '#3b82f6',
+                            dark: '#2563eb',
+                        },
+                        accent: {
+                            DEFAULT: '#06b6d4',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #60a5fa, #06b6d4); /* Blue to Cyan */
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* 記事用カスタムスタイル */
+        .prose h2 {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-top: 3.5rem;
+            color: #f8fafc;
+        }
+        .prose h3 {
+            color: #e2e8f0;
+            margin-top: 2.5rem;
+            border-left: 3px solid #3b82f6; /* Blue系アクセント */
+            padding-left: 0.75rem;
+            font-size: 1.25rem;
+        }
+        .prose a {
+            color: #60a5fa;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .prose a:hover {
+            border-bottom-color: #60a5fa;
+        }
+        .prose strong {
+            color: #f8fafc;
+            background: linear-gradient(transparent 60%, rgba(59, 130, 246, 0.3) 40%);
+        }
+        .related-box {
+            background: rgba(30, 41, 59, 0.6);
+            border-left: 4px solid #3b82f6;
+            padding: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 2rem 0;
+        }
+        .step-box {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            position: relative;
+        }
+        .step-number {
+            position: absolute;
+            top: -1rem;
+            left: 1.5rem;
+            background: #3b82f6;
+            color: white;
+            font-weight: bold;
+            font-size: 0.875rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            border: 4px solid #0a0f1c;
+        }
+        .template-box {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        .template-content {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-size: 0.875rem;
+            line-height: 1.6;
+            color: #cbd5e1;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-brand selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-brand/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-cyan-500/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-accent flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="/news.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        ニュース一覧へ戻る
+                    </a>
+                    <a href="/demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                        相談 or デモ予約
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <article class="max-w-4xl mx-auto">
+            
+            <!-- パンくずリスト -->
+            <nav class="flex text-sm text-slate-400 mb-8" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/index.html" class="hover:text-white transition-colors">ホーム</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <a href="/news.html" class="hover:text-white transition-colors">ニュース・インサイト</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <span class="text-slate-500 truncate max-w-[200px] sm:max-w-none">PSIRTのKPIとSLA</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- 記事ヘッダー -->
+            <header class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-blue-500/20 border border-blue-500/30 text-blue-400 text-xs font-bold px-3 py-1 rounded-full">実務ガイド</span>
+                    <time class="text-slate-400 text-sm flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> 2026.03.09
+                    </time>
+                </div>
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
+                    PSIRTのKPIとSLA<br/>
+                    <span class="text-2xl md:text-3xl text-slate-300 font-medium">（OEM回答期限を守る管理術：最小設計）</span>
+                </h1>
+                
+                <!-- 導入文 -->
+                <div class="text-lg text-slate-300 leading-relaxed p-6 bg-navy-800/50 rounded-2xl border border-white/5 space-y-4">
+                    <p>PSIRT運用が崩れる最大の理由は、専門知識が足りないことではありません。<br>
+                    <strong>「いつまでに何を返すか」が曖昧なまま案件が流れ、結果として期限を守れないこと</strong>です。</p>
+                    
+                    <p>OEMや顧客からの調査依頼は、内容そのものよりも <strong>回答期限を守れるか</strong> を強く見られます。</p>
+                    
+                    <p>しかもTier2〜Tier4の現場では、PSIRT専任ではなく兼務で回すことが多く、次のような事故が起きがちです。</p>
+                    <ul class="m-0 list-disc list-inside">
+                        <li>受領確認が遅く、相手が不安になって督促が来る</li>
+                        <li>一次回答と最終回答の違いが曖昧で、全部が“最終回答待ち”になる</li>
+                        <li>調査中案件に次回更新日がなく、放置に見える</li>
+                        <li>期限を超えた理由が残らず、監査で説明できない</li>
+                    </ul>
+                    
+                    <p>この状態を防ぐには、まず <strong>SLA（期限の設計）</strong> を置き、その達成度を <strong>KPI（測定項目）</strong> で見える化するのが最短です。<br>
+                    この記事では、兼務でも破綻しないように、<strong>最小のKPIとSLA</strong> に絞って設計方法を解説します。</p>
+                </div>
+            </header>
+
+            <!-- 記事本文 -->
+            <div class="glass-card p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl bg-navy-900/80 mb-16">
+                <div class="prose prose-invert prose-slate prose-lg max-w-none">
+                    
+                    <!-- 内部リンク①：全体像 -->
+                    <div class="related-box mt-0 border-l-brand">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="map" class="w-4 h-4"></i> 全体像を先に見直す</div>
+                        <p class="text-sm text-slate-300 mb-2">SLA・KPIを設定する前提となる、PSIRTの全体設計（窓口・証跡・回答フロー等）はこちらをご覧ください。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/automotive-supplier-guide/" class="!text-brand-light hover:!text-brand">自動車サプライヤーのPSIRT完全ガイド</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>先に結論：兼務PSIRTに必要なSLAは3つ、KPIは5つで十分</h2>
+                    <p>最初から細かい指標を増やすと、運用より入力が重くなります。<br>
+                    まずは次の <strong>SLA 3つ</strong> と <strong>KPI 5つ</strong> だけで十分です。</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
+                        <div class="bg-navy-800/80 p-5 rounded-xl border-l-4 border-l-blue-400">
+                            <h4 class="text-blue-400 font-bold mt-0 mb-3 flex items-center gap-2"><i data-lucide="clock" class="w-5 h-5"></i> 最小SLA</h4>
+                            <ul class="text-sm m-0 space-y-2 pl-4 text-slate-300">
+                                <li><strong>受領確認SLA：</strong> 依頼を受け取ったことを返す期限</li>
+                                <li><strong>一次回答SLA：</strong> 影響あり/なし/調査中の暫定結論を返す期限</li>
+                                <li><strong>最終回答SLA：</strong> 根拠・証跡込みで最終回答を返す期限</li>
+                            </ul>
+                        </div>
+                        <div class="bg-navy-800/80 p-5 rounded-xl border-l-4 border-l-cyan-400">
+                            <h4 class="text-cyan-400 font-bold mt-0 mb-3 flex items-center gap-2"><i data-lucide="bar-chart-2" class="w-5 h-5"></i> 最小KPI</h4>
+                            <ul class="text-sm m-0 space-y-2 pl-4 text-slate-300">
+                                <li>受領確認SLA遵守率</li>
+                                <li>一次回答SLA遵守率</li>
+                                <li>最終回答SLA遵守率</li>
+                                <li>調査中案件の次回更新日遵守率</li>
+                                <li>期限超過案件数（理由分類つき）</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <p class="text-center font-bold text-slate-200">この5つが見えれば、現場の詰まりどころがかなり分かります。</p>
+
+                    <h2>KPIとSLAの違い</h2>
+                    <p>ここを混同すると設計が崩れます。</p>
+                    
+                    <ul class="space-y-2 mb-4 font-medium">
+                        <li><strong>SLA：</strong> 守るべき期限や応答ルール <span class="text-slate-400 text-sm">（＝約束）</span></li>
+                        <li><strong>KPI：</strong> そのSLAや運用が守れているかを見るための数字 <span class="text-slate-400 text-sm">（＝観測）</span></li>
+                    </ul>
+
+                    <div class="bg-navy-800 p-4 rounded-lg border border-white/5 my-4">
+                        <p class="m-0 text-sm text-slate-300">
+                            例：「受領確認は1営業日以内に返す」は <strong>SLA</strong> です。<br>
+                            例：「受領確認を1営業日以内に返せた割合が92%」は <strong>KPI</strong> です。
+                        </p>
+                    </div>
+                    <p>SLAだけあっても測らなければ改善できず、KPIだけあっても基準がなければ意味がありません。</p>
+
+                    <h2>最小SLAの作り方（兼務で回る現実解）</h2>
+                    <p>SLAは“理想値”ではなく、<strong>いまの体制で守れる現実的な水準</strong>に置くのがコツです。</p>
+
+                    <div class="space-y-6 my-6">
+                        <div class="bg-navy-900/50 p-5 rounded-lg border border-white/10">
+                            <h4 class="text-brand-light font-bold mt-0 mb-2">1. 受領確認SLA</h4>
+                            <p class="text-sm text-slate-300 m-0">おすすめの初期値は <strong>1営業日以内</strong>。<br>ここで返す内容は、結論ではなく「受け付けたこと」と「次回更新日」で十分です。</p>
+                        </div>
+                        <div class="bg-navy-900/50 p-5 rounded-lg border border-white/10">
+                            <h4 class="text-brand-light font-bold mt-0 mb-2">2. 一次回答SLA</h4>
+                            <p class="text-sm text-slate-300 m-0">おすすめの初期値は <strong>3〜5営業日以内</strong>。<br>ここで必要なのは「影響あり」「影響なし」「調査中」のどれかと、次回更新日です。</p>
+                        </div>
+                        <div class="bg-navy-900/50 p-5 rounded-lg border border-white/10">
+                            <h4 class="text-brand-light font-bold mt-0 mb-2">3. 最終回答SLA</h4>
+                            <p class="text-sm text-slate-300 m-0">おすすめの初期値は <strong>10営業日前後</strong>。<br>ただし案件の重さによって変わるので、固定値よりも「軽微案件」「通常案件」「重大案件」のように分けてもよいです。</p>
+                        </div>
+                    </div>
+
+                    <p class="text-lg font-bold text-red-400 bg-red-500/10 p-4 rounded text-center my-6">
+                        重要なのは、一次回答と最終回答を分けることです。<br>
+                        <span class="text-sm font-normal text-slate-300 block mt-2">これを分けないと、全部が“最終回答待ち”になってしまい、期限を落とします。</span>
+                    </p>
+
+                    <h2>KPIは「改善に使える数字」だけにする</h2>
+                    <p>KPIはたくさん作れますが、兼務体制では使い切れません。おすすめは次の5つだけです。</p>
+
+                    <ul class="space-y-4 my-6 list-none pl-0">
+                        <li class="flex gap-4">
+                            <div class="w-8 h-8 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold shrink-0">1</div>
+                            <div>
+                                <strong class="text-slate-200 block">受領確認SLA遵守率</strong>
+                                <span class="text-sm text-slate-400">依頼受付の初動を見ます。ここが低いと、窓口や案件化に問題があります。</span>
+                            </div>
+                        </li>
+                        <li class="flex gap-4">
+                            <div class="w-8 h-8 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold shrink-0">2</div>
+                            <div>
+                                <strong class="text-slate-200 block">一次回答SLA遵守率</strong>
+                                <span class="text-sm text-slate-400">現場の処理能力を見ます。低い場合は、版数確認や担当割り当てで止まっていることが多いです。</span>
+                            </div>
+                        </li>
+                        <li class="flex gap-4">
+                            <div class="w-8 h-8 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold shrink-0">3</div>
+                            <div>
+                                <strong class="text-slate-200 block">最終回答SLA遵守率</strong>
+                                <span class="text-sm text-slate-400">調査・証跡・承認の遅延を見ます。ここだけを責めると現場が疲弊するので、理由分類とセットで見るのが大切です。</span>
+                            </div>
+                        </li>
+                        <li class="flex gap-4">
+                            <div class="w-8 h-8 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold shrink-0">4</div>
+                            <div>
+                                <strong class="text-slate-200 block">次回更新日遵守率</strong>
+                                <span class="text-sm text-slate-400">調査中案件の放置防止に効きます。これが低いと、相手から見ると“放置されている”ように見えます。</span>
+                            </div>
+                        </li>
+                        <li class="flex gap-4">
+                            <div class="w-8 h-8 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold shrink-0">5</div>
+                            <div>
+                                <strong class="text-slate-200 block">期限超過案件数（理由分類つき）</strong>
+                                <span class="text-sm text-slate-400">単なる件数ではなく、理由を分類します。<br>例：上流回答待ち ／ 対象版数未確定 ／ 承認待ち ／ 証跡不足 ／ 工数不足<br>この分類があると、改善策が作れます。</span>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <h2 class="border-b-2 border-blue-500 pb-2 mt-12 mb-8">手順：PSIRTのKPI/SLAを作る（5ステップ）</h2>
+
+                    <div class="step-box pt-8">
+                        <div class="step-number">Step 1</div>
+                        <h4 class="text-white font-bold mt-0 mb-2">案件の種類を3つに分ける</h4>
+                        <p class="text-sm text-slate-300 mb-2">まず、同じSLAを全案件に当てないことです。最低でも次の3つに分けます。</p>
+                        <ul class="text-sm m-0 text-slate-300 space-y-1">
+                            <li><strong>OEM/顧客照会：</strong> 期限が厳しい（最優先）</li>
+                            <li><strong>一般CVE通知：</strong> 外部期限なし（社内でSLAを作る）</li>
+                            <li><strong>監査/是正要求：</strong> 提出物が多い（SLAは別途長めに設定）</li>
+                        </ul>
+                    </div>
+
+                    <div class="step-box pt-8">
+                        <div class="step-number">Step 2</div>
+                        <h4 class="text-white font-bold mt-0 mb-2">各案件のSLAを定義する</h4>
+                        <p class="text-sm text-slate-300 m-0">案件種類ごとに、「受領確認」「一次回答」「最終回答」の目安を置きます。</p>
+                    </div>
+
+                    <div class="step-box pt-8">
+                        <div class="step-number">Step 3</div>
+                        <h4 class="text-white font-bold mt-0 mb-2">案件台帳に“必須列”を足す</h4>
+                        <p class="text-sm text-slate-300 mb-2">KPIを取るには、台帳やチケットに最低限この列が必要です。</p>
+                        <div class="bg-navy-900/80 p-3 rounded border border-white/5 columns-2 text-sm text-slate-300">
+                            <ul class="m-0 pl-4 list-disc space-y-1">
+                                <li>受付日</li>
+                                <li>相手期限</li>
+                                <li>受領確認日</li>
+                                <li>一次回答日</li>
+                                <li>最終回答日</li>
+                                <li>次回更新日</li>
+                                <li>現在ステータス</li>
+                                <li>期限超過理由</li>
+                                <li>証跡リンク/ID</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- 内部リンク②：台帳テンプレ -->
+                    <div class="related-box my-4 py-3">
+                        <div class="text-sm font-bold text-blue-400 mb-1 flex items-center gap-2"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> すぐ使えるテンプレ</div>
+                        <p class="text-sm text-slate-300 mb-2">SLA・期限管理を回すための台帳（チケット）の項目定義とテンプレはこちらをご利用ください。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/vulnerability-response-assignment-progress-template/" class="!text-blue-400 hover:!text-blue-300">OEM回答期限管理表テンプレ（アサイン表＆進捗管理）</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="step-box pt-8">
+                        <div class="step-number">Step 4</div>
+                        <h4 class="text-white font-bold mt-0 mb-2">週次でKPIを1回見る</h4>
+                        <p class="text-sm text-slate-300 mb-2">毎日見る必要はありません。週1回、15分で良いので次だけ確認します。</p>
+                        <ul class="text-sm m-0 text-slate-300 space-y-1">
+                            <li>今週期限を迎える案件</li>
+                            <li>調査中で更新日が近い案件</li>
+                            <li>期限超過した案件と理由</li>
+                            <li>SLA遵守率のざっくり傾向</li>
+                        </ul>
+                    </div>
+
+                    <div class="step-box pt-8 border-blue-500">
+                        <div class="step-number">Step 5</div>
+                        <h4 class="text-white font-bold mt-0 mb-2">KPIに基づいてルールを直す</h4>
+                        <p class="text-sm text-slate-300 mb-2">KPIは評価のためではなく、改善のために使います。</p>
+                        <ul class="text-sm m-0 text-slate-300 space-y-1">
+                            <li>受領確認が遅い → <strong>窓口を一本化する</strong></li>
+                            <li>一次回答が遅い → <strong>技術評価の依頼テンプレを整える</strong></li>
+                            <li>最終回答が遅い → <strong>承認ルールと証跡整理を見直す</strong></li>
+                            <li>更新日が守れない → <strong>“調査中”ルールを短くしすぎている</strong></li>
+                        </ul>
+                    </div>
+
+                    <h2>そのまま使える：KPI/SLA定義テンプレ</h2>
+                    <p>以下をそのまま社内ルールや運用ガイドラインへ貼ってご活用ください。</p>
+
+                    <div class="template-box">
+                        <div class="template-content">【SLA定義】
+- 受領確認：1営業日以内
+- 一次回答：5営業日以内
+- 最終回答：10営業日以内
+- 調査中案件は、次回更新日を必ず設定する
+
+【KPI定義】
+- 受領確認SLA遵守率 = 期限内受領確認件数 / 全受領件数
+- 一次回答SLA遵守率 = 期限内一次回答件数 / 全一次回答対象件数
+- 最終回答SLA遵守率 = 期限内最終回答件数 / 全最終回答対象件数
+- 次回更新日遵守率 = 期限内更新実施件数 / 全調査中案件件数
+- 期限超過案件数 = 期限超過した案件数（理由分類を添える）</div>
+                    </div>
+
+                    <!-- 途中CTA（主CTA） -->
+                    <div class="bg-navy-800/50 p-6 md:p-8 rounded-2xl border border-blue-500/30 text-center my-10 shadow-[0_0_20px_rgba(59,130,246,0.15)]">
+                        <p class="text-slate-200 mb-6 font-medium text-lg">OEM調査依頼・監査対応の進め方を、自社の体制・SLAに合わせて整理したい方はご相談ください。</p>
+                        <a href="/demo_form.html" class="inline-flex items-center gap-2 px-8 py-3.5 bg-brand hover:bg-brand-dark !text-white rounded-full font-bold transition-all hover:-translate-y-1 shadow-lg shadow-brand/20">
+                            <i data-lucide="calendar" class="w-5 h-5"></i> 【無料】オンライン相談を予約する
+                        </a>
+                    </div>
+
+                    <h2>よくある失敗（運用が回らない典型）</h2>
+                    <ul class="space-y-4 my-6 list-none pl-0">
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>SLAはあるが、台帳に日付列が無い</strong><br><span class="text-sm text-slate-400">→ KPIが取れず、改善できない</span></div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>一次回答と最終回答を分けていない</strong><br><span class="text-sm text-slate-400">→ 全部が遅く見える（常にSLA違反になる）</span></div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>期限超過理由を残していない</strong><br><span class="text-sm text-slate-400">→ 毎回同じ原因（上流待ち、承認待ち等）で詰まる</span></div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>KPIを増やしすぎる</strong><br><span class="text-sm text-slate-400">→ 入力だけが増えて運用が止まる</span></div></li>
+                    </ul>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2>FAQ：SLAとKPIの運用について</h2>
+                    <div class="space-y-6 mt-6">
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q1. KPIとSLAは両方必要ですか？</strong>
+                            <p class="m-0 text-slate-300">はい。SLAは「何日で返すか」の基準、KPIは「それを守れているか」を見るための数字です。どちらか片方だけでは改善が回りません。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q2. 兼務でも測れるKPIは何ですか？</strong>
+                            <p class="m-0 text-slate-300">まずは、受領確認SLA遵守率、一次回答SLA遵守率、最終回答SLA遵守率、次回更新日遵守率、期限超過件数（理由分類）の5つで十分です。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q3. 一次回答SLAを守れない時はどうしますか？</strong>
+                            <p class="m-0 text-slate-300">「調査中＋次回更新日」を期限内に返す設計にします。最終結論を待って沈黙するより、運用として評価されます。</p>
+                        </div>
+                    </div>
+
+                    <!-- 内部リンク③：次に読む -->
+                    <div class="related-box border-l-brand mt-12">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="book-open" class="w-4 h-4"></i> 次に読む</div>
+                        <p class="text-sm text-slate-300 mb-2">そもそもPSIRTの役割や、OEMが求める「運用の安心感」について基本を確認したい方はこちら。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/what-is-psirt/" class="!text-brand-light hover:!text-brand">PSIRTとは（役割・やるべきことを一言で）</a></li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- CTA Section (副CTA) -->
+            <div class="glass-card rounded-3xl p-8 md:p-12 text-center border-t-4 border-t-blue-500 bg-navy-800/80 shadow-[0_0_40px_-10px_rgba(59,130,246,0.2)]">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">SLAと進捗管理、システムで自動化しませんか？</h2>
+                <p class="text-slate-300 mb-8 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+                    <strong>Auto PSIRT Cloud</strong>なら、案件のSLA（回答期限）や次回更新日がダッシュボード上で一元管理・可視化されます。期限が近づくとアラートが出るため、入力や集計の手間なく「期限超過」を防ぐことができます。
+                </p>
+                <div class="flex justify-center">
+                    <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-navy-900 bg-white hover:bg-slate-200 transition-all duration-300 shadow-xl shadow-white/10 w-full sm:w-auto hover:-translate-y-1">
+                        <i data-lucide="monitor-play" class="w-5 h-5 text-blue-600"></i>
+                        OEM回答書作成・SLA管理の流れをデモで見る
+                    </a>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/5 text-center text-sm text-slate-500 mt-auto bg-navy-900/80">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span class="font-bold text-slate-400">Auto PSIRT Cloud</span>
+            </div>
+            <p>&copy; 2026 Unimobilities株式会社. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
