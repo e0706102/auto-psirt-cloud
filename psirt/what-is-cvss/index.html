@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEOメタタグ -->
+    <title>CVSSとは？点数の読み方と誤用をやさしく解説 | Auto PSIRT Cloud</title>
+    <meta name="description" content="CVSSとは何かを、サプライヤー向けにやさしく解説。0.0〜10.0の点数の意味、Base/Threat/Environmentalの違い、CVSS-Bは“リスク”ではなく“深刻度”である点、よくある誤用、実務での読み方まで短く整理します。">
+    <meta name="keywords" content="CVSSとは, CVSS, 脆弱性管理, PSIRT, トリアージ, 自動車セキュリティ">
+    <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/psirt/what-is-cvss/">
+    
+    <!-- OGPタグ (SNSシェア用) -->
+    <meta property="og:title" content="CVSSとは？点数の読み方と誤用をやさしく解説">
+    <meta property="og:description" content="CVSSの点数はそのままリスクではありません。よくある誤用と、実務での正しい読み方を解説します。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/psirt/what-is-cvss/">
+    <meta property="og:site_name" content="Auto PSIRT Cloud">
+
+    <!-- ファビコン -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23f97316%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z%22/><path d=%22m9 12 2 2 4-4%22/></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0a0f1c',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        brand: {
+                            light: '#60a5fa',
+                            DEFAULT: '#3b82f6',
+                            dark: '#2563eb',
+                        },
+                        accent: {
+                            DEFAULT: '#06b6d4',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #f97316, #ef4444); /* Orange to Red */
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* 記事用カスタムスタイル */
+        .prose h2 {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-top: 3.5rem;
+            color: #f8fafc;
+        }
+        .prose h3 {
+            color: #e2e8f0;
+            margin-top: 2.5rem;
+            border-left: 3px solid #f97316; /* Orange系アクセント */
+            padding-left: 0.75rem;
+            font-size: 1.25rem;
+        }
+        .prose a {
+            color: #fb923c; /* orange-400 */
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .prose a:hover {
+            border-bottom-color: #fb923c;
+        }
+        .prose strong {
+            color: #f8fafc;
+            background: linear-gradient(transparent 60%, rgba(249, 115, 22, 0.3) 40%);
+        }
+        .related-box {
+            background: rgba(30, 41, 59, 0.6);
+            border-left: 4px solid #f97316;
+            padding: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-orange-500 selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-brand/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-orange-500/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-accent flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="/news.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        ニュース一覧へ戻る
+                    </a>
+                    <a href="/demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                        相談 or デモ予約
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <article class="max-w-4xl mx-auto">
+            
+            <!-- パンくずリスト -->
+            <nav class="flex text-sm text-slate-400 mb-8" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/index.html" class="hover:text-white transition-colors">ホーム</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <a href="/news.html" class="hover:text-white transition-colors">ニュース・インサイト</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <span class="text-slate-500 truncate max-w-[200px] sm:max-w-none">CVSSとは</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- 記事ヘッダー -->
+            <header class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-orange-500/20 border border-orange-500/30 text-orange-400 text-xs font-bold px-3 py-1 rounded-full">入門解説</span>
+                    <time class="text-slate-400 text-sm flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> 2026.03.09
+                    </time>
+                </div>
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
+                    CVSSとは<br/>
+                    <span class="text-2xl md:text-3xl text-slate-300 font-medium">（点数の読み方・誤用）</span>
+                </h1>
+                
+                <!-- 導入文 -->
+                <div class="text-lg text-slate-300 leading-relaxed p-6 bg-navy-800/50 rounded-2xl border border-white/5 space-y-4">
+                    <p>CVSSとは <strong>Common Vulnerability Scoring System</strong> の略で、脆弱性の特徴と深刻度を共通のルールで表すためのフレームワークです。</p>
+                    <p>FIRSTのCVSS v4.0 User Guideでは、CVSSを「ソフトウェア脆弱性の特徴と深刻度を伝えるためのオープンなフレームワーク」と説明しています。</p>
+                </div>
+            </header>
+
+            <!-- 記事本文 -->
+            <div class="glass-card p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl bg-navy-900/80 mb-16">
+                <div class="prose prose-invert prose-slate prose-lg max-w-none">
+                    
+                    <!-- 内部リンク①：全体像の設計へ -->
+                    <div class="related-box mt-0 border-l-brand">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="map" class="w-4 h-4"></i> トリアージの全体像へ</div>
+                        <p class="text-sm text-slate-300 mb-2">CVSSの点数から実際に優先度を決める（トリアージする）手順や、VEXへの落とし込み方はこちらのガイドをご覧ください。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/cve-triage-vex-guide/" class="!text-brand-light hover:!text-brand">CVEトリアージ＆VEX実務 完全ガイド</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>CVSSの点数は何を意味する？</h2>
+                    <p>CVSSの基本スコアは <strong>0.0〜10.0</strong> で表され、一般に次のようなレンジで扱われます。<br>FIRSTのv4.0 User Guideでも、このレンジは維持されています。</p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 my-6">
+                        <div class="bg-navy-800/80 p-3 rounded-lg border-l-4 border-l-slate-400 text-center">
+                            <strong class="text-slate-300 block">0.0 = None</strong>
+                        </div>
+                        <div class="bg-navy-800/80 p-3 rounded-lg border-l-4 border-l-blue-400 text-center">
+                            <strong class="text-blue-300 block">0.1–3.9 = Low</strong>
+                        </div>
+                        <div class="bg-navy-800/80 p-3 rounded-lg border-l-4 border-l-yellow-400 text-center">
+                            <strong class="text-yellow-300 block">4.0–6.9 = Medium</strong>
+                        </div>
+                        <div class="bg-navy-800/80 p-3 rounded-lg border-l-4 border-l-orange-500 text-center">
+                            <strong class="text-orange-400 block">7.0–8.9 = High</strong>
+                        </div>
+                        <div class="bg-navy-800/80 p-3 rounded-lg border-l-4 border-l-red-500 text-center sm:col-span-2 md:col-span-1">
+                            <strong class="text-red-400 block">9.0–10.0 = Critical</strong>
+                        </div>
+                    </div>
+
+                    <p class="text-red-400 font-bold mt-8 mb-4">ただし、点数だけ見て優先度を決めるのは危険です。</p>
+
+                    <p>CVSS v4.0では、Base、Threat、Environmental、Supplemental の4つのメトリクス群があり、特に <strong>Base（CVSS-B）は脆弱性そのものの深刻度であって、リスクそのものではない</strong> とFIRSTが明確に説明しています。<br>
+                    Threat や Environmental を加味して初めて、自組織に近い判断に寄せられます。</p>
+
+                    <h2>実務での読み方（まずここだけ見る）</h2>
+                    <p>サプライヤー実務では、CVSSを次の順で見るとブレにくくなります。</p>
+
+                    <div class="space-y-6 my-8">
+                        <div class="bg-navy-800/50 p-6 rounded-xl border border-white/5 border-l-4 border-l-orange-400">
+                            <h4 class="text-white font-bold mt-0 mb-2">1. どのCVSSか</h4>
+                            <p class="text-sm text-slate-300 m-0">CVSS-B（Baseだけ）なのか、Threat/Environmentalを含むのかを確認する。<br>FIRSTは v4.0 で CVSS-B / CVSS-BT / CVSS-BE / CVSS-BTE という表記を推奨しています。</p>
+                        </div>
+                        <div class="bg-navy-800/50 p-6 rounded-xl border border-white/5 border-l-4 border-l-orange-400">
+                            <h4 class="text-white font-bold mt-0 mb-2">2. ベクトル（条件）</h4>
+                            <p class="text-sm text-slate-300 m-0">点数だけでなく、攻撃ベクトルや権限、ユーザー操作、影響範囲などの条件を見る。<br><strong class="text-brand-light">点数が高くても、自社製品でその条件が成立しなければ優先度は下がります。</strong></p>
+                        </div>
+                        <div class="bg-navy-800/50 p-6 rounded-xl border border-white/5 border-l-4 border-l-orange-400">
+                            <h4 class="text-white font-bold mt-0 mb-2">3. 自社の文脈</h4>
+                            <p class="text-sm text-slate-300 m-0">対象版数、外部IFの有無、到達性、設定条件を重ねる。<br>ここはCVSSの外側にある判断で、PSIRTやVEXの領域です。</p>
+                        </div>
+                    </div>
+
+                    <h2>よくある誤用</h2>
+                    <p>現場で起きがちなCVSSの誤った解釈です。</p>
+
+                    <ul class="space-y-4 my-6 list-none pl-0">
+                        <li class="flex items-start gap-4">
+                            <div class="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded shrink-0 mt-0.5">誤用1</div>
+                            <div>
+                                <strong class="text-slate-200 block mb-1">9.8だから最優先</strong>
+                                <span class="text-sm text-slate-400">CVSS-Bは“深刻度”であり、“あなたの製品でのリスク”ではありません。FIRSTも、Base Score 単独をリスク評価として使うべきではないと説明しています。</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-4">
+                            <div class="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded shrink-0 mt-0.5">誤用2</div>
+                            <div>
+                                <strong class="text-slate-200 block mb-1">スコアだけ見てベクトルを見ない</strong>
+                                <span class="text-sm text-slate-400">同じ点数でも、攻撃条件が違えば実務上の優先度は変わります。「点数よりベクトル」が基本です。</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-4">
+                            <div class="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded shrink-0 mt-0.5">誤用3</div>
+                            <div>
+                                <strong class="text-slate-200 block mb-1">CVSSだけでOEM回答を書く</strong>
+                                <span class="text-sm text-slate-400">OEM照会では、対象版数、構成、到達性、前提条件まで必要です。CVSSは材料の1つであって、回答そのものではありません。</span>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2>FAQ：CVSSとは</h2>
+                    <div class="space-y-6 mt-6">
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q1. CVSSとは何ですか？</strong>
+                            <p class="m-0 text-slate-300">脆弱性の特徴と深刻度を共通のルールで表すフレームワークです。FIRSTが管理しています。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q2. CVSSの点数はそのままリスクですか？</strong>
+                            <p class="m-0 text-slate-300">いいえ。CVSS-B は脆弱性の深刻度であり、リスクではありません。Threat や Environmental、さらに自社の状況を加味する必要があります。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q3. 9.0以上なら全部緊急対応ですか？</strong>
+                            <p class="m-0 text-slate-300">そうとは限りません。対象版数、到達性、設定条件など、自社製品側の文脈で優先度は変わります。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q4. CVSS-B / CVSS-BT / CVSS-BTE の違いは？</strong>
+                            <p class="m-0 text-slate-300">Base だけか、Threat や Environmental を含むかの違いです。どのメトリクス群を使った数値か明示するための表記です。</p>
+                        </div>
+                    </div>
+
+                    <!-- 内部リンク②：テンプレへ -->
+                    <div class="related-box border-l-emerald-500 mt-12">
+                        <div class="text-sm font-bold text-emerald-400 mb-2 flex items-center gap-2"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> 次に読む</div>
+                        <p class="text-sm text-slate-300 mb-2">CVSS等をもとに、最終的な優先度（P0/P1/P2）やVEXを社内でどう記録するか、決定理由の型はこちらをご利用ください。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/triage-decision-sheet-template/" class="!text-emerald-400 hover:!text-emerald-300">トリアージ判定シート（決定理由）テンプレ</a></li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- CTA Section (相談のみ) -->
+            <div class="glass-card rounded-3xl p-8 md:p-12 text-center border-t-4 border-t-orange-500 bg-navy-800/80 shadow-[0_0_40px_-10px_rgba(249,115,22,0.2)]">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">脆弱性トリアージの判断基準、整理しませんか？</h2>
+                <p class="text-slate-300 mb-8 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+                    CVSSやEPSS、KEVといった指標を「自社の製品構成・外部IF・OEM要求」に合わせてどう評価するか、トリアージ基準として整理したい方はご相談ください。
+                </p>
+                <div class="flex justify-center">
+                    <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-white bg-brand hover:bg-brand-dark transition-all duration-300 shadow-lg shadow-brand/20 w-full sm:w-auto hover:-translate-y-1">
+                        <i data-lucide="message-square" class="w-5 h-5"></i>
+                        【無料】オンライン相談を予約する
+                    </a>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/5 text-center text-sm text-slate-500 mt-auto bg-navy-900/80">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span class="font-bold text-slate-400">Auto PSIRT Cloud</span>
+            </div>
+            <p>&copy; 2026 Unimobilities株式会社. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
