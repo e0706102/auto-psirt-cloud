@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEOメタタグ -->
+    <title>JVNとは？日本語ソースの活用法｜CVE対応での見方と注意点 | Auto PSIRT Cloud</title>
+    <meta name="description" content="JVNとは何かをサプライヤー向けに解説。JVNとJVN iPediaの違い、日本語ソースとしての使いどころ、ベンダ情報・参考情報・更新履歴の見方、誤解しやすい点までを実務目線で整理します。">
+    <meta name="keywords" content="JVNとは, JVN, CVE, トリアージ, VEX, PSIRT, 脆弱性管理">
+    <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/psirt/what-is-jvn/">
+    
+    <!-- OGPタグ (SNSシェア用) -->
+    <meta property="og:title" content="JVNとは？日本語ソースの活用法｜CVE対応での見方と注意点">
+    <meta property="og:description" content="日本語で脆弱性情報を確認できるJVN。実務での使い方、JVN iPediaとの違い、注意すべきポイントを解説します。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/psirt/what-is-jvn/">
+    <meta property="og:site_name" content="Auto PSIRT Cloud">
+
+    <!-- ファビコン -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23a855f7%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z%22/><path d=%22m9 12 2 2 4-4%22/></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0a0f1c',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        brand: {
+                            light: '#60a5fa',
+                            DEFAULT: '#3b82f6',
+                            dark: '#2563eb',
+                        },
+                        accent: {
+                            DEFAULT: '#06b6d4',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #a855f7, #3b82f6); /* Purple to Blue */
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* 記事用カスタムスタイル */
+        .prose h2 {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-top: 3.5rem;
+            color: #f8fafc;
+        }
+        .prose h3 {
+            color: #e2e8f0;
+            margin-top: 2.5rem;
+            border-left: 3px solid #a855f7; /* Purple系アクセント */
+            padding-left: 0.75rem;
+            font-size: 1.25rem;
+        }
+        .prose a {
+            color: #c084fc; /* purple-400 */
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .prose a:hover {
+            border-bottom-color: #c084fc;
+        }
+        .prose strong {
+            color: #f8fafc;
+            background: linear-gradient(transparent 60%, rgba(168, 85, 247, 0.3) 40%);
+        }
+        .related-box {
+            background: rgba(30, 41, 59, 0.6);
+            border-left: 4px solid #a855f7;
+            padding: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 2rem 0;
+        }
+        
+        .trust-box {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 0.5rem;
+            padding: 1.25rem;
+            margin-top: 1rem;
+        }
+        .discard-box {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 0.5rem;
+            padding: 1.25rem;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-purple-500 selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-brand/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-purple-500/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-accent flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="/news.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        ニュース一覧へ戻る
+                    </a>
+                    <a href="/demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                        相談 or デモ予約
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <article class="max-w-4xl mx-auto">
+            
+            <!-- パンくずリスト -->
+            <nav class="flex text-sm text-slate-400 mb-8" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/index.html" class="hover:text-white transition-colors">ホーム</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <a href="/news.html" class="hover:text-white transition-colors">ニュース・インサイト</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <span class="text-slate-500 truncate max-w-[200px] sm:max-w-none">JVNとは</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- 記事ヘッダー -->
+            <header class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-purple-500/20 border border-purple-500/30 text-purple-400 text-xs font-bold px-3 py-1 rounded-full">入門解説</span>
+                    <time class="text-slate-400 text-sm flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> 2026.03.09
+                    </time>
+                </div>
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
+                    JVNとは<br/>
+                    <span class="text-2xl md:text-3xl text-slate-300 font-medium">（日本語ソースの活用法と注意点）</span>
+                </h1>
+                
+                <!-- 導入文 -->
+                <div class="text-lg text-slate-300 leading-relaxed p-6 bg-navy-800/50 rounded-2xl border border-white/5 space-y-4">
+                    <p>JVNとは <strong>Japan Vulnerability Notes</strong> の略で、日本で使われているソフトウェアなどの脆弱性関連情報と対策情報を提供する脆弱性対策情報ポータルサイトです。<br>
+                    JVN公式の説明では、JVNは「情報セキュリティ早期警戒パートナーシップ」に基づき、2004年7月から JPCERT/CC と IPA が共同で運営しています。</p>
+                    
+                    <p>サプライヤー実務での一言にすると、JVNは <strong>「日本語で脆弱性情報を素早く確認するための入口」</strong> です。<br>
+                    OEM照会や社内の初動で、まず日本語で概要を掴みたい時に役立ちます。</p>
+                    <p>一方で、最終判断をJVNだけで完結させるのではなく、ベンダ情報や参考情報まで確認する前提で使うのが安全です。JVN iPediaは、JVN掲載情報に加えて国内外で日々公開される脆弱性対策情報を集約したデータベースとして案内されています。</p>
+                </div>
+            </header>
+
+            <!-- 記事本文 -->
+            <div class="glass-card p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl bg-navy-900/80 mb-16">
+                <div class="prose prose-invert prose-slate prose-lg max-w-none">
+                    
+                    <!-- 内部リンク①：全体像の設計へ -->
+                    <div class="related-box mt-0 border-l-brand">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="map" class="w-4 h-4"></i> トリアージの全体像へ</div>
+                        <p class="text-sm text-slate-300 mb-2">得られた脆弱性情報をどう解釈し、実務でどうトリアージしていくか、全体のフローはこちらのガイドをご覧ください。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/cve-triage-vex-guide/" class="!text-brand-light hover:!text-brand">CVEトリアージ＆VEX実務 完全ガイド</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>JVNとJVN iPediaの違い</h2>
+                    <p>実務でまず混同しやすいのが、<strong>JVN</strong> と <strong>JVN iPedia</strong> です。<br>ざっくり分けるとこうなります。</p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-6">
+                        <div class="bg-navy-800/80 p-5 rounded-xl border border-white/5 border-l-4 border-l-purple-400">
+                            <h4 class="text-purple-400 font-bold mt-0 mb-2">JVN</h4>
+                            <p class="text-sm text-slate-300 m-0">日本語で脆弱性対策情報を案内するポータル。JPCERT/CC と IPA が共同運営する入口。</p>
+                        </div>
+                        <div class="bg-navy-800/80 p-5 rounded-xl border border-white/5 border-l-4 border-l-blue-400">
+                            <h4 class="text-blue-400 font-bold mt-0 mb-2">JVN iPedia</h4>
+                            <p class="text-sm text-slate-300 m-0">JVN掲載情報に加えて、国内外問わず日々公開される脆弱性対策情報を集約したデータベース。検索・詳細確認・活用の中心になりやすい。</p>
+                        </div>
+                    </div>
+
+                    <p>サプライヤーの運用では、<strong>「JVNで概要を把握し、JVN iPediaで詳細や更新履歴を見る」</strong>という使い方が分かりやすいです。</p>
+
+                    <h2>日本語ソースとしての活用法</h2>
+                    <p>JVNの価値は、英語の一次情報を読まないと判断できない現場でも、<strong>まず日本語で状況整理できること</strong>です。特に初動で役立つのは次の3点です。</p>
+
+                    <div class="space-y-6 my-8">
+                        <div class="bg-navy-800/50 p-6 rounded-xl border border-white/5">
+                            <h4 class="text-white font-bold mt-0 mb-2">1. 概要を早く掴む</h4>
+                            <p class="text-sm text-slate-300 m-0">JVN iPedia の詳細ページには「概要」があり、どの製品にどのような脆弱性があるかを短く把握できます。</p>
+                        </div>
+                        
+                        <div class="bg-navy-800/50 p-6 rounded-xl border border-white/5">
+                            <h4 class="text-white font-bold mt-0 mb-2">2. ベンダ情報と参考情報へ辿る</h4>
+                            <p class="text-sm text-slate-300 m-0">JVN iPedia の詳細ページでは、ベンダ情報や参考情報へのリンクが示されます。正確な判断が必要な場合は、ここからベンダ公告や一次情報を追うのが基本です。</p>
+                        </div>
+
+                        <div class="bg-navy-800/50 p-6 rounded-xl border border-white/5">
+                            <h4 class="text-white font-bold mt-0 mb-2">3. 更新履歴と日付を見る</h4>
+                            <p class="text-sm text-slate-300 m-0">JVN iPedia には更新履歴と日付情報（公表日、登録日、最終更新日）があり、<strong>「いつ時点の情報で判断したか」</strong>を残すのに役立ちます。監査やOEM照会では、この“時点”が重要です。</p>
+                        </div>
+                    </div>
+
+                    <h2>どこに注意すべきか（誤解しやすい点）</h2>
+                    <p>JVNは便利ですが、使い方を誤ると判断が雑になります。注意点は主に3つです。</p>
+
+                    <ul class="space-y-4 my-6 list-none pl-0">
+                        <li class="flex items-start gap-4">
+                            <div class="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded shrink-0 mt-0.5">注意1</div>
+                            <div>
+                                <strong class="text-slate-200 block mb-1">概要だけで結論を出さない</strong>
+                                <span class="text-sm text-slate-400">JVN iPedia自身が、正確かつ詳細な情報が必要な場合はベンダ情報または参考情報を参照するよう案内しています。つまり、JVNは“結論”というより“日本語の入口”です。</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-4">
+                            <div class="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded shrink-0 mt-0.5">注意2</div>
+                            <div>
+                                <strong class="text-slate-200 block mb-1">日付の意味を混同しない</strong>
+                                <span class="text-sm text-slate-400">JVN iPedia には 公表日、登録日、最終更新日 があり、それぞれ意味が違います。監査で「いつの情報を見たか」を説明する時は、ここを混ぜない方が安全です。</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-4">
+                            <div class="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded shrink-0 mt-0.5">注意3</div>
+                            <div>
+                                <strong class="text-slate-200 block mb-1">ベンダ情報が不明確なこともある</strong>
+                                <span class="text-sm text-slate-400">JVN iPedia のヘルプには、ベンダ情報が不明確な場合にベンダのトップページを記載する場合があるとあります。つまり、リンクがあるから十分ではなく、必要に応じて上流情報を追いに行く必要があります。</span>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <h2>サプライヤー実務での使いどころ</h2>
+                    <p>JVNは、次のような場面で特に便利です。</p>
+
+                    <ul class="space-y-3 bg-navy-800 p-6 rounded-xl border border-white/5 my-6 list-none pl-0">
+                        <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-5 h-5 text-purple-400 shrink-0 mt-0.5"></i> <div class="text-slate-200">OEM照会が来て、まず日本語で概要を掴みたい</div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-5 h-5 text-purple-400 shrink-0 mt-0.5"></i> <div class="text-slate-200">社内の品質保証や管理職へ、内容を日本語で共有したい</div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-5 h-5 text-purple-400 shrink-0 mt-0.5"></i> <div class="text-slate-200">ベンダ情報・参考情報の入口を整理したい</div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-5 h-5 text-purple-400 shrink-0 mt-0.5"></i> <div class="text-slate-200">「いつの情報か」を証跡として残したい</div></li>
+                    </ul>
+
+                    <p class="text-center font-bold text-brand-light mt-4">一方で、対象版数の確定、到達性、影響あり/なし の最終判断は、<br class="hidden sm:block">SBOMや構成表、VEX的な整理とセットで行う必要があります。<br>JVNはその判断を速くするための“入口”と捉えるのが安全です。</p>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2>FAQ：JVNについて</h2>
+                    <div class="space-y-6 mt-6">
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q1. JVNとは何ですか？</strong>
+                            <p class="m-0 text-slate-300">日本で使用されているソフトウェア等の脆弱性関連情報と対策情報を提供する脆弱性対策情報ポータルサイトです。JPCERT/CC と IPA が共同運営しています。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q2. JVNとJVN iPediaの違いは何ですか？</strong>
+                            <p class="m-0 text-slate-300">JVNはポータル、JVN iPediaは検索・詳細確認に使うデータベースと考えると分かりやすいです。JVN iPediaはJVN掲載情報に加え、国内外の日々の脆弱性情報も扱います。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q3. JVNだけ見れば十分ですか？</strong>
+                            <p class="m-0 text-slate-300">十分ではありません。JVN iPedia も、詳細が必要ならベンダ情報や参考情報を確認するよう案内しています。最終判断は一次情報や自社構成との照合が必要です。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q4. JVNでどこを見ればいいですか？</strong>
+                            <p class="m-0 text-slate-300">概要、ベンダ情報、参考情報、更新履歴、公表日/登録日/最終更新日を見ると、初動判断と証跡整理に役立ちます。</p>
+                        </div>
+                    </div>
+
+                    <!-- 内部リンク領域 -->
+                    <div class="mt-12 space-y-6">
+                        <!-- 内部リンク②：テンプレを活用する -->
+                        <div class="related-box border-l-emerald-500 my-0">
+                            <div class="text-sm font-bold text-emerald-400 mb-2 flex items-center gap-2"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> テンプレを活用する</div>
+                            <p class="text-sm text-slate-300 mb-2">JVNなどで得た情報をもとに、最終的な優先度や決定理由を社内でどう記録するか、判定シートの型はこちらをご利用ください。</p>
+                            <ul class="text-base m-0 list-none pl-0">
+                                <li><a href="/psirt/triage-decision-sheet-template/" class="!text-emerald-400 hover:!text-emerald-300">トリアージ判定シート（決定理由）テンプレ</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- CTA Section (相談のみ) -->
+            <div class="glass-card rounded-3xl p-8 md:p-12 text-center border-t-4 border-t-purple-500 bg-navy-800/80 shadow-[0_0_40px_-10px_rgba(168,85,247,0.2)]">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">自社に必要な対応範囲、整理しませんか？</h2>
+                <p class="text-slate-300 mb-8 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+                    JVNやNVDの情報をどう読み解き、自社のトリアージ判断基準としてどう落とし込むか、実務ベースで整理したい方はご相談ください。
+                </p>
+                <div class="flex justify-center">
+                    <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-white bg-brand hover:bg-brand-dark transition-all duration-300 shadow-lg shadow-brand/20 w-full sm:w-auto hover:-translate-y-1">
+                        <i data-lucide="message-square" class="w-5 h-5"></i>
+                        【無料】オンライン相談を予約する
+                    </a>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/5 text-center text-sm text-slate-500 mt-auto bg-navy-900/80">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span class="font-bold text-slate-400">Auto PSIRT Cloud</span>
+            </div>
+            <p>&copy; 2026 Unimobilities株式会社. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
