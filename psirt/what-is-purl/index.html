@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEOメタタグ -->
+    <title>PURL（Package URL）とは？OSS特定のキーをやさしく解説 | Auto PSIRT Cloud</title>
+    <meta name="description" content="PURL（Package URL）とは、OSSパッケージを一意に表現しやすくする識別子です。SBOMや脆弱性突合でなぜ重要なのか、CPEとの違い、SPDX/CycloneDXでの使われ方、よくある落とし穴まで実務目線で整理します。">
+    <meta name="keywords" content="PURLとは, PURL, SBOM, SPDX, CycloneDX, OSS, 識別子, PSIRT">
+    <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/psirt/what-is-purl/">
+    
+    <!-- OGPタグ (SNSシェア用) -->
+    <meta property="og:title" content="PURL（Package URL）とは？OSS特定のキーをやさしく解説">
+    <meta property="og:description" content="PURLとは何か？SBOMや脆弱性突合での重要性、CPEとの違い、実務での落とし穴まで整理します。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/psirt/what-is-purl/">
+    <meta property="og:site_name" content="Auto PSIRT Cloud">
+
+    <!-- ファビコン -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%2314b8a6%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z%22/><path d=%22m9 12 2 2 4-4%22/></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0a0f1c',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        brand: {
+                            light: '#60a5fa',
+                            DEFAULT: '#3b82f6',
+                            dark: '#2563eb',
+                        },
+                        accent: {
+                            DEFAULT: '#06b6d4',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #14b8a6, #3b82f6); /* Teal to Blue */
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* 記事用カスタムスタイル */
+        .prose h2 {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-top: 3.5rem;
+            color: #f8fafc;
+        }
+        .prose h3 {
+            color: #e2e8f0;
+            margin-top: 2.5rem;
+            border-left: 3px solid #14b8a6; /* Teal系アクセント */
+            padding-left: 0.75rem;
+            font-size: 1.25rem;
+        }
+        .prose a {
+            color: #2dd4bf; /* teal-400 */
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .prose a:hover {
+            border-bottom-color: #2dd4bf;
+        }
+        .prose strong {
+            color: #f8fafc;
+            background: linear-gradient(transparent 60%, rgba(20, 184, 166, 0.3) 40%);
+        }
+        .related-box {
+            background: rgba(30, 41, 59, 0.6);
+            border-left: 4px solid #14b8a6;
+            padding: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-teal-500 selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-brand/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-teal-500/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-accent flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="/news.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        ニュース一覧へ戻る
+                    </a>
+                    <a href="/demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                        相談 or デモ予約
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <article class="max-w-4xl mx-auto">
+            
+            <!-- パンくずリスト -->
+            <nav class="flex text-sm text-slate-400 mb-8" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/index.html" class="hover:text-white transition-colors">ホーム</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <a href="/news.html" class="hover:text-white transition-colors">ニュース・インサイト</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <span class="text-slate-500 truncate max-w-[200px] sm:max-w-none">PURLとは</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- 記事ヘッダー -->
+            <header class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-teal-500/20 border border-teal-500/30 text-teal-400 text-xs font-bold px-3 py-1 rounded-full">入門解説</span>
+                    <time class="text-slate-400 text-sm flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> 2026.03.09
+                    </time>
+                </div>
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
+                    PURL（Package URL）とは<br/>
+                    <span class="text-2xl md:text-3xl text-slate-300 font-medium">（OSS特定のキー）</span>
+                </h1>
+                
+                <!-- 導入文 -->
+                <div class="text-lg text-slate-300 leading-relaxed p-6 bg-navy-800/50 rounded-2xl border border-white/5 space-y-4">
+                    <p>PURL（Package URL）とは、ソフトウェアパッケージをエコシステム横断で、比較的一貫した形で識別するための表現です。</p>
+                    
+                    <p>公式サイトでは、PURLを「さまざまなエコシステムやリポジトリにまたがってソフトウェアパッケージを識別・位置付けるための標準化された方法」と説明しており、<code>type</code>、<code>namespace</code>、<code>name</code>、<code>version</code>、<code>qualifiers</code>、<code>subpath</code> といった要素で構成されます。</p>
+                    
+                    <p>サプライヤー実務での一言にすると、PURLは <strong>「OSSを“何のパッケージか”で特定しやすくするキー」</strong> です。<br>
+                    SBOMにPURLが入っていると、OSSの依存関係や脆弱性情報との突合がやりやすくなります。CycloneDXの公式ガイドでも、既知脆弱性の識別において <strong>OSSにはPURLを推奨</strong> すると明記されています。</p>
+                </div>
+            </header>
+
+            <!-- 記事本文 -->
+            <div class="glass-card p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl bg-navy-900/80 mb-16">
+                <div class="prose prose-invert prose-slate prose-lg max-w-none">
+                    
+                    <!-- 内部リンク①：全体像の設計へ -->
+                    <div class="related-box mt-0 border-l-brand">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="map" class="w-4 h-4"></i> 全体像を押さえる</div>
+                        <p class="text-sm text-slate-300 mb-2">Excelで始めるべきか、SPDX/CycloneDXへ移行すべきかなど、SBOM運用・提出の全体像はこちら。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/sbom-complete-guide/" class="!text-brand-light hover:!text-brand">SBOM完全ガイド（SPDX/CycloneDX/Excel運用・提出と機密の現実解）</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>PURLで何が分かるのか</h2>
+                    <p>PURLの強みは、単なる“名前”ではなく、<strong>どのエコシステムの、どの名前空間の、どの版数のパッケージか</strong> を表しやすいことです。</p>
+                    
+                    <p>たとえば npm、Maven、PyPI などで同じような名前のパッケージがあっても、<code>type</code> や <code>namespace</code> を含めて表現できるため、照合の精度が上がります。</p>
+                    
+                    <div class="bg-navy-800 p-5 rounded-lg border border-white/5 my-4 font-mono text-sm text-slate-300">
+                        <span class="text-slate-400">例：</span> pkg:npm/lodash@4.17.21<br>
+                        <span class="text-slate-400">例：</span> pkg:maven/org.apache.logging.log4j/log4j-core@2.14.1
+                    </div>
+
+                    <p>このためPURLは、SBOMそのものではありませんが、<strong>SBOMの中で使うと価値が出る識別子</strong>です。SPDX仕様でも、脆弱性情報の解決に役立つ外部参照として、CPEやSWIDなどと並んで PURLを含めることが推奨実務 とされています。</p>
+
+                    <h2>CPEとの違い</h2>
+                    <p>実務で混同しやすいのが <strong>CPE</strong> です。<br>
+                    CycloneDXの公式ガイドでは、OSSにはPURLを推奨し、プロプライエタリソフトや一部政府系/商用データベースに載る製品にはCPEが適する と整理しています。さらに、ハードウェア識別ではCPEが推奨される場面もあります。</p>
+
+                    <p>つまり、ざっくり言うと次のような使い分けが現実的です。</p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-6">
+                        <div class="bg-navy-800 p-5 rounded-lg border-t-4 border-t-teal-400 shadow-lg text-center">
+                            <h4 class="text-teal-400 font-bold mt-0 mb-2">PURL が得意</h4>
+                            <p class="text-sm text-slate-300 m-0">OSS中心（パッケージマネージャ依存）</p>
+                        </div>
+                        <div class="bg-navy-800 p-5 rounded-lg border-t-4 border-t-indigo-400 shadow-lg text-center">
+                            <h4 class="text-indigo-400 font-bold mt-0 mb-2">CPE が得意</h4>
+                            <p class="text-sm text-slate-300 m-0">政府系DBや一部商用DBに載る製品 / ハードウェア</p>
+                        </div>
+                    </div>
+
+                    <h2>サプライヤー実務でどこに出てくる？</h2>
+                    <p>PURLは、主に次の場面で登場します。</p>
+
+                    <ul class="space-y-3 bg-navy-800 p-6 rounded-xl border border-white/5 my-6 list-none pl-0">
+                        <li class="flex items-start gap-3"><i data-lucide="file-spreadsheet" class="w-5 h-5 text-teal-400 shrink-0 mt-0.5"></i> <div class="text-slate-200"><strong>SBOM作成：</strong> OSSコンポーネントを識別しやすくする</div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="git-compare" class="w-5 h-5 text-teal-400 shrink-0 mt-0.5"></i> <div class="text-slate-200"><strong>CVE突合：</strong> どのOSSパッケージかを精度高く照合する</div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="message-square" class="w-5 h-5 text-teal-400 shrink-0 mt-0.5"></i> <div class="text-slate-200"><strong>OEM照会：</strong> 対象版数と根拠を整理する土台にする</div></li>
+                    </ul>
+
+                    <p>ただし、CycloneDXも明記している通り、すべての脆弱性インテリジェンス源がすべての識別子をサポートするわけではありません。したがって、PURLだけで万能というより、<strong>SBOM・版数管理・必要に応じたCPE併用まで含めて考えるのが安全</strong>です。</p>
+
+                    <h2>よくある落とし穴</h2>
+                    <p>PURLは非常に便利ですが、“OSS特定のキー”であって、<strong>判断そのものを置き換えるものではない</strong> と理解しておくと運用が安定します。</p>
+
+                    <ul class="space-y-3 my-6 list-none pl-0">
+                        <li class="flex items-start gap-3"><i data-lucide="alert-triangle" class="w-5 h-5 text-yellow-500 shrink-0 mt-0.5"></i> <div class="text-slate-200"><code>type</code> や <code>namespace</code> が抜けていて、同名パッケージを取り違える</div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="alert-triangle" class="w-5 h-5 text-yellow-500 shrink-0 mt-0.5"></i> <div class="text-slate-200"><code>version</code> が曖昧で、対象版数が切れない</div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="alert-triangle" class="w-5 h-5 text-yellow-500 shrink-0 mt-0.5"></i> <div class="text-slate-200">PURLがあれば自動で完全一致すると過信してしまう</div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="alert-triangle" class="w-5 h-5 text-yellow-500 shrink-0 mt-0.5"></i> <div class="text-slate-200">商用部品やハードウェアまでPURLだけで扱おうとして無理が出る</div></li>
+                    </ul>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2>FAQ：PURLについて</h2>
+                    <div class="space-y-6 mt-6">
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q1. PURLとは何ですか？</strong>
+                            <p class="m-0 text-slate-300">OSSなどのソフトウェアパッケージを、エコシステム横断で識別しやすくするための標準化された表現（URL形式）です。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q2. PURLはSBOMそのものですか？</strong>
+                            <p class="m-0 text-slate-300">違います。PURLは“識別子”で、SBOMは“構成表”です。PURLはSBOMの中で使うと価値が出ます。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q3. PURLとCPEはどう違いますか？</strong>
+                            <p class="m-0 text-slate-300">CycloneDXの整理では、OSSはPURL、プロプライエタリソフトや一部ハードウェア/政府系DB寄りの識別にはCPEが向いています。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q4. PURLがあればCVE突合は十分ですか？</strong>
+                            <p class="m-0 text-slate-300">十分ではありません。版数管理、SBOM、必要に応じた他識別子との併用が必要です。すべてのソースがPURLを完全にサポートしているわけではありません。</p>
+                        </div>
+                    </div>
+
+                    <!-- 内部リンク②：Excelテンプレへ -->
+                    <div class="related-box border-l-emerald-500 mt-12">
+                        <div class="text-sm font-bold text-emerald-400 mb-2 flex items-center gap-2"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> 次に読む</div>
+                        <p class="text-sm text-slate-300 mb-2">標準化の前に、まずはExcelで“運用を回す”ための最小テンプレはこちらをご活用ください。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/sbom-excel-template-minimum/" class="!text-emerald-400 hover:!text-emerald-300">SBOM Excelテンプレ（最小項目版）</a></li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- CTA Section (相談のみ) -->
+            <div class="glass-card rounded-3xl p-8 md:p-12 text-center border-t-4 border-t-teal-500 bg-navy-800/80 shadow-[0_0_40px_-10px_rgba(20,184,166,0.2)]">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">SBOMの識別子やCVE突合に悩んでいませんか？</h2>
+                <p class="text-slate-300 mb-8 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+                    PURLやCPEの使い分け、Excel部品表から自動運用への移行など、SBOM整備・提出運用をどこから始めるか整理したい方はご相談ください。
+                </p>
+                <div class="flex justify-center">
+                    <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-white bg-brand hover:bg-brand-dark transition-all duration-300 shadow-lg shadow-brand/20 w-full sm:w-auto hover:-translate-y-1">
+                        <i data-lucide="message-square" class="w-5 h-5"></i>
+                        【無料】オンライン相談を予約する
+                    </a>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/5 text-center text-sm text-slate-500 mt-auto bg-navy-900/80">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span class="font-bold text-slate-400">Auto PSIRT Cloud</span>
+            </div>
+            <p>&copy; 2026 Unimobilities株式会社. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
