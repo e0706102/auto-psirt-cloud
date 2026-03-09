@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEOメタタグ -->
+    <title>取引先/OEM向け「PSIRT体制説明」1枚資料テンプレ｜そのまま使える雛形 | Auto PSIRT Cloud</title>
+    <meta name="description" content="取引先/OEM向けにそのまま使える「PSIRT体制説明」1枚資料テンプレを公開。窓口、役割分担、受付〜回答の流れ、SLA、証跡の考え方までを1ページで説明する構成と、書き方のコツ、よくあるNG例を解説します。">
+    <meta name="keywords" content="取引先/OEM向け「PSIRT体制説明」1枚資料テンプレ, PSIRT, 体制説明, OEM監査, 脆弱性管理, 自動車セキュリティ">
+    <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/psirt/one-page-overview-template/">
+    
+    <!-- OGPタグ (SNSシェア用) -->
+    <meta property="og:title" content="取引先/OEM向け「PSIRT体制説明」1枚資料テンプレ｜そのまま使える雛形">
+    <meta property="og:description" content="「PSIRT体制を1枚で説明して」と言われたらこれ。窓口・役割・SLAが伝わる資料テンプレを公開。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/psirt/one-page-overview-template/">
+    <meta property="og:site_name" content="Auto PSIRT Cloud">
+
+    <!-- ファビコン -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%236366f1%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z%22/><path d=%22m9 12 2 2 4-4%22/></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0a0f1c',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        brand: {
+                            light: '#60a5fa',
+                            DEFAULT: '#3b82f6',
+                            dark: '#2563eb',
+                        },
+                        accent: {
+                            DEFAULT: '#06b6d4',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #6366f1, #3b82f6); /* Indigo to Blue */
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* 記事用カスタムスタイル */
+        .prose h2 {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-top: 3.5rem;
+            color: #f8fafc;
+        }
+        .prose h3 {
+            color: #e2e8f0;
+            margin-top: 2.5rem;
+            border-left: 3px solid #6366f1; /* Indigo系アクセント */
+            padding-left: 0.75rem;
+            font-size: 1.25rem;
+        }
+        .prose a {
+            color: #818cf8; /* indigo-400 */
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .prose a:hover {
+            border-bottom-color: #818cf8;
+        }
+        .prose strong {
+            color: #f8fafc;
+            background: linear-gradient(transparent 60%, rgba(99, 102, 241, 0.3) 40%);
+        }
+        .related-box {
+            background: rgba(30, 41, 59, 0.6);
+            border-left: 4px solid #6366f1;
+            padding: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 2rem 0;
+        }
+        .template-box {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(99, 102, 241, 0.4);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.2);
+        }
+        .template-header {
+            color: #818cf8;
+            font-weight: bold;
+            margin-top: 0;
+            margin-bottom: 1rem;
+            border-bottom: 1px dashed rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .template-content {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-size: 0.875rem;
+            line-height: 1.6;
+            color: #cbd5e1;
+            white-space: pre-wrap;
+        }
+        .placeholder-text {
+            color: #a5b4fc;
+            background: rgba(99, 102, 241, 0.1);
+            padding: 0 0.25rem;
+            border-radius: 0.25rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-indigo-500 selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-brand/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-indigo-500/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-accent flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="/news.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        ニュース一覧へ戻る
+                    </a>
+                    <a href="/demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                        相談 or デモ予約
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <article class="max-w-4xl mx-auto">
+            
+            <!-- パンくずリスト -->
+            <nav class="flex text-sm text-slate-400 mb-8" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/index.html" class="hover:text-white transition-colors">ホーム</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <a href="/news.html" class="hover:text-white transition-colors">ニュース・インサイト</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <span class="text-slate-500 truncate max-w-[200px] sm:max-w-none">PSIRT体制説明1枚資料テンプレ</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- 記事ヘッダー -->
+            <header class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-indigo-500/20 border border-indigo-500/30 text-indigo-400 text-xs font-bold px-3 py-1 rounded-full">実務テンプレ</span>
+                    <time class="text-slate-400 text-sm flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> 2026.03.09
+                    </time>
+                </div>
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
+                    取引先/OEM向け「PSIRT体制説明」<br/>1枚資料テンプレ<br/>
+                    <span class="text-2xl md:text-3xl text-slate-300 font-medium">（そのまま使える雛形）</span>
+                </h1>
+                
+                <!-- 導入文 -->
+                <div class="text-lg text-slate-300 leading-relaxed p-6 bg-navy-800/50 rounded-2xl border border-white/5 space-y-4">
+                    <p>OEMや取引先から「御社のPSIRT体制を1枚で説明してください」と言われたとき、長い手順書や社内文書をそのまま出すと、かえって伝わりません。</p>
+                    
+                    <p>相手が知りたいのは、細かい社内事情ではなく、<strong>「窓口があるか」「誰が何を担うか」「期限内に返せるか」</strong> です。</p>
+                    
+                    <p>このページでは、取引先/OEM向けにそのまま使える<strong>“PSIRT体制説明1枚資料テンプレ”</strong> を掲載します。<br>
+                    最初は完璧さより、一目で伝わること を優先するのがコツです。</p>
+                </div>
+            </header>
+
+            <!-- 記事本文 -->
+            <div class="glass-card p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl bg-navy-900/80 mb-16">
+                <div class="prose prose-invert prose-slate prose-lg max-w-none">
+                    
+                    <!-- 内部リンク①：全体像の設計へ -->
+                    <div class="related-box mt-0 border-l-brand">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="map" class="w-4 h-4"></i> 前提の確認（全体フロー）</div>
+                        <p class="text-sm text-slate-300 mb-2">体制説明を作る前提として、社内で誰が何をどう回すかの全体像（UN-R155要件〜実務の型）はこちらをご覧ください。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/automotive-supplier-guide/" class="!text-brand-light hover:!text-brand">自動車サプライヤーのPSIRT完全ガイド</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>そのまま使える：1枚資料テンプレ</h2>
+                    <p><strong>使い方：</strong> PowerPoint / Word / Google Docs などにそのまま貼り、<span class="placeholder-text">【 】</span>だけ埋めてください。<br>
+                    相手に見せる前提なので、社内用語は減らし、短文でまとめます。</p>
+
+                    <div class="template-box">
+                        <div class="template-header">
+                            <span class="flex items-center gap-2"><i data-lucide="presentation" class="w-5 h-5"></i> 1枚資料テキスト（コピペ用）</span>
+                            <button onclick="copyToClipboard('template-content', this)" class="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 rounded text-xs transition-colors">
+                                <i data-lucide="copy" class="w-3.5 h-3.5"></i> コピーする
+                            </button>
+                        </div>
+                        <div class="template-content mt-0 border-none bg-transparent p-0 shadow-none text-base" id="template-content">【タイトル】
+PSIRT体制のご説明（<span class="placeholder-text">【会社名】</span>）
+
+【1. 目的】
+当社は、製品に関する脆弱性・セキュリティ課題への対応を行うため、PSIRT運用を整備しています。
+
+【2. 窓口】
+- 受付窓口：<span class="placeholder-text">【メールアドレス / フォームURL】</span>
+- 受付対象：脆弱性情報、影響有無の照会、セキュリティ関連の問い合わせ
+
+【3. 役割分担】
+- 受付/案件管理：<span class="placeholder-text">【部署名】</span>
+- 技術評価（対象版数・影響確認）：<span class="placeholder-text">【部署名】</span>
+- 対外回答（回答書作成/提出）：<span class="placeholder-text">【部署名】</span>
+- 承認：<span class="placeholder-text">【役職/部署名】</span>
+
+【4. 基本フロー】
+1. 受領
+2. 対象版数・構成確認
+3. 影響評価（影響あり/なし/調査中）
+4. 回答作成・承認
+5. 提出・必要時の更新
+
+【5. 期限管理（SLA）】
+- 受領確認：<span class="placeholder-text">【例：1営業日以内】</span>
+- 一次回答：<span class="placeholder-text">【例：3〜5営業日以内】</span>
+- 最終回答：<span class="placeholder-text">【例：案件に応じて設定】</span>
+- 調査中案件は次回更新日を設定
+
+【6. 証跡の考え方】
+- 対象版数、構成情報、判断理由、提出履歴を記録
+- 必要に応じてSBOM/構成表/試験結果等を根拠として参照
+
+【7. 連絡方針】
+- 影響あり/なし/調査中を、対象版数と根拠付きで回答
+- 期限内に最終結論が難しい場合は、中間報告と更新予定日を提示</div>
+                    </div>
+
+                    <!-- 途中CTA（主CTA） -->
+                    <div class="bg-navy-800/50 p-6 md:p-8 rounded-2xl border border-indigo-500/30 text-center my-10 shadow-[0_0_20px_rgba(99,102,241,0.15)]">
+                        <p class="text-slate-200 mb-6 font-medium text-lg">この記事のテンプレを、自社の組織構成やSLAに合わせて調整したい方はご相談ください。</p>
+                        <a href="/demo_form.html" class="inline-flex items-center gap-2 px-8 py-3.5 bg-brand hover:bg-brand-dark !text-white rounded-full font-bold transition-all hover:-translate-y-1 shadow-lg shadow-brand/20">
+                            <i data-lucide="calendar" class="w-5 h-5"></i> 【無料】オンライン相談を予約する
+                        </a>
+                    </div>
+
+                    <h2>使い方のコツ</h2>
+
+                    <div class="space-y-6 my-8">
+                        <div class="bg-navy-800/80 p-5 rounded-xl border-l-4 border-l-indigo-400">
+                            <h4 class="text-white font-bold mt-0 mb-2">1. 役割は“部門名”より“何をするか”で書く</h4>
+                            <p class="text-sm text-slate-300 m-0">「品質保証部」「設計部」だけだと相手は役割を想像しにくいです。<br>
+                            <strong>受付/案件管理、技術評価、対外回答、承認</strong> のように、動作で表す方が伝わります。</p>
+                        </div>
+
+                        <div class="bg-navy-800/80 p-5 rounded-xl border-l-4 border-l-indigo-400">
+                            <h4 class="text-white font-bold mt-0 mb-2">2. SLAは厳密値より“運用がある”ことを示す</h4>
+                            <p class="text-sm text-slate-300 mb-2">細かい数値よりも、</p>
+                            <ul class="text-sm m-0 space-y-1 pl-4 text-slate-300">
+                                <li>受領確認</li>
+                                <li>一次回答</li>
+                                <li>調査中の更新</li>
+                            </ul>
+                            <p class="text-sm text-slate-300 mt-2 m-0">があることを示す方が、OEMには「放置されないな」と伝わりやすいです。</p>
+                        </div>
+
+                        <div class="bg-navy-800/80 p-5 rounded-xl border-l-4 border-l-indigo-400">
+                            <h4 class="text-white font-bold mt-0 mb-2">3. 証跡は“全部見せる”ではなく“持っている”を伝える</h4>
+                            <p class="text-sm text-slate-300 m-0">1枚資料では、証跡の詳細なリストを並べる必要はありません。<br>
+                            「対象版数・判断理由・提出履歴を記録している」と書ければ十分です。</p>
+                        </div>
+                    </div>
+
+                    <!-- 内部リンク②：PSIRTとは -->
+                    <div class="related-box border-l-brand my-8">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="book-open" class="w-4 h-4"></i> 用語の補足</div>
+                        <p class="text-sm text-slate-300 mb-2">説明資料を作る前に、「そもそもPSIRTの役割とは？」を自分たちで言語化しておきたい方はこちら。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/what-is-psirt/" class="!text-brand-light hover:!text-brand">PSIRTとは（役割・やるべきことを一言で）</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>よくあるNG例（説明資料として弱くなるパターン）</h2>
+                    <ul class="space-y-4 my-6 list-none pl-0 font-medium">
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>NG1：組織図だけ載せる</strong><br><span class="text-sm text-slate-400 font-normal">→ 箱だけ見せられても、誰が何をするか分かりません。</span></div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>NG2：社内手順を細かく書きすぎる</strong><br><span class="text-sm text-slate-400 font-normal">→ 相手にとって必要以上に重い資料になり、読む気を削ぎます。</span></div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>NG3：窓口が個人名だけ</strong><br><span class="text-sm text-slate-400 font-normal">→ 異動や不在時に対応が止まるのではないかと不安に思われます。</span></div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>NG4：期限の考え方が無い</strong><br><span class="text-sm text-slate-400 font-normal">→ 「運用が回っている」印象にならず、結局監査で突っ込まれます。</span></div></li>
+                    </ul>
+
+                    <h2>Auto PSIRT Cloudに落とす時のポイント</h2>
+                    <p>この1枚資料で書いている内容は、そのままシステムの運用項目にもできます。</p>
+
+                    <div class="bg-navy-800 p-6 rounded-lg border border-white/10 my-4 text-slate-200">
+                        <ul class="m-0 list-disc list-inside space-y-1 columns-1 sm:columns-2">
+                            <li>窓口</li>
+                            <li>役割分担</li>
+                            <li>SLA（期限）</li>
+                            <li>対象版数</li>
+                            <li>判断理由</li>
+                            <li>提出履歴</li>
+                        </ul>
+                    </div>
+                    <p class="text-brand-light font-bold">これらをシステム側でフィールド化すると、説明資料と実運用がズレにくくなります。</p>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2>FAQ：体制説明資料の作り方</h2>
+                    <div class="space-y-6 mt-6">
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q1. 1枚資料に必ず入れるべき項目は何ですか？</strong>
+                            <p class="m-0 text-slate-300">窓口、役割分担、基本フロー、SLA、証跡の考え方の5つです。これで相手は「運用があるか」を判断しやすくなります。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q2. 組織図は必要ですか？</strong>
+                            <p class="m-0 text-slate-300">必須ではありません。むしろ1枚資料では、部門名より役割（受付、技術評価、回答、承認）を簡潔に示す方が伝わります。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q3. 証跡はどこまで書けばいいですか？</strong>
+                            <p class="m-0 text-slate-300">詳細資料のリストを並べる必要はありません。「対象版数、判断理由、提出履歴を記録している」といった考え方（残し方のスタンス）までで十分です。</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- CTA Section (副CTA) -->
+            <div class="glass-card rounded-3xl p-8 md:p-12 text-center border-t-4 border-t-indigo-500 bg-navy-800/80 shadow-[0_0_40px_-10px_rgba(99,102,241,0.2)]">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">説明した通りの運用を、システムで楽に実現しませんか？</h2>
+                <p class="text-slate-300 mb-8 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+                    <strong>Auto PSIRT Cloud</strong>なら、「窓口での受付」「期限のアラート」「影響評価の証跡」「OEM回答書の自動生成」といった、この1枚資料で約束する運用をそのままシステム上で実現できます。
+                </p>
+                <div class="flex justify-center">
+                    <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-navy-900 bg-white hover:bg-slate-200 transition-all duration-300 shadow-xl shadow-white/10 w-full sm:w-auto hover:-translate-y-1">
+                        <i data-lucide="monitor-play" class="w-5 h-5 text-indigo-600"></i>
+                        OEM回答書作成・SLA管理の流れを見る
+                    </a>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/5 text-center text-sm text-slate-500 mt-auto bg-navy-900/80">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span class="font-bold text-slate-400">Auto PSIRT Cloud</span>
+            </div>
+            <p>&copy; 2026 Unimobilities株式会社. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Copy to clipboard function
+        function copyToClipboard(contentId, button) {
+            const content = document.getElementById(contentId).textContent;
+            
+            const textarea = document.createElement('textarea');
+            textarea.value = content;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            
+            try {
+                document.execCommand('copy');
+                const originalHtml = button.innerHTML;
+                button.innerHTML = '<i data-lucide="check" class="w-3.5 h-3.5"></i> コピーしました';
+                button.classList.remove('bg-indigo-500/20', 'text-indigo-300');
+                button.classList.add('bg-brand/20', 'text-brand-light');
+                lucide.createIcons();
+                
+                setTimeout(() => {
+                    button.innerHTML = originalHtml;
+                    button.classList.remove('bg-brand/20', 'text-brand-light');
+                    button.classList.add('bg-indigo-500/20', 'text-indigo-300');
+                    lucide.createIcons();
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy', err);
+            } finally {
+                document.body.removeChild(textarea);
+            }
+        }
+    </script>
+</body>
+</html>
