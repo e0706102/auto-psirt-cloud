@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEOメタタグ -->
+    <title>部門横断の責任分界（設計・QA・情シス・経営）の決め方｜OEM調査依頼で止まらない運用設計 | Auto PSIRT Cloud</title>
+    <meta name="description" content="OEM調査依頼や監査対応で、設計・QA・情シス・経営の責任分界をどう決めるかを解説。兼務でも破綻しないように、RACIの切り方、承認線、証跡、SLA、例外時のエスカレーションまで、すぐ使えるテンプレ付きで整理します。">
+    <meta name="keywords" content="部門横断の責任分界, RACI, OEM調査依頼, 証跡, SLA, PSIRT, 脆弱性管理">
+    <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/psirt/cross-functional-raci/">
+    
+    <!-- OGPタグ (SNSシェア用) -->
+    <meta property="og:title" content="部門横断の責任分界（設計・QA・情シス・経営）の決め方">
+    <meta property="og:description" content="OEM対応で一番止まる「誰が何を決めるか」。RACIを使った兼務でも破綻しない運用設計を解説。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/psirt/cross-functional-raci/">
+    <meta property="og:site_name" content="Auto PSIRT Cloud">
+
+    <!-- ファビコン -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%233b82f6%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z%22/><path d=%22m9 12 2 2 4-4%22/></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0a0f1c',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        brand: {
+                            light: '#60a5fa',
+                            DEFAULT: '#3b82f6',
+                            dark: '#2563eb',
+                        },
+                        accent: {
+                            DEFAULT: '#06b6d4',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #60a5fa, #06b6d4);
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* 記事用カスタムスタイル */
+        .prose h2 {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-top: 3.5rem;
+            color: #f8fafc;
+        }
+        .prose h3 {
+            color: #e2e8f0;
+            margin-top: 2.5rem;
+            border-left: 3px solid #3b82f6; /* Blue系アクセント */
+            padding-left: 0.75rem;
+            font-size: 1.25rem;
+        }
+        .prose a {
+            color: #60a5fa;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .prose a:hover {
+            border-bottom-color: #60a5fa;
+        }
+        .prose strong {
+            color: #f8fafc;
+            background: linear-gradient(transparent 60%, rgba(59, 130, 246, 0.3) 40%);
+        }
+        .related-box {
+            background: rgba(30, 41, 59, 0.6);
+            border-left: 4px solid #3b82f6;
+            padding: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 2rem 0;
+        }
+        
+        .step-box {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            position: relative;
+        }
+        .step-number {
+            position: absolute;
+            top: -1rem;
+            left: 1.5rem;
+            background: #3b82f6;
+            color: white;
+            font-weight: bold;
+            font-size: 0.875rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            border: 4px solid #0a0f1c;
+        }
+
+        .template-box {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.2);
+            overflow-x: auto;
+        }
+        .custom-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+            min-width: 600px;
+        }
+        .custom-table th {
+            background-color: rgba(30, 41, 59, 0.8);
+            border-bottom: 2px solid #3b82f6;
+            padding: 0.75rem;
+            text-align: left;
+            color: #white;
+        }
+        .custom-table td {
+            padding: 0.75rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            color: #cbd5e1;
+        }
+        .custom-table tr:hover td {
+            background-color: rgba(255,255,255,0.02);
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-brand selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-brand/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-cyan-500/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-accent flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="/news.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        ニュース一覧へ戻る
+                    </a>
+                    <a href="/demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                        相談 or デモ予約
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <article class="max-w-4xl mx-auto">
+            
+            <!-- パンくずリスト -->
+            <nav class="flex text-sm text-slate-400 mb-8" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/index.html" class="hover:text-white transition-colors">ホーム</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <a href="/news.html" class="hover:text-white transition-colors">ニュース・インサイト</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <span class="text-slate-500 truncate max-w-[200px] sm:max-w-none">部門横断の責任分界の決め方</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- 記事ヘッダー -->
+            <header class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-blue-500/20 border border-blue-500/30 text-blue-400 text-xs font-bold px-3 py-1 rounded-full">実務ガイド</span>
+                    <time class="text-slate-400 text-sm flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> 2026.03.09
+                    </time>
+                </div>
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
+                    部門横断の責任分界（設計・QA・情シス・経営）の決め方<br/>
+                    <span class="text-2xl md:text-3xl text-slate-300 font-medium">（OEM調査依頼で止まらない運用設計）</span>
+                </h1>
+                
+                <!-- 導入文 -->
+                <div class="text-lg text-slate-300 leading-relaxed p-6 bg-navy-800/50 rounded-2xl border border-white/5 space-y-4">
+                    <p>OEM調査依頼や監査対応で一番止まりやすいのは、技術判断そのものではなく、<strong>「誰が何を決めるか」が曖昧なこと</strong>です。</p>
+                    
+                    <ul class="m-0 list-disc list-inside">
+                        <li><strong>設計</strong>は「技術確認はするが、対外回答は品質でしょ」と考える</li>
+                        <li><strong>QA</strong>は「根拠を作るのは開発でしょ」と考える</li>
+                        <li><strong>情シス</strong>は「製品ではなく社内IT担当なので対象外」と考える</li>
+                        <li><strong>経営</strong>は「最後に承認だけ」と思っているが、判断材料が上がってこない</li>
+                    </ul>
+                    
+                    <p>この状態だと、期限（SLA）だけが近づき、結論も証跡もまとまりません。<br>
+                    FIRSTのPSIRT Services Frameworkでも、PSIRTは製品開発から切り離された独立組織ではなく、開発・テスト/品質保証・サポート・法務/広報など複数の内部関係者と連携する前提で整理されています。また、内部関係者とその役割を理解し、必要なコミュニケーション方法を整えること、さらにインシデント対応時には PSIRT、開発、サポート、サプライヤーなどを集めて状況把握することが推奨されています。</p>
+                    
+                    <p>CISAの脆弱性開示 handling procedures でも、報告の追跡、内部調整、影響評価と優先順位付け、外部とのコミュニケーション、そして目標時間（timelines）を定めて追跡することが求められています。つまり、責任分界とは「組織図の問題」ではなく、<strong>内部調整と期限運用を成立させるための設計</strong>です。</p>
+                </div>
+            </header>
+
+            <!-- 記事本文 -->
+            <div class="glass-card p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl bg-navy-900/80 mb-16">
+                <div class="prose prose-invert prose-slate prose-lg max-w-none">
+                    
+                    <!-- 内部リンク①：全体像の設計へ -->
+                    <div class="related-box mt-0 border-l-brand">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="map" class="w-4 h-4"></i> 導入（全体フローの確認）</div>
+                        <p class="text-sm text-slate-300 mb-2">OEM調査依頼の初動から、回答書の作成・証跡の集め方までの全体設計はこちらをご覧ください。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/audit-investigation-response-guide/" class="!text-brand-light hover:!text-brand">OEM調査依頼・監査対応 完全ガイド</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>先に結論：4部門は「4役」に変換すると決めやすい</h2>
+                    <p>部門名のままだと、責任が重なって揉めます。<br>最初は 設計・QA・情シス・経営 を、そのまま部門で切るのではなく、次の <strong>4役</strong> に変換して考えると整理しやすいです。</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
+                        <div class="bg-navy-800 p-5 rounded-xl border-l-4 border-l-emerald-400 shadow-lg">
+                            <h4 class="text-emerald-400 font-bold mt-0 mb-2">技術評価</h4>
+                            <p class="text-sm text-slate-300 m-0 mb-2">対象版数、構成、到達性、影響有無を確認する</p>
+                            <p class="text-xs text-brand-light font-bold m-0">→ 主に設計/開発が担当</p>
+                        </div>
+                        <div class="bg-navy-800 p-5 rounded-xl border-l-4 border-l-blue-400 shadow-lg">
+                            <h4 class="text-blue-400 font-bold mt-0 mb-2">対外回答</h4>
+                            <p class="text-sm text-slate-300 m-0 mb-2">OEM向け回答文、提出物、証跡の整理を行う</p>
+                            <p class="text-xs text-brand-light font-bold m-0">→ 主にQAが担当</p>
+                        </div>
+                        <div class="bg-navy-800 p-5 rounded-xl border-l-4 border-l-purple-400 shadow-lg">
+                            <h4 class="text-purple-400 font-bold mt-0 mb-2">運用・証跡管理</h4>
+                            <p class="text-sm text-slate-300 m-0 mb-2">チケット、期限、保存場所、ログ、権限、社内連絡を整える</p>
+                            <p class="text-xs text-brand-light font-bold m-0">→ 情シスまたはPSIRT窓口機能が担当</p>
+                        </div>
+                        <div class="bg-navy-800 p-5 rounded-xl border-l-4 border-l-red-400 shadow-lg">
+                            <h4 class="text-red-400 font-bold mt-0 mb-2">承認・経営判断</h4>
+                            <p class="text-sm text-slate-300 m-0 mb-2">期限交渉、リスク受容、外部発信の承認を行う</p>
+                            <p class="text-xs text-brand-light font-bold m-0">→ 経営層または部門長が担当</p>
+                        </div>
+                    </div>
+                    
+                    <p class="text-center font-bold text-slate-200">この4役に置き換えると、誰が“作る側”で、誰が“決める側”かが見えやすくなります。</p>
+
+                    <h2 class="mt-12">部門別に見ると、何を持つべきか</h2>
+
+                    <h3>設計/開発</h3>
+                    <p>設計は「技術評価の責任者」です。持つべき責任は次の通りです。</p>
+                    <ul class="text-slate-300 space-y-1">
+                        <li>対象製品・対象版数の確認</li>
+                        <li>構成やSBOM、設定、IFの確認</li>
+                        <li>影響あり/なし/調査中の技術根拠の提示</li>
+                        <li>暫定対策/恒久対策の案出し</li>
+                        <li>修正版の対象版数、更新方式の提示</li>
+                    </ul>
+                    <p class="text-brand-light font-bold mt-2">逆に、OEMへの最終文面を設計だけで確定させる必要はありません。</p>
+
+                    <h3>QA（品質保証）</h3>
+                    <p>QAは「対外回答の責任者」です。持つべき責任は次の通りです。</p>
+                    <ul class="text-slate-300 space-y-1">
+                        <li>OEM/顧客との窓口</li>
+                        <li>受領確認、一次回答、最終回答の期限管理</li>
+                        <li>回答書の組み立て（結論→根拠→対応方針→証跡）</li>
+                        <li>提出履歴の管理</li>
+                        <li>監査証跡の整理</li>
+                    </ul>
+                    <p class="text-brand-light font-bold mt-2">QAが“技術判断そのもの”をする必要はありませんが、技術判断を対外説明に変換する責任を持ちます。</p>
+
+                    <h3>情シス/PSIRT窓口</h3>
+                    <p>情シスは、自社ITだけでなく、PSIRT窓口機能を兼ねるなら「運用設計」の責任を持ちます。</p>
+                    <ul class="text-slate-300 space-y-1">
+                        <li>チケット/案件IDの管理</li>
+                        <li>証跡の保管場所、アクセス権、命名ルール</li>
+                        <li>期限管理表の更新</li>
+                        <li>社内エスカレーションの運用</li>
+                        <li>監査時に再現できるログの保持</li>
+                    </ul>
+                    <p class="text-brand-light font-bold mt-2">ここは“技術評価”と混同しやすいですが、主役は運用を回すことです。</p>
+
+                    <h3>経営/部門長</h3>
+                    <p>経営は最後に判子を押すだけではありません。持つべき責任は次の通りです。</p>
+                    <ul class="text-slate-300 space-y-1">
+                        <li>期限交渉やリスク受容の承認</li>
+                        <li>重大案件での優先順位付け</li>
+                        <li>追加工数や予算の判断</li>
+                        <li>対外的に重い回答の承認</li>
+                        <li>例外運用の承認</li>
+                    </ul>
+                    <p class="text-red-400 font-bold mt-2">経営が入るべき場面を決めておかないと、全部の案件で承認待ちになって詰まります。</p>
+
+                    <h2 class="border-b-2 border-blue-500 pb-2 mt-12 mb-8">手順：責任分界を決める（5ステップ）</h2>
+
+                    <div class="step-box pt-8">
+                        <div class="step-number">Step 1</div>
+                        <h4 class="text-white font-bold mt-0 mb-2">まず“決めること”を洗い出す</h4>
+                        <p class="text-sm text-slate-300 mb-2">部門ではなく、決める対象を列挙します。たとえば次のようなものです。</p>
+                        <ul class="text-sm m-0 text-slate-300 space-y-1 list-none pl-4">
+                            <li>・対象版数を確定する</li>
+                            <li>・影響あり/なしを決める</li>
+                            <li>・一次回答を出す</li>
+                            <li>・最終回答を承認する</li>
+                            <li>・証跡を保存する</li>
+                            <li>・期限交渉をする</li>
+                            <li>・修正版の出荷を決める</li>
+                        </ul>
+                    </div>
+
+                    <div class="step-box pt-8">
+                        <div class="step-number">Step 2</div>
+                        <h4 class="text-white font-bold mt-0 mb-2">RACIで4列だけ作る</h4>
+                        <p class="text-sm text-slate-300 mb-2">最初は細かくしすぎず、4列だけで十分です。</p>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-sm text-slate-200">
+                            <div class="bg-navy-900/80 p-2 rounded border border-white/5"><strong class="text-brand-light">R：</strong>実行</div>
+                            <div class="bg-navy-900/80 p-2 rounded border border-white/5"><strong class="text-red-400">A：</strong>最終責任</div>
+                            <div class="bg-navy-900/80 p-2 rounded border border-white/5"><strong class="text-yellow-400">C：</strong>相談</div>
+                            <div class="bg-navy-900/80 p-2 rounded border border-white/5"><strong class="text-emerald-400">I：</strong>共有</div>
+                        </div>
+                    </div>
+
+                    <div class="step-box pt-8">
+                        <div class="step-number">Step 3</div>
+                        <h4 class="text-white font-bold mt-0 mb-2">案件の重さで“承認線”を分ける</h4>
+                        <p class="text-sm text-slate-300 mb-2">すべての案件で経営承認が必要だと止まります。たとえば次のように切ると現実的です。</p>
+                        <ul class="text-sm m-0 text-slate-300 space-y-1 list-none pl-4">
+                            <li><strong>軽微：</strong> QA承認</li>
+                            <li><strong>通常：</strong> QA ＋ 設計責任者</li>
+                            <li><strong>重大：</strong> QA ＋ 設計責任者 ＋ 部門長</li>
+                        </ul>
+                    </div>
+
+                    <div class="step-box pt-8 border-red-500">
+                        <div class="step-number bg-red-500">Step 4</div>
+                        <h4 class="text-red-400 font-bold mt-0 mb-2">証跡の責任者を別で置く</h4>
+                        <p class="text-sm text-slate-300 m-0">多くの現場で抜けるのがここです。技術評価があっても、証跡を残す人がいないと監査で弱くなります。最低限、<strong>証跡管理のOwner を1人決めてください。</strong></p>
+                    </div>
+
+                    <div class="step-box pt-8">
+                        <div class="step-number">Step 5</div>
+                        <h4 class="text-white font-bold mt-0 mb-2">例外時のルールを先に決める</h4>
+                        <p class="text-sm text-slate-300 m-0">上流回答待ち、設計不在、承認者不在など、例外は必ず起きます。その時の代替ルール（エスカレーション先）を、最初に決めておくと事故が減ります。</p>
+                    </div>
+
+                    <h2 class="mt-12">そのまま使える：責任分界（RACI）テンプレ</h2>
+                    <p>以下のような表を1枚持つだけで、かなり安定します。（※ これは雛形です。実際には組織構成に応じて入れ替えてください。）</p>
+
+                    <div class="template-box p-0">
+                        <table class="custom-table">
+                            <thead>
+                                <tr>
+                                    <th class="rounded-tl-lg">決めること</th>
+                                    <th class="text-center">設計</th>
+                                    <th class="text-center">QA</th>
+                                    <th class="text-center">情シス/PSIRT</th>
+                                    <th class="text-center rounded-tr-lg">経営/部門長</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="font-bold">対象版数の確定</td>
+                                    <td class="text-center text-brand-light font-bold">R</td>
+                                    <td class="text-center text-yellow-400 font-bold">C</td>
+                                    <td class="text-center text-emerald-400 font-bold">I</td>
+                                    <td class="text-center text-emerald-400 font-bold">I</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-bold">影響有無の技術判断</td>
+                                    <td class="text-center text-brand-light font-bold">R</td>
+                                    <td class="text-center text-yellow-400 font-bold">C</td>
+                                    <td class="text-center text-emerald-400 font-bold">I</td>
+                                    <td class="text-center text-emerald-400 font-bold">I</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-bold">OEM一次回答の作成</td>
+                                    <td class="text-center text-yellow-400 font-bold">C</td>
+                                    <td class="text-center text-brand-light font-bold">R</td>
+                                    <td class="text-center text-yellow-400 font-bold">C</td>
+                                    <td class="text-center text-emerald-400 font-bold">I</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-bold">最終回答の承認</td>
+                                    <td class="text-center text-yellow-400 font-bold">C</td>
+                                    <td class="text-center text-brand-light font-bold">R</td>
+                                    <td class="text-center text-emerald-400 font-bold">I</td>
+                                    <td class="text-center text-red-400 font-bold">A</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-bold">証跡の保存/管理</td>
+                                    <td class="text-center text-yellow-400 font-bold">C</td>
+                                    <td class="text-center text-yellow-400 font-bold">C</td>
+                                    <td class="text-center text-brand-light font-bold">R</td>
+                                    <td class="text-center text-emerald-400 font-bold">I</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-bold">期限交渉</td>
+                                    <td class="text-center text-yellow-400 font-bold">C</td>
+                                    <td class="text-center text-brand-light font-bold">R</td>
+                                    <td class="text-center text-emerald-400 font-bold">I</td>
+                                    <td class="text-center text-red-400 font-bold">A</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-bold">修正版の出荷判断</td>
+                                    <td class="text-center text-brand-light font-bold">R</td>
+                                    <td class="text-center text-yellow-400 font-bold">C</td>
+                                    <td class="text-center text-emerald-400 font-bold">I</td>
+                                    <td class="text-center text-red-400 font-bold">A</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- 内部リンク②：回答の型へ -->
+                    <div class="related-box border-l-cyan-500 my-8">
+                        <div class="text-sm font-bold text-cyan-400 mb-2 flex items-center gap-2"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> 回答の型（テンプレ）</div>
+                        <p class="text-sm text-slate-300 mb-2">誰が対外回答を作るにせよ、QA側で「この型で書いてほしい」という文章の型を用意しておくと調整が速くなります。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/not-affected-response-template-ja/" class="!text-cyan-400 hover:!text-cyan-300">“影響なし”OEM回答文テンプレ（日本語）｜証跡・SLAまで抜けない書き方</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- 途中CTA（主CTA） -->
+                    <div class="bg-navy-800/50 p-6 md:p-8 rounded-2xl border border-blue-500/30 text-center my-10 shadow-[0_0_20px_rgba(59,130,246,0.15)]">
+                        <p class="text-slate-200 mb-6 font-medium text-lg">OEM調査依頼・監査対応の進め方を、自社の組織に合わせて整理したい方はご相談ください。</p>
+                        <a href="/demo_form.html" class="inline-flex items-center gap-2 px-8 py-3.5 bg-brand hover:bg-brand-dark !text-white rounded-full font-bold transition-all hover:-translate-y-1 shadow-lg shadow-brand/20">
+                            <i data-lucide="calendar" class="w-5 h-5"></i> 【無料】オンライン相談を予約する
+                        </a>
+                    </div>
+
+                    <h2>よくあるNG例（体制が回らなくなる原因）</h2>
+                    <ul class="space-y-4 my-6 list-none pl-0">
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>設計が“全部やる”ことになっている</strong><br><span class="text-sm text-slate-400">技術も対外回答も証跡も全部抱え込み、止まりやすくなります。</span></div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>QAが“取りまとめるだけ”で責任が無い</strong><br><span class="text-sm text-slate-400">文面調整しかできず、期限交渉や証跡管理が宙に浮きます。</span></div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>情シスが関与せず、ログと証跡が散らばる</strong><br><span class="text-sm text-slate-400">後から監査で辿れなくなります。</span></div></li>
+                        <li class="flex items-start gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> <div><strong>経営承認が全部に必要</strong><br><span class="text-sm text-slate-400">軽微案件まで承認待ちになり、SLAを落とします。</span></div></li>
+                    </ul>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2>FAQ：責任分界・RACIの決め方</h2>
+                    <div class="space-y-6 mt-6">
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q1. 責任分界は部門で切るべきですか、役割で切るべきですか？</strong>
+                            <p class="m-0 text-slate-300">最初は役割で切る方が整理しやすいです。部門名だけで決めると、責任が重なったり抜けたりしやすくなります。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q2. 兼務でもRACIは必要ですか？</strong>
+                            <p class="m-0 text-slate-300">必要です。むしろ兼務ほど「どの帽子で判断しているのか」を明確にする必要があります。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q3. 経営はどこまで関与すべきですか？</strong>
+                            <p class="m-0 text-slate-300">重大案件、期限交渉、リスク受容、対外回答の承認など、“重い判断”だけに絞ると運用が崩れにくいです。</p>
+                        </div>
+                    </div>
+
+                    <!-- 内部リンク③：次に読む -->
+                    <div class="related-box border-l-brand mt-12">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="book-open" class="w-4 h-4"></i> 次に読む</div>
+                        <p class="text-sm text-slate-300 mb-2">責任分界の中でも重い判断になりやすい「OTA（ソフトウェア更新）」が絡む案件の前提知識はこちら。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="#" class="!text-brand-light hover:!text-brand">OTAが「？」な担当者向け解説（作成中）</a></li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- CTA Section (副CTA) -->
+            <div class="glass-card rounded-3xl p-8 md:p-12 text-center border-t-4 border-t-blue-500 bg-navy-800/80 shadow-[0_0_40px_-10px_rgba(59,130,246,0.2)]">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">エスカレーションと承認をシステム化しませんか？</h2>
+                <p class="text-slate-300 mb-8 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+                    <strong>Auto PSIRT Cloud</strong>なら、OEM調査依頼をチケット化し、あらかじめ決めた担当者や承認者へワークフローとして自動で通知します。誰がボールを持っているか、システム上で一目で分かります。
+                </p>
+                <div class="flex justify-center">
+                    <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-navy-900 bg-white hover:bg-slate-200 transition-all duration-300 shadow-xl shadow-white/10 w-full sm:w-auto hover:-translate-y-1">
+                        <i data-lucide="monitor-play" class="w-5 h-5 text-blue-600"></i>
+                        OEM回答書作成・ワークフローの流れを見る
+                    </a>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/5 text-center text-sm text-slate-500 mt-auto bg-navy-900/80">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span class="font-bold text-slate-400">Auto PSIRT Cloud</span>
+            </div>
+            <p>&copy; 2026 Unimobilities株式会社. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
