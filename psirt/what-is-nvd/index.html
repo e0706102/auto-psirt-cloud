@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEOメタタグ -->
+    <title>NVDとは？データの取り扱い注意点をやさしく解説 | Auto PSIRT Cloud</title>
+    <meta name="description" content="NVDとは何かをサプライヤー向けに解説。CVEとの違い、CVSS/CWE/CPEの付与、NVDが“分析・付加”するデータの性質、CPEやスコアをそのまま信じすぎない理由、API/フィード利用時の注意点まで短く整理します。">
+    <meta name="keywords" content="NVDとは, NVD, CVE, CVSS, CPE, 脆弱性管理, PSIRT">
+    <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/psirt/what-is-nvd/">
+    
+    <!-- OGPタグ (SNSシェア用) -->
+    <meta property="og:title" content="NVDとは？データの取り扱い注意点をやさしく解説">
+    <meta property="og:description" content="NVDはCVEの「分析つき辞書」。スコアやCPEをそのまま鵜呑みにしてはいけない理由を実務目線で解説します。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/psirt/what-is-nvd/">
+    <meta property="og:site_name" content="Auto PSIRT Cloud">
+
+    <!-- ファビコン -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23a855f7%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z%22/><path d=%22m9 12 2 2 4-4%22/></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0a0f1c',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        brand: {
+                            light: '#60a5fa',
+                            DEFAULT: '#3b82f6',
+                            dark: '#2563eb',
+                        },
+                        accent: {
+                            DEFAULT: '#06b6d4',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #a855f7, #3b82f6); /* Purple to Blue */
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* 記事用カスタムスタイル */
+        .prose h2 {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-top: 3.5rem;
+            color: #f8fafc;
+        }
+        .prose h3 {
+            color: #e2e8f0;
+            margin-top: 2.5rem;
+            border-left: 3px solid #a855f7; /* Purple系アクセント */
+            padding-left: 0.75rem;
+            font-size: 1.25rem;
+        }
+        .prose a {
+            color: #c084fc; /* purple-400 */
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .prose a:hover {
+            border-bottom-color: #c084fc;
+        }
+        .prose strong {
+            color: #f8fafc;
+            background: linear-gradient(transparent 60%, rgba(168, 85, 247, 0.3) 40%);
+        }
+        .related-box {
+            background: rgba(30, 41, 59, 0.6);
+            border-left: 4px solid #a855f7;
+            padding: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 2rem 0;
+        }
+        
+        .trust-box {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 0.5rem;
+            padding: 1.25rem;
+            margin-top: 1rem;
+        }
+        .discard-box {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 0.5rem;
+            padding: 1.25rem;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-purple-500 selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-brand/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-purple-500/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-accent flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="/news.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        ニュース一覧へ戻る
+                    </a>
+                    <a href="/demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                        相談 or デモ予約
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <article class="max-w-4xl mx-auto">
+            
+            <!-- パンくずリスト -->
+            <nav class="flex text-sm text-slate-400 mb-8" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/index.html" class="hover:text-white transition-colors">ホーム</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <a href="/news.html" class="hover:text-white transition-colors">ニュース・インサイト</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <span class="text-slate-500 truncate max-w-[200px] sm:max-w-none">NVDとは</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- 記事ヘッダー -->
+            <header class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-purple-500/20 border border-purple-500/30 text-purple-400 text-xs font-bold px-3 py-1 rounded-full">入門解説</span>
+                    <time class="text-slate-400 text-sm flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> 2026.03.09
+                    </time>
+                </div>
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
+                    NVDとは<br/>
+                    <span class="text-2xl md:text-3xl text-slate-300 font-medium">（データの取り扱い注意点）</span>
+                </h1>
+                
+                <!-- 導入文 -->
+                <div class="text-lg text-slate-300 leading-relaxed p-6 bg-navy-800/50 rounded-2xl border border-white/5 space-y-4">
+                    <p>NVDとは <strong>National Vulnerability Database</strong> の略で、NIST（米国国立標準技術研究所）が維持する脆弱性管理データのリポジトリです。<br>
+                    NVDの公式説明では、NVDはSCAPに基づく脆弱性管理データを提供し、ソフトウェアやハードウェアの脆弱性、製品名、影響指標などを含むとされています。</p>
+                    
+                    <p>サプライヤー実務で言い換えると、NVDは <strong>「CVE情報をそのまま並べる場所」ではなく、CVEに分析情報を付与して、運用で使いやすくする場所</strong> です。<br>
+                    NVD General Information では、NVDは公開済みCVEに対して、CVSS、CWE、CPE applicability statements などの enrichment（付加分析）を行うと説明しています。</p>
+                </div>
+            </header>
+
+            <!-- 記事本文 -->
+            <div class="glass-card p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl bg-navy-900/80 mb-16">
+                <div class="prose prose-invert prose-slate prose-lg max-w-none">
+                    
+                    <!-- 内部リンク①：全体像の設計へ -->
+                    <div class="related-box mt-0 border-l-brand">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="map" class="w-4 h-4"></i> 全体像を押さえる</div>
+                        <p class="text-sm text-slate-300 mb-2">NVDの情報をどう読み解き、どうトリアージしていくか、実務全体のフローはこちらのガイドで解説しています。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/cve-triage-vex-guide/" class="!text-brand-light hover:!text-brand">CVEトリアージ＆VEX実務 完全ガイド</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>NVDとCVEの違い</h2>
+                    <p>ここは最初に分けて理解すると混乱が減ります。</p>
+
+                    <ul class="space-y-4 my-6 list-none pl-0">
+                        <li class="bg-navy-800/50 p-4 rounded-xl border border-white/5">
+                            <strong class="text-brand-light font-mono text-lg block mb-1">CVE</strong>
+                            <span class="text-slate-300">脆弱性そのものの識別子（番号）</span>
+                        </li>
+                        <li class="bg-navy-800/50 p-4 rounded-xl border border-white/5 border-l-4 border-l-purple-500">
+                            <strong class="text-purple-400 font-mono text-lg block mb-1">NVD</strong>
+                            <span class="text-slate-300">そのCVEに、深刻度・脆弱性種別・対象製品情報などを付けて運用しやすくしたデータベース</span>
+                        </li>
+                    </ul>
+
+                    <p>つまり、CVEが“ラベル”、NVDが“分析つきの辞書”に近いです。<br>
+                    NVD自身も、CVEに対してCVSS、CWE、CPEなどを追加していると説明しています。</p>
+
+                    <h2>何を信じて、何をそのまま信じすぎないか</h2>
+                    <p>NVDは非常に便利ですが、そのまま鵜呑みにしすぎないことが大切です。特に注意したいのは次の3点です。</p>
+
+                    <div class="space-y-6 my-8">
+                        <div class="bg-navy-800/50 p-6 rounded-xl border border-white/5 border-l-4 border-l-red-500">
+                            <h4 class="text-white font-bold mt-0 mb-2">1. CVSSは“深刻度”であって自社の優先度ではない</h4>
+                            <p class="text-sm text-slate-300 m-0">NVDに付いているCVSSは参考になりますが、実際の優先順位は <strong>対象版数・到達性・前提条件</strong> で変わります。<br>NVDは分析結果を提供しますが、自社製品での成立条件までは保証しません。</p>
+                        </div>
+                        
+                        <div class="bg-navy-800/50 p-6 rounded-xl border border-white/5 border-l-4 border-l-orange-400">
+                            <h4 class="text-white font-bold mt-0 mb-2">2. CPEは“候補”であって確定ではない</h4>
+                            <p class="text-sm text-slate-300 m-0">NVD Productsページでは、NVDはCPE 2.3を使って製品識別を行い、CVEには CPE match strings を付与すると説明しています。<br>ですが、これは突合の入口として非常に有用な一方、自社の構成にそのまま一致することを保証するものではありません。表記差や版数差、実装差分があるため、<strong>SBOMや構成表との照合が必要</strong>です。</p>
+                        </div>
+
+                        <div class="bg-navy-800/50 p-6 rounded-xl border border-white/5 border-l-4 border-l-yellow-400">
+                            <h4 class="text-white font-bold mt-0 mb-2">3. NVDの分析結果は後から変わる</h4>
+                            <p class="text-sm text-slate-300 m-0">NVD General Information では、追加情報が得られるとCVSS、CWE、適用性情報などは変更され得ると明記されています。<br>つまり、最初に見たNVDの内容が“最終版”とは限りません。監査やOEM照会では、<strong>確認日（いつ時点のNVDか）</strong> を残しておくと安全です。</p>
+                        </div>
+                    </div>
+
+                    <h2>実務での使い方</h2>
+                    <p>サプライヤー実務では、NVDは次の順番で使うと安定します。</p>
+
+                    <ol class="space-y-2 bg-navy-800 p-6 rounded-lg border border-white/10 my-6 font-medium text-slate-200">
+                        <li>CVEを特定する</li>
+                        <li>NVDでCVSS/CWE/CPE/参考リンクを確認する</li>
+                        <li>SBOMや構成表で自社対象版数を照合する</li>
+                        <li>影響あり/なし/調査中に落とす</li>
+                        <li><strong>確認日時と根拠を残す</strong></li>
+                    </ol>
+
+                    <p class="text-brand-light font-bold text-center">ここで大事なのは、NVDを“結論”にせず、自社判断の材料として使うことです。</p>
+
+                    <h2>APIやデータの取り扱い注意点</h2>
+                    <p>NVDはAPIも提供しており、Vulnerability API や CPE API はオフセットページングで大量データを扱う仕組みになっています。開発者向けドキュメントには、CVE API や Change History API、CPE API、Match Criteria API が用意されていることが示されています。</p>
+                    
+                    <p>また、NISTの2025年のTechnical Updateでは、<strong>旧来の1.1フィードや旧CPE関連ファイルは廃止され、2.0 APIs / 2.0 data feeds への移行が必要</strong> と案内されています。<br>
+                    運用で古いフィード前提の仕組み（自社スクリプトなど）を使っている場合は、ここが見落としポイントです。</p>
+
+                    <!-- 途中CTA（主CTA） -->
+                    <div class="bg-navy-800/50 p-6 md:p-8 rounded-2xl border border-purple-500/30 text-center my-10 shadow-[0_0_20px_rgba(168,85,247,0.15)]">
+                        <p class="text-slate-200 mb-6 font-medium text-lg">NVDの情報をどう読み解き、自社のトリアージ判断基準としてどう落とし込むか整理したい方はご相談ください。</p>
+                        <a href="/demo_form.html" class="inline-flex items-center gap-2 px-8 py-3.5 bg-brand hover:bg-brand-dark !text-white rounded-full font-bold transition-all hover:-translate-y-1 shadow-lg shadow-brand/20">
+                            <i data-lucide="message-square" class="w-5 h-5"></i> 【無料】オンライン相談を予約する
+                        </a>
+                    </div>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2>FAQ：NVDについて</h2>
+                    <div class="space-y-6 mt-6">
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q1. NVDとは何ですか？</strong>
+                            <p class="m-0 text-slate-300">NISTが維持する脆弱性管理データベースで、CVEに対してCVSS、CWE、CPEなどの分析情報を付けて提供します。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q2. NVDとCVEの違いは何ですか？</strong>
+                            <p class="m-0 text-slate-300">CVEは脆弱性番号、NVDはそのCVEに分析情報を付加したデータベースです。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q3. NVDのCVSSスコアはそのまま信じてよいですか？</strong>
+                            <p class="m-0 text-slate-300">深刻度の目安としては有用ですが、自社製品の優先度をそのまま決めるものではありません。対象版数や到達性の確認が必要です。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q4. NVDのCPE情報だけで突合できますか？</strong>
+                            <p class="m-0 text-slate-300">候補の絞り込みには使えますが、最終判断にはSBOMや構成表との照合が必要です。</p>
+                        </div>
+                        <div>
+                            <strong class="text-brand-light block mb-2">Q5. NVDの情報は後から変わりますか？</strong>
+                            <p class="m-0 text-slate-300">変わります。NVD自身が、追加情報に応じてCVSSやCPE適用性などが更新され得ると説明しています。</p>
+                        </div>
+                    </div>
+
+                    <!-- 内部リンク領域 -->
+                    <div class="mt-12 space-y-6">
+                        <!-- 内部リンク②：テンプレを活用する -->
+                        <div class="related-box border-l-emerald-500 my-0">
+                            <div class="text-sm font-bold text-emerald-400 mb-2 flex items-center gap-2"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> テンプレを活用する</div>
+                            <p class="text-sm text-slate-300 mb-2">NVDから得た情報（CVSS等）をもとに、最終的な優先度や決定理由を社内でどう記録するか、判定シートの型はこちらをご利用ください。</p>
+                            <ul class="text-base m-0 list-none pl-0">
+                                <li><a href="/psirt/triage-decision-sheet-template/" class="!text-emerald-400 hover:!text-emerald-300">トリアージ判定シート（決定理由）テンプレ</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/5 text-center text-sm text-slate-500 mt-auto bg-navy-900/80">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span class="font-bold text-slate-400">Auto PSIRT Cloud</span>
+            </div>
+            <p>&copy; 2026 Unimobilities株式会社. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
