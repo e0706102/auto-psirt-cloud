@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEOメタタグ -->
+    <title>CSAFとは？アドバイザリの標準フォーマットをやさしく解説 | Auto PSIRT Cloud</title>
+    <meta name="description" content="CSAFとは、脆弱性や対策情報を機械可読なJSONで交換するための標準フォーマットです。SBOMやVEXとの違い、OEM/サプライヤー実務での使いどころ、誤解しやすい点を短く整理します。">
+    <meta name="keywords" content="CSAFとは, CSAF, VEX, SBOM, 脆弱性管理, PSIRT, セキュリティアドバイザリ">
+    <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/psirt/what-is-csaf/">
+    
+    <!-- OGPタグ (SNSシェア用) -->
+    <meta property="og:title" content="CSAFとは？アドバイザリの標準フォーマットをやさしく解説">
+    <meta property="og:description" content="脆弱性や対策情報を機械可読なJSONで交換するための標準フォーマット。SBOMやVEXとの違いを解説します。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/psirt/what-is-csaf/">
+    <meta property="og:site_name" content="Auto PSIRT Cloud">
+
+    <!-- ファビコン -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23d946ef%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z%22/><path d=%22m9 12 2 2 4-4%22/></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0a0f1c',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        brand: {
+                            light: '#60a5fa',
+                            DEFAULT: '#3b82f6', /* サイト基本の青色 */
+                            dark: '#2563eb',
+                        },
+                        accent: {
+                            DEFAULT: '#d946ef', /* Fuchsia 500 */
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #d946ef, #8b5cf6); /* Fuchsia to Violet */
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* 記事用カスタムスタイル */
+        .prose h2 {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-top: 3.5rem;
+            color: #f8fafc;
+        }
+        .prose h3 {
+            color: #e2e8f0;
+            margin-top: 2.5rem;
+            border-left: 3px solid #d946ef; /* Fuchsia系アクセント */
+            padding-left: 0.75rem;
+            font-size: 1.25rem;
+        }
+        .prose a {
+            color: #e879f9; /* fuchsia-400 */
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .prose a:hover {
+            border-bottom-color: #e879f9;
+        }
+        .prose strong {
+            color: #f8fafc;
+            background: linear-gradient(transparent 60%, rgba(217, 70, 239, 0.3) 40%);
+        }
+        .related-box {
+            background: rgba(30, 41, 59, 0.6);
+            border-left: 4px solid #d946ef;
+            padding: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-fuchsia-500 selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-brand/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-fuchsia-500/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-brand-dark flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="/news.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        ニュース一覧へ戻る
+                    </a>
+                    <a href="/demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                        相談 or デモ予約
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <article class="max-w-4xl mx-auto">
+            
+            <!-- パンくずリスト -->
+            <nav class="flex text-sm text-slate-400 mb-8" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/index.html" class="hover:text-white transition-colors">ホーム</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <a href="/news.html" class="hover:text-white transition-colors">ニュース・インサイト</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <span class="text-slate-500 truncate max-w-[200px] sm:max-w-none">CSAFとは</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- 記事ヘッダー -->
+            <header class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-fuchsia-500/20 border border-fuchsia-500/30 text-fuchsia-400 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1.5">
+                        <i data-lucide="file-json-2" class="w-3.5 h-3.5"></i> 入門解説
+                    </span>
+                    <time class="text-slate-400 text-sm flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> 2026.12.11
+                    </time>
+                </div>
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
+                    CSAFとは<br/>
+                    <span class="text-2xl md:text-3xl text-slate-300 font-medium">（アドバイザリの標準フォーマット）</span>
+                </h1>
+                
+                <!-- 導入文 -->
+                <div class="text-lg text-slate-300 leading-relaxed p-6 bg-navy-800/50 rounded-2xl border border-white/5 space-y-4 shadow-lg shadow-black/20">
+                    <p>CSAFとは <strong>Common Security Advisory Framework</strong> の略で、脆弱性や対策情報を <strong>JSON 形式の機械可読なアドバイザリ</strong> として交換するための標準です。</p>
+                    
+                    <p>OASISの仕様では、CSAFは「製品、脆弱性、影響状況、 remediation（対策）に関する構造化情報として、セキュリティアドバイザリを作成・更新・相互運用可能に交換するための言語」と説明されています。CSAF 2.0は OASIS Standard として公開されており、JSON schemaもあわせて提供されています。</p>
+                    
+                    <div class="bg-navy-900/60 p-4 rounded-xl border-l-4 border-l-fuchsia-500">
+                        <p class="m-0 text-white font-bold">サプライヤー実務で一言にすると、CSAF は<br>
+                        <span class="text-fuchsia-400">「脆弱性の説明書を、人ではなくシステムでも扱える形にしたもの」</span> です。</p>
+                    </div>
+                    
+                    <p>OASISの設計説明では、Security Advisory はベンダー、PSIRT、再販業者・流通事業者などが扱う通知を含み、焦点は <strong>特定の製品・プラットフォーム・バージョンに、影響があるか／ないか、回避策や対策があるか</strong> に置かれています。<br>
+                    つまり、PDFやメール本文ではなく、構造化された advisory をやり取りしたい時に登場するのが CSAF です。</p>
+                </div>
+            </header>
+
+            <!-- 記事本文 -->
+            <div class="glass-card p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl bg-navy-900/80 mb-16">
+                <div class="prose prose-invert prose-slate prose-lg max-w-none">
+                    
+                    <!-- 内部リンク①：全体像の設計へ -->
+                    <div class="related-box mt-0 border-l-brand">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="map" class="w-4 h-4"></i> 前提の確認</div>
+                        <p class="text-sm text-slate-300 mb-2">CSAFのフォーマットを活かす前に、OEMとアドバイザリ（調査依頼と回答）をやり取りする実務フローの全体像についてはこちらをご覧ください。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <!-- CSVから ID:04 のURLを設定 -->
+                            <li><a href="/psirt/audit-investigation-response-guide/" class="!text-brand-light hover:!text-brand flex items-center gap-1.5"><i data-lucide="file-text" class="w-4 h-4"></i> OEM調査依頼・監査対応 完全ガイド</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>CSAFで何ができるのか</h2>
+                    <p>CSAFの最大の価値は、脆弱性情報を「人が読める」だけでなく <strong>機械処理しやすくする</strong> ことです。</p>
+                    <p>OASISの抽象説明どおり、CSAFは製品、脆弱性、影響、対策を構造化して持てるため、OEMやサプライヤーの間で advisory をデータとして交換したり、ツール側で読み込んで自動処理したりしやすくなります。<br>
+                    実務の観点では、<strong>同じ内容をPDF、Excel、メールで何度も手入力（転記）する負荷を減らす</strong>方向で効果を発揮します。</p>
+
+                    <p>また、CSAF には <strong>Profile（用途別の型）</strong> があります。</p>
+                    <ul class="space-y-3 bg-navy-800/50 p-6 rounded-xl border border-white/5 list-none pl-0 text-slate-300">
+                        <li><strong class="text-fuchsia-300 block mb-1">Security Advisory profile</strong>脆弱性とその対策を表す一般的な advisory 向け</li>
+                        <li><strong class="text-fuchsia-300 block mb-1">VEX profile</strong>「その製品が当該脆弱性に影響する／しない理由」を表現する用途向け</li>
+                    </ul>
+                    <p>OASISは VEX profile の主目的を、「ある製品が、ある脆弱性の影響を受けるか受けないか、そしてその理由を述べること」だと明記しています。</p>
+
+                    <h2>SBOM・VEXとの違い</h2>
+                    <p>ここは非常によく混同されるポイントです。以下のように整理してください。</p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 my-6">
+                        <div class="bg-navy-800/80 p-5 rounded-xl border-t-4 border-t-emerald-400">
+                            <h4 class="text-emerald-400 font-bold mt-0 mb-2">SBOM</h4>
+                            <p class="text-sm text-slate-300 m-0">「何が入っているか」を示す<strong>構成表</strong></p>
+                        </div>
+                        <div class="bg-navy-800/80 p-5 rounded-xl border-t-4 border-t-cyan-400">
+                            <h4 class="text-cyan-400 font-bold mt-0 mb-2">VEX</h4>
+                            <p class="text-sm text-slate-300 m-0">「実際に影響するか」を示す<strong>状態表現</strong></p>
+                        </div>
+                        <div class="bg-navy-800/80 p-5 rounded-xl border-t-4 border-t-fuchsia-400">
+                            <h4 class="text-fuchsia-400 font-bold mt-0 mb-2">CSAF</h4>
+                            <p class="text-sm text-slate-300 m-0">それらを含みうる<strong>アドバイザリ交換の枠組み（フォーマット）</strong></p>
+                        </div>
+                    </div>
+
+                    <p>特にOASISの仕様では、CSAFの VEX profile が製品ごとの <code class="text-sm text-fuchsia-300 bg-fuchsia-900/30 px-1 py-0.5 rounded">affected</code> / <code class="text-sm text-fuchsia-300 bg-fuchsia-900/30 px-1 py-0.5 rounded">not affected</code> / <code class="text-sm text-fuchsia-300 bg-fuchsia-900/30 px-1 py-0.5 rounded">under investigation</code> などを扱う前提になっており、<strong>CSAFのJSON構造の中でVEX的な情報をやり取りできる</strong>設計になっています。</p>
+
+                    <h2>サプライヤー実務でどこに出てくる？</h2>
+                    <p>CSAFがサプライヤーの実務で登場するのは、主に以下の場面です。</p>
+                    <ul class="list-disc pl-6 space-y-2 text-slate-300">
+                        <li>OEMや上流ベンダーから、構造化された advisory をデータとして受け取る時</li>
+                        <li>自社から（顧客やOEMへ向けて） advisory を機械可読な形で返す時</li>
+                    </ul>
+                    
+                    <p>特に、「どの製品のどの版数に影響があり、どの版数は影響しないか」「回避策や修正版は何か」といった情報を、手作業ではなくシステム間でやり取りしたい時に価値が出ます。</p>
+                    
+                    <div class="bg-amber-900/20 border-l-4 border-amber-500 p-4 rounded-r-lg my-6">
+                        <p class="m-0 text-slate-200">
+                            <strong><i data-lucide="alert-triangle" class="w-5 h-5 inline text-amber-400 pb-1"></i> 注意点</strong><br>
+                            逆に言えば、社内で「対象版数」や「影響の根拠」が整理できていない（アナログでカオスな）状態では、CSAFだけを導入しても運用は改善しません。<br>
+                            <strong>CSAFはプロセスそのものではなく、あくまで「交換フォーマット」だからです。</strong>
+                        </p>
+                    </div>
+
+                    <h2>よくある誤解</h2>
+                    
+                    <ul class="space-y-6 my-8 list-none pl-0">
+                        <li class="bg-navy-800/50 p-5 rounded-xl border border-white/5">
+                            <strong class="text-slate-200 block mb-2 flex items-center gap-2"><i data-lucide="x" class="w-5 h-5 text-red-400"></i> 誤解1：CSAFを使えば運用が自動で整う</strong>
+                            <p class="text-sm text-slate-300 m-0"><strong class="text-red-300">違います。</strong> CSAFは advisory を交換するための標準であって、社内の脆弱性受付、影響判定、証跡管理、承認フローを代替するものではありません。まず必要なのは、社内で対象版数・結論・根拠が正しく整理されていることです。</p>
+                        </li>
+                        <li class="bg-navy-800/50 p-5 rounded-xl border border-white/5">
+                            <strong class="text-slate-200 block mb-2 flex items-center gap-2"><i data-lucide="x" class="w-5 h-5 text-red-400"></i> 誤解2：CSAF ＝ VEX である</strong>
+                            <p class="text-sm text-slate-300 m-0"><strong class="text-red-300">違います。</strong> VEXはCSAFの中で使える用途（Profile）の1つに過ぎず、CSAF全体はそれよりも広いセキュリティアドバイザリ全般の枠組みです。</p>
+                        </li>
+                        <li class="bg-navy-800/50 p-5 rounded-xl border border-white/5">
+                            <strong class="text-slate-200 block mb-2 flex items-center gap-2"><i data-lucide="x" class="w-5 h-5 text-red-400"></i> 誤解3：昔の CVRF と同じでよい</strong>
+                            <p class="text-sm text-slate-300 m-0"><strong class="text-red-300">アップデートされています。</strong> CSAF 2.0 の仕様ページでは、CSAFは CSAF-CVRF 1.2 を置き換える/引き継ぐものとして整理されています。つまり、CSAFは CVRF の系譜を引き継ぎつつ、現在の標準としてJSONで整備されたものです。</p>
+                        </li>
+                    </ul>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2>FAQ：CSAFとは</h2>
+                    <div class="space-y-6 mt-6">
+                        <div>
+                            <strong class="text-fuchsia-400 block mb-2">Q1. CSAFとは何ですか？</strong>
+                            <p class="m-0 text-slate-300">脆弱性や対策情報を、JSONで機械可読に交換するための標準フォーマットです。OASIS が標準化を行っています。</p>
+                        </div>
+                        <div>
+                            <strong class="text-fuchsia-400 block mb-2">Q2. CSAFは何に使いますか？</strong>
+                            <p class="m-0 text-slate-300">製品、脆弱性、影響状況、対策情報を構造化し、サプライヤーやOEM、PSIRTの間でセキュリティアドバイザリ（通知・報告）をやり取りしやすくするために使います。</p>
+                        </div>
+                        <div>
+                            <strong class="text-fuchsia-400 block mb-2">Q3. CSAFとVEXの違いは何ですか？</strong>
+                            <p class="m-0 text-slate-300">CSAFは advisory の枠組み（フォーマット）全体であり、VEXはその中で「影響する/しない理由」を扱う profile（用途）の1つです。</p>
+                        </div>
+                        <div>
+                            <strong class="text-fuchsia-400 block mb-2">Q4. CSAFを導入すればOEM対応は楽になりますか？</strong>
+                            <p class="m-0 text-slate-300">社内で対象版数、根拠、承認プロセス、証跡が整理されている前提なら効力を発揮します。逆に、社内のPSIRT運用プロセスが未整備のままでは、CSAFという箱だけ入れても改善は限定的です。</p>
+                        </div>
+                    </div>
+
+                    <!-- 内部リンク領域 -->
+                    <div class="mt-12 space-y-6">
+                        <!-- 内部リンク②：テンプレを活用する -->
+                        <div class="related-box border-l-emerald-500 my-0">
+                            <div class="text-sm font-bold text-emerald-400 mb-2 flex items-center gap-2"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> 次に読む</div>
+                            <p class="text-sm text-slate-300 mb-2">CSAFやVEXで出力する前の「社内の影響判定（対応不要の根拠）」を、実務としてどう回答書に落とし込むかについてはこちら。</p>
+                            <ul class="text-base m-0 list-none pl-0">
+                                <!-- CSVから ID:88 のURLを取得 -->
+                                <li><a href="/psirt/not-affected-response-template-ja/" class="!text-emerald-400 hover:!text-emerald-300">“影響なし”OEM回答文テンプレ（対応不要の書き方）</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- CTA Section (相談のみ) -->
+            <div class="glass-card rounded-3xl p-8 md:p-12 text-center border-t-4 border-t-fuchsia-500 bg-navy-800/80 shadow-[0_0_40px_-10px_rgba(217,70,239,0.2)]">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">フォーマットの前に、社内のプロセスを整理しませんか？</h2>
+                <p class="text-slate-300 mb-8 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+                    CSAFやVEXといった標準フォーマットを活用するためには、まず「社内のどの製品が対象か」「影響有無の証跡をどう残すか」というPSIRTの基本プロセスが不可欠です。OEM調査依頼・監査対応の進め方を自社向けに整理したい方はご相談ください。
+                </p>
+                <div class="flex justify-center">
+                    <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold !text-white bg-brand hover:bg-brand-dark transition-all duration-300 shadow-lg shadow-brand/20 w-full sm:w-auto hover:-translate-y-1">
+                        <i data-lucide="message-square" class="w-5 h-5 !text-white"></i>
+                        【無料】オンライン相談を予約する
+                    </a>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/5 text-center text-sm text-slate-500 mt-auto bg-navy-900/80">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span class="font-bold text-slate-400">Auto PSIRT Cloud</span>
+            </div>
+            <p>&copy; 2026 Unimobilities株式会社. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
