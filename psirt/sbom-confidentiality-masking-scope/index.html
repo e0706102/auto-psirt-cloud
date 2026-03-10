@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEOメタタグ -->
+    <title>SBOM提出時の機密対策（秘匿/マスキング/範囲定義）｜出しすぎず、足りなさすぎない作り方 | Auto PSIRT Cloud</title>
+    <meta name="description" content="SBOM提出時の機密対策を、秘匿・マスキング・範囲定義の3点から整理。社内正本と提出版の分け方、どの項目を出し、どこを伏せ、何を証跡として残すかを、兼務でも回る手順とテンプレで解説します。">
+    <meta name="keywords" content="SBOM提出時の機密対策, SBOM, マスキング, 秘匿, 範囲定義, OEM監査, 脆弱性管理, 自動車セキュリティ">
+    <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/psirt/sbom-confidentiality-masking-scope/">
+    
+    <!-- OGPタグ (SNSシェア用) -->
+    <meta property="og:title" content="SBOM提出時の機密対策（秘匿/マスキング/範囲定義）｜出しすぎず、足りなさすぎない作り方">
+    <meta property="og:description" content="社内正本と提出版の分け方、どこを出し・どこを伏せるべきかの基準、兼務でも回るマスキング手順とテンプレを解説します。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/psirt/sbom-confidentiality-masking-scope/">
+    <meta property="og:site_name" content="Auto PSIRT Cloud">
+
+    <!-- ファビコン -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%2314b8a6%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z%22/><path d=%22m9 12 2 2 4-4%22/></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0a0f1c',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        brand: {
+                            light: '#2dd4bf', /* Teal 400 */
+                            DEFAULT: '#14b8a6', /* Teal 500 */
+                            dark: '#0f766e', /* Teal 700 */
+                        },
+                        accent: {
+                            DEFAULT: '#6366f1', /* Indigo 500 */
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #2dd4bf, #6366f1); /* Teal to Indigo */
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* 記事用カスタムスタイル */
+        .prose h2 {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-top: 4rem;
+            color: #f8fafc;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .prose h3 {
+            color: #e2e8f0;
+            margin-top: 2.5rem;
+            border-left: 3px solid #14b8a6; /* Teal系アクセント */
+            padding-left: 0.75rem;
+            font-size: 1.25rem;
+        }
+        .prose a {
+            color: #2dd4bf; /* Teal 400 */
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .prose a:hover {
+            border-bottom-color: #2dd4bf;
+        }
+        .prose strong {
+            color: #f8fafc;
+            background: linear-gradient(transparent 60%, rgba(20, 184, 166, 0.2) 40%);
+        }
+        .related-box {
+            background: rgba(30, 41, 59, 0.6);
+            border-left: 4px solid #14b8a6;
+            padding: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 2rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .related-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(20, 184, 166, 0.05));
+            pointer-events: none;
+        }
+        .template-box {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(20, 184, 166, 0.4);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        .template-header {
+            color: #2dd4bf;
+            font-weight: bold;
+            margin-top: 0;
+            margin-bottom: 1rem;
+            border-bottom: 1px dashed rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .template-content {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-size: 0.875rem;
+            line-height: 1.6;
+            color: #e2e8f0;
+            white-space: pre;
+            overflow-x: auto;
+            tab-size: 4;
+            scrollbar-width: thin;
+            scrollbar-color: #475569 transparent;
+        }
+        .template-content::-webkit-scrollbar {
+            height: 8px;
+        }
+        .template-content::-webkit-scrollbar-thumb {
+            background-color: #475569;
+            border-radius: 4px;
+        }
+        .step-card {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        .step-card:hover {
+            border-color: rgba(20, 184, 166, 0.3);
+            background: rgba(30, 41, 59, 0.8);
+        }
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2rem;
+            height: 2rem;
+            background: #14b8a6;
+            color: white;
+            border-radius: 0.5rem;
+            font-weight: bold;
+            font-size: 1rem;
+            margin-right: 0.75rem;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-teal-500 selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-teal-500/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-indigo-500/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-accent flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="/news.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        ニュース一覧へ戻る
+                    </a>
+                    <a href="/demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                        相談 or デモ予約
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <article class="max-w-4xl mx-auto">
+            
+            <!-- パンくずリスト -->
+            <nav class="flex text-sm text-slate-400 mb-8" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/index.html" class="hover:text-white transition-colors">ホーム</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <a href="/news.html" class="hover:text-white transition-colors">ニュース・インサイト</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <span class="text-slate-500 truncate max-w-[200px] sm:max-w-none">SBOM提出時の機密対策</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- 記事ヘッダー -->
+            <header class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-teal-500/20 border border-teal-500/30 text-teal-400 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1.5">
+                        <i data-lucide="file-lock-2" class="w-3.5 h-3.5"></i> 実務ノウハウ
+                    </span>
+                    <time class="text-slate-400 text-sm flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> 2026.03.10
+                    </time>
+                </div>
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
+                    SBOM提出時の機密対策<br class="hidden sm:block"/>（秘匿/マスキング/範囲定義）<br/>
+                    <span class="text-2xl md:text-3xl text-slate-300 font-medium">出しすぎず、足りなさすぎない作り方</span>
+                </h1>
+                
+                <!-- 導入文 -->
+                <div class="text-lg text-slate-300 leading-relaxed p-6 md:p-8 bg-navy-800/50 rounded-2xl border border-white/5 space-y-4 shadow-lg shadow-black/20 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-teal-500/5 rounded-bl-full -z-10"></div>
+                    
+                    <p>SBOMをOEMや顧客へ提出しようとすると、実務現場ではほぼ必ずこの悩みにぶつかります。</p>
+                    
+                    <ul class="space-y-2 font-medium text-slate-200 bg-navy-900/40 p-4 rounded-xl border border-white/5 list-none pl-0">
+                        <li class="flex items-start gap-2"><i data-lucide="help-circle" class="w-5 h-5 text-teal-400 shrink-0 mt-0.5"></i> 「どこまで出せば相手が納得するのか」</li>
+                        <li class="flex items-start gap-2"><i data-lucide="help-circle" class="w-5 h-5 text-teal-400 shrink-0 mt-0.5"></i> 「どこから先は設計情報に近く、出しすぎになるのか」</li>
+                        <li class="flex items-start gap-2"><i data-lucide="help-circle" class="w-5 h-5 text-teal-400 shrink-0 mt-0.5"></i> 「伏せすぎると『それでは判断できない』と差し戻されないか」</li>
+                    </ul>
+                    
+                    <p>結論から言うと、SBOM提出で大事なのは <strong>“全部出すか、全部隠すか” というゼロイチの議論ではありません。</strong></p>
+                    
+                    <p>重要なのは、提出の目的に合わせて範囲を定義し、機密区分に応じてマスキングし、それを<strong>再現できる形（証跡）として残すこと</strong>です。<br>
+                    SBOMは、そのまま出すと設計や取引先情報に近い要素を含むことがあります。一方で、出す情報が少なすぎると、OEMや顧客側で脆弱性の影響判定ができません。<br>
+                    だからこそ必要なのは、<strong>「社内正本」 と 「提出版」 を明確に分けて考えること</strong>です。</p>
+                </div>
+            </header>
+
+            <!-- 記事本文 -->
+            <div class="glass-card p-6 sm:p-10 md:p-12 rounded-3xl border border-white/10 shadow-2xl bg-navy-900/80 mb-16 relative">
+                
+                <div class="prose prose-invert prose-slate prose-lg max-w-none">
+                    
+                    <!-- 内部リンク①：全体像へ -->
+                    <div class="related-box mt-0 border-l-brand">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="map" class="w-4 h-4"></i> 前提の確認</div>
+                        <p class="text-sm text-slate-300 mb-2">そもそもSBOMとは何か、自動車業界における提出義務や全体のライフサイクル管理の全体像については、まずこちらをご確認ください。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/sbom-complete-guide/" class="!text-brand-light hover:!text-brand flex items-center gap-1.5"><i data-lucide="file-text" class="w-4 h-4"></i> 自動車サプライヤー向け：SBOM完全ガイド</a></li>
+                        </ul>
+                    </div>
+
+                    <h2><i data-lucide="shield" class="w-6 h-6 text-teal-400"></i> まず押さえる：SBOM提出で守るべき3原則</h2>
+                    
+                    <h3>1. 正本は1つ、提出版は複数</h3>
+                    <p>まず大前提として、社内で管理する<strong>「正本SBOM」</strong> と、相手に出す <strong>「提出版SBOM」</strong> は分けて管理してください。<br>
+                    正本にはビルド環境や詳細なパスなどあらゆる情報を持ちますが、提出版は提出先や目的に合わせて抜粋・加工したスナップショットになります。</p>
+
+                    <h3>2. 出す/伏せるの基準を先に決める</h3>
+                    <p>案件ごとに「ここは出すべきか？」と毎回判断していると、担当者ごとにブレが生じ、説明責任が果たせなくなります。<br>
+                    製品名、版数、搭載箇所、供給元、社内モジュール名などを、あらかじめ<strong>「出す / 条件付き / 伏せる」に分類</strong>しておくのが最も安全なアプローチです。</p>
+
+                    <h3>3. マスキングした理由を残す</h3>
+                    <p>OEMからの監査や追加質問で効力を発揮するのは、「なぜそこを伏せたか」を論理的に説明できることです。<br>
+                    単に消すだけでなく、<strong>「削除・置換・粒度調整」のどれで対応したか</strong>をルールとして残しておくと、将来の再提出時や担当者引き継ぎ時に迷いません。</p>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2><i data-lucide="eye-off" class="w-6 h-6 text-teal-400"></i> 何が機密になりやすいのか？</h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-8">
+                        <div class="bg-red-900/20 border border-red-500/20 rounded-xl p-6">
+                            <h4 class="text-red-400 font-bold mt-0 mb-4 flex items-center gap-2">
+                                <i data-lucide="alert-triangle" class="w-5 h-5"></i> 機密になりやすい項目
+                            </h4>
+                            <p class="text-sm text-slate-300 mb-4">そのまま出すとIP（知的財産）や契約上のリスクになる要素です。</p>
+                            <ul class="text-sm m-0 space-y-2 list-none pl-0 text-slate-200">
+                                <li class="flex items-start gap-2"><i data-lucide="x" class="w-4 h-4 text-red-400 mt-0.5"></i> 社内モジュール名や内部命名規則</li>
+                                <li class="flex items-start gap-2"><i data-lucide="x" class="w-4 h-4 text-red-400 mt-0.5"></i> 詳細すぎる搭載箇所（細かい機能分解）</li>
+                                <li class="flex items-start gap-2"><i data-lucide="x" class="w-4 h-4 text-red-400 mt-0.5"></i> 顧客名や他案件の名称</li>
+                                <li class="flex items-start gap-2"><i data-lucide="x" class="w-4 h-4 text-red-400 mt-0.5"></i> 供給元や取引先名</li>
+                                <li class="flex items-start gap-2"><i data-lucide="x" class="w-4 h-4 text-red-400 mt-0.5"></i> リポジトリURL、ファイルパス、内部チケット番号</li>
+                                <li class="flex items-start gap-2"><i data-lucide="x" class="w-4 h-4 text-red-400 mt-0.5"></i> ハッシュやビルド環境の詳細</li>
+                                <li class="flex items-start gap-2"><i data-lucide="x" class="w-4 h-4 text-red-400 mt-0.5"></i> 備考欄の設計メモ</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="bg-teal-900/20 border border-teal-500/20 rounded-xl p-6">
+                            <h4 class="text-teal-400 font-bold mt-0 mb-4 flex items-center gap-2">
+                                <i data-lucide="check-circle" class="w-5 h-5"></i> 相手が最低限必要な項目
+                            </h4>
+                            <p class="text-sm text-slate-300 mb-4">これがないと、OEM側で脆弱性管理（影響判定）が回りません。</p>
+                            <ul class="text-sm m-0 space-y-2 list-none pl-0 text-slate-200">
+                                <li class="flex items-start gap-2"><i data-lucide="check" class="w-4 h-4 text-teal-400 mt-0.5"></i> 製品名</li>
+                                <li class="flex items-start gap-2"><i data-lucide="check" class="w-4 h-4 text-teal-400 mt-0.5"></i> 製品版数</li>
+                                <li class="flex items-start gap-2"><i data-lucide="check" class="w-4 h-4 text-teal-400 mt-0.5"></i> コンポーネント名（OSS等）</li>
+                                <li class="flex items-start gap-2"><i data-lucide="check" class="w-4 h-4 text-teal-400 mt-0.5"></i> コンポーネント版数</li>
+                                <li class="flex items-start gap-2"><i data-lucide="check" class="w-4 h-4 text-teal-400 mt-0.5"></i> 影響判定に必要な範囲の説明</li>
+                                <li class="flex items-start gap-2"><i data-lucide="check" class="w-4 h-4 text-teal-400 mt-0.5"></i> 必要に応じた搭載箇所（大分類レベル）</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <p class="text-center font-bold text-lg text-white my-8 bg-navy-800 p-4 rounded-lg border border-white/5">
+                        つまり、<span class="text-teal-400">「判断に必要な粒度は残し、設計の深部に入る粒度は落とす」</span> という考え方が基本になります。
+                    </p>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2><i data-lucide="list-checks" class="w-6 h-6 text-teal-400"></i> 手順：兼務でも破綻しないSBOM提出時の機密対策</h2>
+                    <p>専任者がいない組織でも安定して回せる、実践的な6ステップを解説します。</p>
+
+                    <div class="space-y-4 my-8">
+                        <div class="step-card">
+                            <h4 class="mt-0 text-white flex items-center text-lg"><span class="step-number">1</span>提出の目的を1行で定義する</h4>
+                            <p class="text-slate-300 m-0">最初に、「何のために出すか」を書きます。これが曖昧だと、出す範囲もマスキング基準も決まりません。<br>
+                            例：「OEM照会に対する影響有無の説明」「契約上の提出物」「監査用の確認資料」など。目的によって相手が求める解像度は変わります。</p>
+                        </div>
+                        
+                        <div class="step-card">
+                            <h4 class="mt-0 text-white flex items-center text-lg"><span class="step-number">2</span>提出対象の範囲を切る</h4>
+                            <p class="text-slate-300 m-0">次に、どの製品・どの版数・どのモジュール範囲か を固定します。ここが曖昧なままでは、提出版をどう加工しても差し戻されやすくなります。<br>
+                            最低限、<strong>「製品名」「対象版数」「提出先」「対象となるコンポーネント範囲」</strong>は確定させます。</p>
+                        </div>
+
+                        <div class="step-card">
+                            <h4 class="mt-0 text-white flex items-center text-lg"><span class="step-number">3</span>項目を3区分に分ける</h4>
+                            <p class="text-slate-300 mb-3">各データ項目を次の3区分に分けると実務で使いやすいです。このルールを事前に決めるだけで、毎回の迷いが劇的に減ります。</p>
+                            <ul class="text-sm m-0 space-y-2 bg-navy-900/50 p-4 rounded-lg list-none pl-0">
+                                <li><span class="inline-block w-24 text-teal-400 font-bold">提出可</span> : そのまま出してよい</li>
+                                <li><span class="inline-block w-24 text-yellow-400 font-bold">条件付き提出</span> : 粒度を落とす、置換する</li>
+                                <li><span class="inline-block w-24 text-slate-400 font-bold">非提出</span> : 原則出さない。必要時は別協議</li>
+                            </ul>
+                        </div>
+
+                        <div class="step-card">
+                            <h4 class="mt-0 text-white flex items-center text-lg"><span class="step-number">4</span>マスキング方法を決める</h4>
+                            <p class="text-slate-300 mb-3">マスキングは、単に黒塗りするだけではありません。実務では次の3種類を使い分けます。</p>
+                            <ul class="text-sm m-0 space-y-2 bg-navy-900/50 p-4 rounded-lg list-none pl-0">
+                                <li><strong class="text-white">削除</strong> : 完全に出さない。</li>
+                                <li><strong class="text-white">置換</strong> : 例：内部モジュール名を <code>MODULE-A</code> のように抽象化して置き換える。</li>
+                                <li><strong class="text-white">粒度調整</strong> : 例：詳細な機能名ではなく「通信モジュール」「更新モジュール」といった大分類にする。</li>
+                            </ul>
+                            <p class="text-sm text-teal-300 font-medium mt-3 m-0"><i data-lucide="lightbulb" class="w-4 h-4 inline pb-0.5"></i> おすすめは可能な限り「置換」か「粒度調整」です。全部削除してしまうと、相手が影響箇所を判断できなくなり、結果的に問い合わせが増えます。</p>
+                        </div>
+
+                        <div class="step-card">
+                            <h4 class="mt-0 text-white flex items-center text-lg"><span class="step-number">5</span>提出版を作り、正本との紐付けを残す</h4>
+                            <p class="text-slate-300 mb-3">提出版を作成したら、必ず以下の情報を記録してください。これが無いと、後から「何を元にこの提出版を作ったのか」が追えなくなります。</p>
+                            <div class="flex flex-wrap gap-2 text-sm font-mono text-indigo-300 bg-indigo-900/20 p-3 rounded border border-indigo-500/20">
+                                <span>[提出版ID]</span> <span>[参照した正本SBOMのID]</span> <span>[提出日]</span> <span>[提出先]</span> <span>[適用したマスキングルール]</span>
+                            </div>
+                        </div>
+
+                        <div class="step-card">
+                            <h4 class="mt-0 text-white flex items-center text-lg"><span class="step-number">6</span>承認してから提出する</h4>
+                            <p class="text-slate-300 m-0">SBOM提出は、単なる技術データの連携ではなく、<strong>機密と取引の判断を含む重要な行為</strong>です。<br>
+                            最低限、「提出前の承認者」を1人決めてください。兼務でリソースが厳しい体制でも、ここのプロセスだけは省略しない方が安全です。</p>
+                        </div>
+                    </div>
+
+                    <!-- 内部リンク②：テンプレ関連 -->
+                    <div class="related-box border-l-brand my-8">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> 関連資料</div>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <li><a href="/psirt/sbom-confidentiality-template/" class="!text-brand-light hover:!text-brand">SBOM提出時の機密区分・マスキング手順テンプレ（ダウンロード可）</a></li>
+                        </ul>
+                    </div>
+
+                    <h2><i data-lucide="clipboard-copy" class="w-6 h-6 text-teal-400"></i> そのまま使える：機密区分・マスキング判断テンプレ</h2>
+                    <p>以下のテキストはタブ区切りになっています。コピーして、そのままExcelやGoogleスプレッドシートのA1セルに貼り付けて、自社の基準作成にご活用ください。</p>
+
+                    <div class="template-box">
+                        <div class="template-header">
+                            <span class="flex items-center gap-2 text-teal-400"><i data-lucide="table" class="w-5 h-5"></i> マスキング判断テーブル（タブ区切り）</span>
+                            <button onclick="copyToClipboard('template-content', this)" class="flex items-center gap-1.5 px-3 py-1.5 bg-teal-500/20 hover:bg-teal-500/30 text-teal-300 rounded text-xs transition-colors border border-teal-500/30">
+                                <i data-lucide="copy" class="w-3.5 h-3.5"></i> Excel用にコピー
+                            </button>
+                        </div>
+                        <div class="template-content mt-0 border-none bg-transparent p-0 shadow-none text-sm" id="template-content">項目名	区分（提出可・条件付・非提出）	マスキング方法（削除・置換・粒度調整）	理由	承認者	備考
+製品名	提出可	なし	対象特定に必要	____	____
+製品版数	提出可	なし	対象版数の明示が必要	____	____
+コンポーネント名	提出可	なし	影響判定に必要	____	____
+内部モジュール名	条件付き提出	置換	IP保護のため	____	MODULE-A 等に置換
+供給元名	条件付き提出	粒度調整	契約情報保護	____	「ベンダA」等種別のみ
+ファイルパス	非提出	削除	設計詳細に近いため	____	____</div>
+                    </div>
+
+                    <!-- 途中CTA（主CTA） -->
+                    <div class="bg-gradient-to-br from-navy-800 to-teal-900/20 p-6 md:p-8 rounded-2xl border border-teal-500/30 text-center my-12 shadow-[0_0_30px_rgba(20,184,166,0.1)] relative overflow-hidden group">
+                        <div class="absolute inset-0 bg-teal-500/5 group-hover:bg-teal-500/10 transition-colors"></div>
+                        <p class="text-white mb-6 font-medium text-lg relative z-10">自社製品のSBOM整備や、OEMへの提出運用・マスキング基準をどこから始めるべきか整理したい方はご相談ください。</p>
+                        <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-white bg-brand hover:bg-brand-dark transition-all duration-300 shadow-lg shadow-brand/20 w-full sm:w-auto hover:-translate-y-1 relative z-10">
+                            <i data-lucide="calendar-clock" class="w-5 h-5"></i> 【無料】オンライン相談を予約する
+                        </a>
+                    </div>
+
+                    <h2><i data-lucide="alert-octagon" class="w-6 h-6 text-red-400"></i> よくあるNG例（監査で詰まるパターン）</h2>
+                    <ul class="space-y-4 my-6 list-none pl-0 font-medium">
+                        <li class="flex items-start gap-3 bg-navy-800/50 p-4 rounded-lg border border-red-500/10">
+                            <i data-lucide="x-circle" class="w-6 h-6 text-red-400 shrink-0 mt-0.5"></i> 
+                            <div>
+                                <strong class="text-white text-lg">NG1：提出版を「正本」として上書き更新してしまう</strong><br>
+                                <span class="text-sm text-slate-400 font-normal">後から詳細な情報を元に戻せなくなり、社内の開発用SBOMと外部提出版が混ざって管理不能になります。</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3 bg-navy-800/50 p-4 rounded-lg border border-red-500/10">
+                            <i data-lucide="x-circle" class="w-6 h-6 text-red-400 shrink-0 mt-0.5"></i> 
+                            <div>
+                                <strong class="text-white text-lg">NG2：担当者の感覚で毎回伏せ方が違う</strong><br>
+                                <span class="text-sm text-slate-400 font-normal">相手先や提出時期によって文書の粒度がズレてしまい、後から「なぜ今回はこれがないのか？」と突っ込まれ説明が破綻します。</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3 bg-navy-800/50 p-4 rounded-lg border border-red-500/10">
+                            <i data-lucide="x-circle" class="w-6 h-6 text-red-400 shrink-0 mt-0.5"></i> 
+                            <div>
+                                <strong class="text-white text-lg">NG3：ひたすら「黒塗り（削除）」だけで提出する</strong><br>
+                                <span class="text-sm text-slate-400 font-normal">情報が読めず、OEM側の影響判定プロセスが止まります。実務では「置換」や「粒度調整」で構造を残す方が親切であり、差し戻しを防げます。</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3 bg-navy-800/50 p-4 rounded-lg border border-red-500/10">
+                            <i data-lucide="x-circle" class="w-6 h-6 text-red-400 shrink-0 mt-0.5"></i> 
+                            <div>
+                                <strong class="text-white text-lg">NG4：なぜ伏せたかの記録がない</strong><br>
+                                <span class="text-sm text-slate-400 font-normal">数ヶ月後の監査や再提出の際に「これって何で消したんだっけ？」と同じ議論を社内で繰り返すことになります。</span>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2><i data-lucide="message-circle-question" class="w-6 h-6 text-teal-400"></i> FAQ：マスキングの実務</h2>
+                    <div class="space-y-6 mt-6">
+                        <div class="bg-navy-800 p-5 rounded-xl border border-white/5">
+                            <strong class="text-teal-400 flex items-center gap-2 mb-2"><span class="bg-teal-500/20 px-2 py-0.5 rounded text-sm">Q</span> SBOMは開発ツールから出力したまま提出してよいですか？</strong>
+                            <p class="m-0 text-slate-300"><span class="font-bold text-white pr-2">A.</span> 基本的には、そのまま出さず「社内正本」と「提出版」を分けた方が安全です。特に内部モジュール名、詳細なファイルパス、取引先情報などは、そのまま出さない方が良いケースが大半です。</p>
+                        </div>
+                        <div class="bg-navy-800 p-5 rounded-xl border border-white/5">
+                            <strong class="text-teal-400 flex items-center gap-2 mb-2"><span class="bg-teal-500/20 px-2 py-0.5 rounded text-sm">Q</span> 提出時の証跡として、何を一番残すべきですか？</strong>
+                            <p class="m-0 text-slate-300"><span class="font-bold text-white pr-2">A.</span> 「提出版のID」「元にした正本SBOMのID」「適用したマスキングルール」の3点です。この3つがセットになっていると、後からでも提出状態の完全な再現が可能になります。</p>
+                        </div>
+                        <div class="bg-navy-800 p-5 rounded-xl border border-white/5">
+                            <strong class="text-teal-400 flex items-center gap-2 mb-2"><span class="bg-teal-500/20 px-2 py-0.5 rounded text-sm">Q</span> 隠す際、黒塗り（削除）と置換はどちらが良いですか？</strong>
+                            <p class="m-0 text-slate-300"><span class="font-bold text-white pr-2">A.</span> 可能なら「置換」や「粒度調整」の方が推奨されます。完全に削除してしまうとツリー構造が崩れますが、置換であれば相手が「ここに何かコンポーネントがある」という構造を理解でき、判断材料を残しやすいからです。</p>
+                        </div>
+                    </div>
+
+                    <!-- 内部リンク③：次に読む -->
+                    <div class="mt-12 p-6 bg-navy-800/80 rounded-xl border border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                        <div>
+                            <div class="text-sm font-bold text-slate-400 mb-1">次に読む</div>
+                            <a href="/psirt/what-is-sbom/" class="text-lg font-bold !text-white hover:!text-teal-400 transition-colors">SBOMとは（基本概念のおさらい） <i data-lucide="arrow-right" class="w-4 h-4 inline"></i></a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- CTA Section (副CTA) -->
+            <div class="glass-card rounded-3xl p-8 md:p-12 text-center border-t-4 border-t-teal-500 bg-navy-800/80 shadow-[0_0_40px_-10px_rgba(20,184,166,0.2)]">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">マスキングしたSBOMでも、脆弱性の影響判定を自動化できます。</h2>
+                <p class="text-slate-300 mb-8 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+                    <strong>Auto PSIRT Cloud</strong>なら、社内正本のSBOMを登録しておくだけで、日々公開される脆弱性情報（CVE等）と自動で突合。マスキングして提出した範囲についても、「自社のどの製品の、どのモジュールに影響があるか」を即座に特定し、OEMへの回答期限（SLA）を守る運用を強力に支援します。
+                </p>
+                <div class="flex justify-center">
+                    <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-white bg-brand hover:bg-brand-dark transition-all duration-300 shadow-lg shadow-brand/20 w-full sm:w-auto hover:-translate-y-1">
+                        <i data-lucide="monitor-play" class="w-5 h-5 text-white"></i>
+                        SBOM登録から突合までの流れをデモで見る
+                    </a>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/5 text-center text-sm text-slate-500 mt-auto bg-navy-900/80">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span class="font-bold text-slate-400">Auto PSIRT Cloud</span>
+            </div>
+            <p>&copy; 2026 Unimobilities株式会社. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Copy to clipboard function (TSV/Text support)
+        function copyToClipboard(contentId, button) {
+            const content = document.getElementById(contentId).textContent;
+            
+            const textarea = document.createElement('textarea');
+            textarea.value = content;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            
+            try {
+                document.execCommand('copy');
+                const originalHtml = button.innerHTML;
+                button.innerHTML = '<i data-lucide="check" class="w-3.5 h-3.5"></i> コピーしました';
+                button.classList.remove('bg-teal-500/20', 'text-teal-300', 'border-teal-500/30');
+                button.classList.add('bg-brand/20', 'text-brand-light', 'border-brand/50');
+                lucide.createIcons();
+                
+                setTimeout(() => {
+                    button.innerHTML = originalHtml;
+                    button.classList.remove('bg-brand/20', 'text-brand-light', 'border-brand/50');
+                    button.classList.add('bg-teal-500/20', 'text-teal-300', 'border-teal-500/30');
+                    lucide.createIcons();
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy', err);
+            } finally {
+                document.body.removeChild(textarea);
+            }
+        }
+    </script>
+</body>
+</html>
