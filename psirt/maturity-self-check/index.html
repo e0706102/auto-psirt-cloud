@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEOメタタグ -->
+    <title>自己点検：PSIRT成熟度チェック（監査前に整える）｜短時間で抜け漏れを見つける | Auto PSIRT Cloud</title>
+    <meta name="description" content="PSIRTの成熟度を、監査前に短時間で自己点検できるチェックリスト。窓口、SLA、対象版数、判断根拠、証跡、回答運用の6観点で抜け漏れを確認し、差し戻されやすいポイントを解消する手順を解説します。">
+    <meta name="keywords" content="自己点検：PSIRT成熟度チェック, PSIRT, 監査対応, トリアージ, 脆弱性管理, 自動車セキュリティ">
+    <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/psirt/maturity-self-check/">
+    
+    <!-- OGPタグ (SNSシェア用) -->
+    <meta property="og:title" content="自己点検：PSIRT成熟度チェック（監査前に整える）｜短時間で抜け漏れを見つける">
+    <meta property="og:description" content="監査前に短時間で自己点検できるチェックリスト。6観点で抜け漏れを確認し、差し戻されやすいポイントを解消する手順を解説します。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/psirt/maturity-self-check/">
+    <meta property="og:site_name" content="Auto PSIRT Cloud">
+
+    <!-- ファビコン -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%233b82f6%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z%22/><path d=%22m9 12 2 2 4-4%22/></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0a0f1c',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        brand: {
+                            light: '#60a5fa',
+                            DEFAULT: '#3b82f6', /* サイト基本の青色 */
+                            dark: '#2563eb',
+                        },
+                        accent: {
+                            DEFAULT: '#3b82f6', /* Blue 500 */
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #3b82f6, #8b5cf6); /* Blue to Violet */
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* 記事用カスタムスタイル */
+        .prose h2 {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-top: 4rem;
+            color: #f8fafc;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .prose h3 {
+            color: #e2e8f0;
+            margin-top: 2.5rem;
+            border-left: 3px solid #3b82f6; /* Blue系アクセント */
+            padding-left: 0.75rem;
+            font-size: 1.25rem;
+        }
+        .prose a {
+            color: #60a5fa; /* blue-400 */
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .prose a:hover {
+            border-bottom-color: #60a5fa;
+        }
+        .prose strong {
+            color: #f8fafc;
+            background: linear-gradient(transparent 60%, rgba(59, 130, 246, 0.3) 40%);
+        }
+        .related-box {
+            background: rgba(30, 41, 59, 0.6);
+            border-left: 4px solid #3b82f6;
+            padding: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 2rem 0;
+        }
+        .step-card {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        .step-card:hover {
+            border-color: rgba(59, 130, 246, 0.3);
+            background: rgba(30, 41, 59, 0.8);
+        }
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2rem;
+            height: 2rem;
+            background: #3b82f6;
+            color: white;
+            border-radius: 0.5rem;
+            font-weight: bold;
+            font-size: 1rem;
+            margin-right: 0.75rem;
+        }
+        /* チェックリスト用スタイル */
+        .checklist-container {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
+        }
+        .checklist-group {
+            margin-bottom: 2rem;
+        }
+        .checklist-group:last-child {
+            margin-bottom: 0;
+        }
+        .checklist-title {
+            color: #60a5fa;
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 1px dashed rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+        }
+        .checklist-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            background: rgba(30, 41, 59, 0.5);
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.2s;
+        }
+        .checklist-item:hover {
+            background: rgba(30, 41, 59, 0.8);
+            border-color: rgba(59, 130, 246, 0.4);
+            transform: translateX(4px);
+        }
+        .checklist-icon {
+            color: #3b82f6;
+            flex-shrink: 0;
+            margin-top: 0.125rem;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-blue-500 selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-brand/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-indigo-500/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-brand-dark flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="/news.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        ニュース一覧へ戻る
+                    </a>
+                    <a href="/demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                        相談 or デモ予約
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <article class="max-w-4xl mx-auto">
+            
+            <!-- パンくずリスト -->
+            <nav class="flex text-sm text-slate-400 mb-8" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/index.html" class="hover:text-white transition-colors">ホーム</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <a href="/news.html" class="hover:text-white transition-colors">ニュース・インサイト</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <span class="text-slate-500 truncate max-w-[200px] sm:max-w-none">自己点検：PSIRT成熟度チェック</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- 記事ヘッダー -->
+            <header class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-blue-500/20 border border-blue-500/30 text-blue-400 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1.5">
+                        <i data-lucide="clipboard-check" class="w-3.5 h-3.5"></i> 実務テンプレ
+                    </span>
+                    <time class="text-slate-400 text-sm flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> 2026.03.11
+                    </time>
+                </div>
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
+                    自己点検：PSIRT成熟度チェック<br/>
+                    <span class="text-2xl md:text-3xl text-slate-300 font-medium">（監査前に整える）</span>
+                </h1>
+                
+                <!-- 導入文 -->
+                <div class="text-lg text-slate-300 leading-relaxed p-6 md:p-8 bg-navy-800/50 rounded-2xl border border-white/5 space-y-4 shadow-lg shadow-black/20 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-bl-full -z-10"></div>
+                    <p>OEM監査や顧客照会の直前になると、PSIRT運用の弱点は一気に表面化します。</p>
+                    
+                    <p>ふだんは何となく回っているように見えても、いざ監査になると次のようなところで止まりがちです。</p>
+                    
+                    <ul class="space-y-2 font-medium text-slate-200 bg-navy-900/40 p-4 rounded-xl border border-white/5 list-none pl-0">
+                        <li class="flex items-start gap-2"><i data-lucide="alert-circle" class="w-5 h-5 text-amber-400 shrink-0 mt-0.5"></i> 窓口はあるが、誰が承認するのか曖昧</li>
+                        <li class="flex items-start gap-2"><i data-lucide="alert-circle" class="w-5 h-5 text-amber-400 shrink-0 mt-0.5"></i> 影響あり/なしは言えるが、根拠の証跡が残っていない</li>
+                        <li class="flex items-start gap-2"><i data-lucide="alert-circle" class="w-5 h-5 text-amber-400 shrink-0 mt-0.5"></i> 一次回答は返せるが、次回更新日や期限管理が弱い</li>
+                        <li class="flex items-start gap-2"><i data-lucide="alert-circle" class="w-5 h-5 text-amber-400 shrink-0 mt-0.5"></i> SBOMや構成表はあるが、対象版数との結び付きが弱い</li>
+                        <li class="flex items-start gap-2"><i data-lucide="alert-circle" class="w-5 h-5 text-amber-400 shrink-0 mt-0.5"></i> 回答書は作れるが、提出履歴や差し戻し履歴が追えない</li>
+                    </ul>
+                    
+                    <p>つまり、PSIRTの成熟度は「高価なツールがあるか」ではなく、<strong>「監査やOEM照会で回答と根拠を再現できるか」</strong> で見られます。</p>
+                    <p>このページでは、監査前に短時間で自己点検できるように、抜けやすい観点をチェックリスト化します。</p>
+                </div>
+            </header>
+
+            <!-- 記事本文 -->
+            <div class="glass-card p-6 sm:p-10 md:p-12 rounded-3xl border border-white/10 shadow-2xl bg-navy-900/80 mb-16 relative">
+                
+                <div class="prose prose-invert prose-slate prose-lg max-w-none">
+                    
+                    <!-- 内部リンク①：前提の確認 -->
+                    <div class="related-box mt-0 border-l-brand">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="map" class="w-4 h-4"></i> 前提の確認</div>
+                        <p class="text-sm text-slate-300 mb-2">そもそもOEM監査で何を見られ、どう答えればよいのか。監査対応の全体像についてはこちらをご確認ください。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <!-- CSVから ID:04 のURLを取得 -->
+                            <li><a href="/psirt/audit-investigation-response-guide/" class="!text-brand-light hover:!text-brand flex items-center gap-1.5"><i data-lucide="file-text" class="w-4 h-4"></i> OEM調査依頼・監査対応 完全ガイド</a></li>
+                        </ul>
+                    </div>
+
+                    <h2><i data-lucide="layers" class="w-6 h-6 text-blue-500"></i> 先に結論：成熟度は6観点で見ると分かりやすい</h2>
+                    <p>PSIRTの成熟度を一気に評価しようとすると難しくなります。まずは次の「6つの観点」に分けると、監査で問われるポイントがかなり見えやすくなります。</p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 my-8">
+                        <div class="bg-navy-800/80 p-5 rounded-xl border-t-4 border-t-blue-400">
+                            <h4 class="text-blue-400 font-bold mt-0 mb-2"><i data-lucide="mail" class="w-4 h-4 inline mr-1"></i> 窓口</h4>
+                            <p class="text-sm text-slate-300 m-0">誰が受け付けるか、外部に見える形になっているか</p>
+                        </div>
+                        <div class="bg-navy-800/80 p-5 rounded-xl border-t-4 border-t-blue-400">
+                            <h4 class="text-blue-400 font-bold mt-0 mb-2"><i data-lucide="clock" class="w-4 h-4 inline mr-1"></i> 期限（SLA）</h4>
+                            <p class="text-sm text-slate-300 m-0">受領確認、一次回答、最終回答、次回更新日のルールがあるか</p>
+                        </div>
+                        <div class="bg-navy-800/80 p-5 rounded-xl border-t-4 border-t-blue-400">
+                            <h4 class="text-blue-400 font-bold mt-0 mb-2"><i data-lucide="box" class="w-4 h-4 inline mr-1"></i> 対象版数</h4>
+                            <p class="text-sm text-slate-300 m-0">製品名・対象版数・構成が正確に切れるか</p>
+                        </div>
+                        <div class="bg-navy-800/80 p-5 rounded-xl border-t-4 border-t-blue-400">
+                            <h4 class="text-blue-400 font-bold mt-0 mb-2"><i data-lucide="git-branch" class="w-4 h-4 inline mr-1"></i> 判断</h4>
+                            <p class="text-sm text-slate-300 m-0">影響あり/なし/調査中を、明確な理由付きで整理できるか</p>
+                        </div>
+                        <div class="bg-navy-800/80 p-5 rounded-xl border-t-4 border-t-blue-400">
+                            <h4 class="text-blue-400 font-bold mt-0 mb-2"><i data-lucide="files" class="w-4 h-4 inline mr-1"></i> 証跡</h4>
+                            <p class="text-sm text-slate-300 m-0">どの資料を見てそう判断したか、後から確実に辿れるか</p>
+                        </div>
+                        <div class="bg-navy-800/80 p-5 rounded-xl border-t-4 border-t-blue-400">
+                            <h4 class="text-blue-400 font-bold mt-0 mb-2"><i data-lucide="send" class="w-4 h-4 inline mr-1"></i> 提出運用</h4>
+                            <p class="text-sm text-slate-300 m-0">回答書、承認、提出履歴、差し戻し履歴が残るか</p>
+                        </div>
+                    </div>
+                    <p class="font-bold text-center text-blue-300">この6つのどこで止まるかを見れば、監査前に直すべきポイントが見えてきます。</p>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2><i data-lucide="check-square" class="w-6 h-6 text-blue-500"></i> 自己点検チェックリスト（監査前に見る版）</h2>
+                    <p>以下は、そのまま社内レビューで使える簡易チェックリストです。</p>
+
+                    <div class="checklist-container">
+                        
+                        <!-- 1. 窓口 -->
+                        <div class="checklist-group">
+                            <div class="checklist-title">
+                                <span class="bg-blue-500 text-white w-6 h-6 rounded flex items-center justify-center text-sm font-black">1</span> 窓口
+                            </div>
+                            <div class="checklist-item">
+                                <i data-lucide="square" class="w-5 h-5 checklist-icon"></i>
+                                <span class="text-slate-200">外部から見える受付窓口（共有メールアドレスや専用フォーム）がある</span>
+                            </div>
+                            <div class="checklist-item">
+                                <i data-lucide="square" class="w-5 h-5 checklist-icon"></i>
+                                <span class="text-slate-200">社内で窓口責任者が決まっている</span>
+                            </div>
+                            <div class="checklist-item">
+                                <i data-lucide="square" class="w-5 h-5 checklist-icon"></i>
+                                <span class="text-slate-200">責任者不在時の代替担当（バックアップ）が決まっている</span>
+                            </div>
+                        </div>
+
+                        <!-- 2. 期限（SLA） -->
+                        <div class="checklist-group">
+                            <div class="checklist-title">
+                                <span class="bg-blue-500 text-white w-6 h-6 rounded flex items-center justify-center text-sm font-black">2</span> 期限（SLA）
+                            </div>
+                            <div class="checklist-item">
+                                <i data-lucide="square" class="w-5 h-5 checklist-icon"></i>
+                                <span class="text-slate-200">受領確認期限（例：24時間以内など）が決まっている</span>
+                            </div>
+                            <div class="checklist-item">
+                                <i data-lucide="square" class="w-5 h-5 checklist-icon"></i>
+                                <span class="text-slate-200">一次回答期限が決まっている</span>
+                            </div>
+                            <div class="checklist-item">
+                                <i data-lucide="square" class="w-5 h-5 checklist-icon"></i>
+                                <span class="text-slate-200">最終回答期限の考え方がある</span>
+                            </div>
+                            <div class="checklist-item">
+                                <i data-lucide="check-square" class="w-5 h-5 checklist-icon text-amber-400"></i>
+                                <span class="text-slate-200 font-bold">調査中（under_investigation）案件には「次回更新日」を必ず置いている</span>
+                            </div>
+                        </div>
+
+                        <!-- 3. 対象版数 -->
+                        <div class="checklist-group">
+                            <div class="checklist-title">
+                                <span class="bg-blue-500 text-white w-6 h-6 rounded flex items-center justify-center text-sm font-black">3</span> 対象版数
+                            </div>
+                            <div class="checklist-item">
+                                <i data-lucide="square" class="w-5 h-5 checklist-icon"></i>
+                                <span class="text-slate-200">製品名だけでなく、対象版数を案件ごとに明確に切れる</span>
+                            </div>
+                            <div class="checklist-item">
+                                <i data-lucide="square" class="w-5 h-5 checklist-icon"></i>
+                                <span class="text-slate-200">SBOMまたは簡易部品表と紐づけられる</span>
+                            </div>
+                            <div class="checklist-item">
+                                <i data-lucide="square" class="w-5 h-5 checklist-icon"></i>
+                                <span class="text-slate-200">顧客別派生や地域別派生が区別できる</span>
+                            </div>
+                        </div>
+
+                        <!-- 4. 判断 -->
+                        <div class="checklist-group">
+                            <div class="checklist-title">
+                                <span class="bg-blue-500 text-white w-6 h-6 rounded flex items-center justify-center text-sm font-black">4</span> 判断
+                            </div>
+                            <div class="checklist-item">
+                                <i data-lucide="square" class="w-5 h-5 checklist-icon"></i>
+                                <span class="text-slate-200">影響あり / なし / 調査中 の定義が社内にある</span>
+                            </div>
+                            <div class="checklist-item">
+                                <i data-lucide="square" class="w-5 h-5 checklist-icon"></i>
+                                <span class="text-slate-200">“影響なし”の理由を短文で書ける（理由コード等がある）</span>
+                            </div>
+                            <div class="checklist-item">
+                                <i data-lucide="square" class="w-5 h-5 checklist-icon"></i>
+                                <span class="text-slate-200">“調査中”に必要な更新ルール（誰がいつ確認するか）がある</span>
+                            </div>
+                        </div>
+
+                        <!-- 5. 証跡 -->
+                        <div class="checklist-group">
+                            <div class="checklist-title">
+                                <span class="bg-blue-500 text-white w-6 h-6 rounded flex items-center justify-center text-sm font-black">5</span> 証跡
+                            </div>
+                            <div class="checklist-item">
+                                <i data-lucide="square" class="w-5 h-5 checklist-icon"></i>
+                                <span class="text-slate-200">判断根拠の参照先（SBOM、設定書、試験結果など）が明記されている</span>
+                            </div>
+                            <div class="checklist-item">
+                                <i data-lucide="square" class="w-5 h-5 checklist-icon"></i>
+                                <span class="text-slate-200">証跡IDまたはリンクで後から確実に辿れる状態にある</span>
+                            </div>
+                            <div class="checklist-item">
+                                <i data-lucide="check-square" class="w-5 h-5 checklist-icon text-amber-400"></i>
+                                <span class="text-slate-200 font-bold">口頭判断だけで終わっていない（記録が残っている）</span>
+                            </div>
+                        </div>
+
+                        <!-- 6. 提出運用 -->
+                        <div class="checklist-group">
+                            <div class="checklist-title">
+                                <span class="bg-blue-500 text-white w-6 h-6 rounded flex items-center justify-center text-sm font-black">6</span> 提出運用
+                            </div>
+                            <div class="checklist-item">
+                                <i data-lucide="square" class="w-5 h-5 checklist-icon"></i>
+                                <span class="text-slate-200">回答書の統一テンプレがある</span>
+                            </div>
+                            <div class="checklist-item">
+                                <i data-lucide="square" class="w-5 h-5 checklist-icon"></i>
+                                <span class="text-slate-200">外部送付の承認者が決まっている</span>
+                            </div>
+                            <div class="checklist-item">
+                                <i data-lucide="square" class="w-5 h-5 checklist-icon"></i>
+                                <span class="text-slate-200">提出日と提出先を記録している</span>
+                            </div>
+                            <div class="checklist-item">
+                                <i data-lucide="square" class="w-5 h-5 checklist-icon"></i>
+                                <span class="text-slate-200">差し戻しや再提出の履歴を残している</span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <h2><i data-lucide="bar-chart" class="w-6 h-6 text-blue-500"></i> 目安：どのくらい埋まっていればよいか</h2>
+                    <p>このチェックを使う時、最初から満点を目指す必要はありません。ただし、監査やOEM照会の直前なら、少なくとも次の状態は確保しておきたいです。</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
+                        <div class="bg-red-900/20 border border-red-500/30 p-5 rounded-xl">
+                            <h4 class="text-red-400 font-bold mt-0 mb-3 flex items-center gap-2"><i data-lucide="alert-triangle" class="w-5 h-5"></i> まだ危ない状態</h4>
+                            <ul class="text-sm text-slate-300 m-0 pl-4 space-y-2 list-disc">
+                                <li>窓口はあるが、期限や更新日の運用が無い</li>
+                                <li>影響あり/なしを口頭やメールで言うだけで、証跡が追えない</li>
+                                <li>回答書は都度作っているが、版数や提出履歴が曖昧</li>
+                            </ul>
+                        </div>
+                        <div class="bg-blue-900/20 border border-blue-500/30 p-5 rounded-xl">
+                            <h4 class="text-blue-400 font-bold mt-0 mb-3 flex items-center gap-2"><i data-lucide="shield-check" class="w-5 h-5"></i> 最低限“監査で戦える”状態</h4>
+                            <ul class="text-sm text-slate-300 m-0 pl-4 space-y-2 list-disc">
+                                <li>窓口、SLA、対象版数、判断根拠、承認線が通っている</li>
+                                <li>調査中案件に「次回更新日」が確実に入っている</li>
+                                <li>提出履歴が案件IDで辿れる</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <h2><i data-lucide="target" class="w-6 h-6 text-blue-500"></i> 監査前に優先して見直すべき3項目</h2>
+                    <p>時間が無い時は、全部を一度に直そうとしない方が安全です。特に優先して対策すべきなのは以下の3つです。</p>
+
+                    <div class="space-y-4 my-8">
+                        <div class="step-card">
+                            <h4 class="mt-0 text-white flex items-center text-lg"><span class="step-number">1</span>次回更新日が無い案件</h4>
+                            <p class="text-slate-300 m-0">調査中（under_investigation）のステータスなのに「次回更新日」が無い案件は、監査でもOEM照会でも一番弱いです。これがあると<strong>「放置していない（コントロール下にある）」と言えなくなります。</strong></p>
+                        </div>
+                        
+                        <div class="step-card">
+                            <h4 class="mt-0 text-white flex items-center text-lg"><span class="step-number">2</span>対象版数が切れない案件</h4>
+                            <p class="text-slate-300 m-0">対象製品名だけで、対象版数が「最新版」などと曖昧な書き方になっていると、かなり高い確率で差し戻されます。脆弱性対応の基本は構成管理であるため、<strong>版数は最優先で揃えてください。</strong></p>
+                        </div>
+
+                        <div class="step-card">
+                            <h4 class="mt-0 text-white flex items-center text-lg"><span class="step-number">3</span>判断根拠の証跡が無い案件</h4>
+                            <p class="text-slate-300 m-0">「影響なし」という結論だけがあり、根拠資料（SBOMや試験結果）が辿れないと、監査で必ず説明に詰まります。すべてを添付できなくても、最低限<strong>「参照先ID」や「保存場所のリンク」だけでも残してください。</strong></p>
+                        </div>
+                    </div>
+
+                    <!-- 内部リンク②：証跡チェックリストへの導線 -->
+                    <div class="related-box my-8">
+                        <div class="text-sm font-bold text-blue-400 mb-2 flex items-center gap-2"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> 関連資料</div>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <!-- CSVから ID:92 のURLを取得 -->
+                            <li><a href="/psirt/audit-trail-checklist/" class="!text-blue-400 hover:!text-blue-300">監査証跡チェックリスト（残すべき情報まとめ）</a></li>
+                        </ul>
+                    </div>
+
+                    <h2><i data-lucide="rotate-ccw" class="w-6 h-6 text-red-400"></i> よくある差し戻しポイント</h2>
+                    <p>監査やOEM照会で差し戻されやすいのは、だいたい次のようなケースです。</p>
+                    
+                    <ul class="space-y-3 bg-navy-800 p-6 rounded-xl border border-white/5 list-none pl-0 text-slate-300 font-medium">
+                        <li class="flex items-center gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400"></i> 「影響なし」とあるが、理由が書かれていない</li>
+                        <li class="flex items-center gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400"></i> 対象製品名はあるが、対象版数が無い</li>
+                        <li class="flex items-center gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400"></i> 調査中なのに更新予定日が無い</li>
+                        <li class="flex items-center gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400"></i> 承認した人が誰か分からない</li>
+                        <li class="flex items-center gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-red-400"></i> 証跡ファイルはあるが、回答書とIDでつながっていない</li>
+                    </ul>
+
+                    <p class="font-bold text-white text-center mt-6">
+                        これらは高度なセキュリティ技術の問題ではなく、<strong class="text-blue-300">運用と記録（プロセス）の問題</strong>です。<br>
+                        だからこそ、短時間の自己点検でかなり改善できます。
+                    </p>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2><i data-lucide="help-circle" class="w-6 h-6 text-blue-500"></i> FAQ：監査に向けた自己点検</h2>
+                    <div class="space-y-6 mt-6">
+                        <div class="bg-navy-800 p-5 rounded-xl border border-white/5">
+                            <strong class="text-blue-400 flex items-center gap-2 mb-2"><span class="bg-blue-500/20 px-2 py-0.5 rounded text-sm">Q</span> PSIRTの成熟度はどう測ればいいですか？</strong>
+                            <p class="m-0 text-slate-300"><span class="font-bold text-white pr-2">A.</span> まずは、窓口、SLA、対象版数、判断、証跡、提出運用の「6観点」で見てください。高価なツールの有無よりも、プロセスが属人化せず「再現できるか」が重要です。</p>
+                        </div>
+                        <div class="bg-navy-800 p-5 rounded-xl border border-white/5">
+                            <strong class="text-blue-400 flex items-center gap-2 mb-2"><span class="bg-blue-500/20 px-2 py-0.5 rounded text-sm">Q</span> 監査前に全部は直せません。何を優先すべきですか？</strong>
+                            <p class="m-0 text-slate-300"><span class="font-bold text-white pr-2">A.</span> 「次回更新日（の入力）」「対象版数（の特定）」「判断根拠（証跡の紐付け）」の3つです。ここが抜けていると、説明責任が果たせず差し戻しの原因になりやすいです。</p>
+                        </div>
+                        <div class="bg-navy-800 p-5 rounded-xl border border-white/5">
+                            <strong class="text-blue-400 flex items-center gap-2 mb-2"><span class="bg-blue-500/20 px-2 py-0.5 rounded text-sm">Q</span> 証跡はすべて回答書に添付しないといけませんか？</strong>
+                            <p class="m-0 text-slate-300"><span class="font-bold text-white pr-2">A.</span> いいえ。重要なのは、後から辿れることです。社内システムの証跡IDや、共有フォルダのリンクなどが回答書の控え（正本）に紐付いていれば、監査への防御力はかなり高くなります。</p>
+                        </div>
+                    </div>
+
+                    <!-- 内部リンク③：次に読む -->
+                    <div class="mt-12 p-6 bg-navy-800/80 rounded-xl border border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                        <div>
+                            <div class="text-sm font-bold text-slate-400 mb-1">次に読む</div>
+                            <!-- CSVから ID:75 のURLを取得 (推定) -->
+                            <a href="/psirt/what-is-ota/" class="text-lg font-bold !text-white hover:!text-blue-400 transition-colors">OTAとは（アップデート経路と脆弱性） <i data-lucide="arrow-right" class="w-4 h-4 inline"></i></a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- CTA Section (記事末：主CTA・副CTAの2つを配置) -->
+            <div class="space-y-6">
+                <!-- 主CTA：相談 -->
+                <div class="glass-card rounded-3xl p-8 md:p-12 text-center border-t-4 border-t-blue-500 bg-navy-800/80 shadow-[0_0_40px_-10px_rgba(59,130,246,0.2)]">
+                    <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">監査前に自社のPSIRT運用をレビューしませんか？</h2>
+                    <p class="text-slate-300 mb-8 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+                        OEM調査依頼・監査対応において、自社の現在の運用フローに「抜け漏れ」がないか。SLAや証跡の管理をどう整備すれば監査に耐えられるか、実務目線で進め方を整理したい方はご相談ください。
+                    </p>
+                    <div class="flex justify-center">
+                        <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold !text-white bg-brand hover:bg-brand-dark transition-all duration-300 shadow-lg shadow-brand/20 w-full sm:w-auto hover:-translate-y-1">
+                            <i data-lucide="message-square" class="w-5 h-5 !text-white"></i>
+                            【無料】オンライン相談を予約する
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 副CTA：デモ -->
+                <div class="glass-card rounded-3xl p-6 text-center border border-white/5 bg-navy-900/60">
+                    <p class="text-slate-300 mb-4 font-medium">ツールで抜け漏れを防ぎ、回答書作成を自動化する流れを見る</p>
+                    <div class="flex justify-center">
+                        <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full font-bold !text-white bg-slate-700 hover:bg-slate-600 transition-all duration-300 w-full sm:w-auto">
+                            <i data-lucide="monitor-play" class="w-4 h-4 !text-white"></i>
+                            OEM回答書作成の流れをデモで確認する
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/5 text-center text-sm text-slate-500 mt-12 bg-navy-900/80">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span class="font-bold text-slate-400">Auto PSIRT Cloud</span>
+            </div>
+            <p>&copy; 2026 Unimobilities株式会社. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
