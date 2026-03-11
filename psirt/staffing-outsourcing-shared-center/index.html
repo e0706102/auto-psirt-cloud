@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEOメタタグ -->
+    <title>PSIRT人材不足の埋め方｜外部委託・共同センター・内製最小体制の使い分け | Auto PSIRT Cloud</title>
+    <meta name="description" content="PSIRT人材不足を埋めるには、全部を内製しようとしないことが重要です。外部委託、共同センター、内製最小体制の3つを比較し、どの業務を外に出し、どの業務を社内に残すべきかを、役割分担・SLA・証跡・承認線まで含めて解説します。">
+    <meta name="keywords" content="PSIRT人材不足の埋め方, PSIRT, 外部委託, 共同センター, アウトソーシング, BPO, 脆弱性管理">
+    <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/psirt/staffing-outsourcing-shared-center/">
+    
+    <!-- OGPタグ (SNSシェア用) -->
+    <meta property="og:title" content="PSIRT人材不足の埋め方｜外部委託・共同センター・内製最小体制の使い分け">
+    <meta property="og:description" content="全部を内製しようとしないことが重要。外部委託、共同センター、内製最小体制の3つを比較し、役割分担を解説します。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/psirt/staffing-outsourcing-shared-center/">
+    <meta property="og:site_name" content="Auto PSIRT Cloud">
+
+    <!-- ファビコン -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23ec4899%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z%22/><path d=%22m9 12 2 2 4-4%22/></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0a0f1c',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        brand: {
+                            light: '#60a5fa',
+                            DEFAULT: '#3b82f6', /* サイト基本の青色 */
+                            dark: '#2563eb',
+                        },
+                        accent: {
+                            DEFAULT: '#ec4899', /* Pink 500 */
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #ec4899, #f43f5e); /* Pink to Rose */
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* 記事用カスタムスタイル */
+        .prose h2 {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-top: 4rem;
+            color: #f8fafc;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .prose h3 {
+            color: #e2e8f0;
+            margin-top: 2.5rem;
+            border-left: 3px solid #ec4899; /* Pink系アクセント */
+            padding-left: 0.75rem;
+            font-size: 1.25rem;
+        }
+        .prose a {
+            color: #f472b6; /* pink-400 */
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .prose a:hover {
+            border-bottom-color: #f472b6;
+        }
+        .prose strong {
+            color: #f8fafc;
+            background: linear-gradient(transparent 60%, rgba(236, 72, 153, 0.3) 40%);
+        }
+        .related-box {
+            background: rgba(30, 41, 59, 0.6);
+            border-left: 4px solid #ec4899;
+            padding: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 2rem 0;
+        }
+        .step-card {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        .step-card:hover {
+            border-color: rgba(236, 72, 153, 0.3);
+            background: rgba(30, 41, 59, 0.8);
+        }
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2rem;
+            height: 2rem;
+            background: #ec4899;
+            color: white;
+            border-radius: 0.5rem;
+            font-weight: bold;
+            font-size: 1rem;
+            margin-right: 0.75rem;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-pink-500 selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-pink-500/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-brand/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-brand-dark flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="/news.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        ニュース一覧へ戻る
+                    </a>
+                    <a href="/demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                        相談 or デモ予約
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <article class="max-w-4xl mx-auto">
+            
+            <!-- パンくずリスト -->
+            <nav class="flex text-sm text-slate-400 mb-8" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/index.html" class="hover:text-white transition-colors">ホーム</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <a href="/news.html" class="hover:text-white transition-colors">ニュース・インサイト</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <span class="text-slate-500 truncate max-w-[200px] sm:max-w-none">人材不足の埋め方</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- 記事ヘッダー -->
+            <header class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-pink-500/20 border border-pink-500/30 text-pink-400 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1.5">
+                        <i data-lucide="users" class="w-3.5 h-3.5"></i> 実務ノウハウ
+                    </span>
+                    <time class="text-slate-400 text-sm flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> 2026.03.11
+                    </time>
+                </div>
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
+                    PSIRT人材不足の埋め方<br/>
+                    <span class="text-2xl md:text-3xl text-slate-300 font-medium">（外部委託/共同センターの使い分け）</span>
+                </h1>
+                
+                <!-- 導入文 -->
+                <div class="text-lg text-slate-300 leading-relaxed p-6 md:p-8 bg-navy-800/50 rounded-2xl border border-white/5 space-y-4 shadow-lg shadow-black/20 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-pink-500/5 rounded-bl-full -z-10"></div>
+                    <p>「PSIRTを立ち上げたいが、人がいない」</p>
+                    
+                    <p>これは中小サプライヤーでは珍しい悩みではありません。しかも本当の問題は「人数が少ないこと」そのものより、<strong>少人数で回す設計が無いこと</strong> にあります。</p>
+                    
+                    <p>FIRST の PSIRT Services Framework は、PSIRT が効果的に機能するには、開発/設計、QA、サポート、営業/顧客接点、経営層などの内部利害関係者を明確にし、関係性と役割を整理することが必要だとしています。また、外部/内部のコミュニケーションチャネルを用意し、進捗や remediation の状況を共有し、メトリクスも取るべきだとしています。<br>
+                    つまり、PSIRTは<strong>“詳しい人を1人置く”だけでは成立せず、役割と流れが必要</strong>です。</p>
+                    
+                    <p>CISA も、脆弱性開示ハンドリング手順として、報告を解決まで追跡すること、内部で remediation を調整すること、影響を評価して優先順位付けすること、関係者とコミュニケーションすること、そして目標タイムラインを設定して追跡することを求めています。<br>
+                    つまり、PSIRT人材不足への答えは「誰か1人に背負わせる」ではなく、<strong>どこまでを外に出し、どこを社内責任として残すかを切ること</strong>です。</p>
+                </div>
+            </header>
+
+            <!-- 記事本文 -->
+            <div class="glass-card p-6 sm:p-10 md:p-12 rounded-3xl border border-white/10 shadow-2xl bg-navy-900/80 mb-16 relative">
+                
+                <div class="prose prose-invert prose-slate prose-lg max-w-none">
+                    
+                    <!-- 内部リンク①：全体像の設計へ -->
+                    <div class="related-box mt-0 border-l-brand">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="map" class="w-4 h-4"></i> 前提の確認</div>
+                        <p class="text-sm text-slate-300 mb-2">人が少ない中でPSIRTをどう立ち上げるか、まずは「兼務でも回る設計」の全体像についてこちらをご確認ください。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <!-- CSVから ID:01 のURLを設定 -->
+                            <li><a href="/psirt/automotive-supplier-guide/" class="!text-brand-light hover:!text-brand flex items-center gap-1.5"><i data-lucide="file-text" class="w-4 h-4"></i> 自動車サプライヤーのPSIRT完全ガイド</a></li>
+                        </ul>
+                    </div>
+
+                    <h2><i data-lucide="pie-chart" class="w-6 h-6 text-pink-500"></i> 先に結論：人材不足の埋め方は「3分割」で考える</h2>
+                    <p>PSIRT人材不足への現実解は、「全部を内製するか」「全部を丸投げするか」の極端な二択ではありません。<br>
+                    まず業務を次の3つに分けて考えます。</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-8">
+                        <!-- 外に出しやすい -->
+                        <div class="bg-navy-800/80 p-5 rounded-xl border-t-4 border-t-blue-400">
+                            <h4 class="text-blue-400 font-bold mt-0 mb-3 flex items-center gap-2">
+                                <i data-lucide="arrow-up-right" class="w-4 h-4"></i> 外に出しやすい仕事
+                            </h4>
+                            <ul class="text-sm text-slate-300 m-0 pl-4 space-y-1">
+                                <li>受付整流化</li>
+                                <li>期限管理</li>
+                                <li>台帳運用</li>
+                                <li>文面のドラフト</li>
+                                <li>定型レポート作成</li>
+                                <li>メトリクス集計</li>
+                            </ul>
+                        </div>
+                        <!-- 共同化しやすい -->
+                        <div class="bg-navy-800/80 p-5 rounded-xl border-t-4 border-t-pink-400">
+                            <h4 class="text-pink-400 font-bold mt-0 mb-3 flex items-center gap-2">
+                                <i data-lucide="network" class="w-4 h-4"></i> 共同化しやすい仕事
+                            </h4>
+                            <ul class="text-sm text-slate-300 m-0 pl-4 space-y-1">
+                                <li>標準トリアージ</li>
+                                <li>一次回答テンプレ</li>
+                                <li>VEX記述補助</li>
+                                <li>SLA監視</li>
+                                <li>OEM様式への変換</li>
+                            </ul>
+                        </div>
+                        <!-- 社内に残すべき -->
+                        <div class="bg-navy-800/80 p-5 rounded-xl border-t-4 border-t-emerald-400">
+                            <h4 class="text-emerald-400 font-bold mt-0 mb-3 flex items-center gap-2">
+                                <i data-lucide="building-2" class="w-4 h-4"></i> 社内に残すべき仕事
+                            </h4>
+                            <ul class="text-sm text-slate-300 m-0 pl-4 space-y-1">
+                                <li>対象版数の確定</li>
+                                <li>到達性判断</li>
+                                <li>製品固有の影響判断</li>
+                                <li>リスク受容</li>
+                                <li>外部送付の最終承認</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <p>この切り分けは、FIRST と CISA が求める「内部調整」「利害関係者管理」「追跡」「タイムライン管理」から逆算した、実務上最も安全な分け方です。</p>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2><i data-lucide="git-compare" class="w-6 h-6 text-pink-500"></i> 比較：外部委託・共同センター・内製最小体制の違い</h2>
+                    
+                    <h3>外部委託（BPO / 専用コンサル）が向くケース</h3>
+                    <p>個社専用に、ある程度深く伴走してもらいたい場合です。</p>
+                    <p>向いているのは、<strong>「OEMごとの要求が重い」「英文対応が多い」「専用の連絡窓口や定例会議が必要」</strong>といったケースです。受付・台帳・文面作成・期限管理・定例進行までを1社向けに最適化しやすいのが強みです。</p>
+                    <p>ただし、製品固有の版数判断や「影響あり/なし」の最終判断は社内に残した方が安全です。これは、FIRST が開発/QA/経営などの内部関係者との協働を重視しているためです。</p>
+
+                    <h3>共同センター（シェアードサービス）が向くケース</h3>
+                    <p>複数社で似たような受付・一次トリアージ・期限管理・レポート運用を回したい場合です。</p>
+                    <p>FIRST の Framework でも、PSIRT は clear communication channels、stakeholder matrices、metrics のような標準化しやすい運用部品を持つことが推奨されています。こうした標準化しやすい部分は、共同センターに寄せやすいです。<br>
+                    特に、<strong>「Tier2〜Tier4 のように1社あたりの脆弱性対応件数は多くないが、各社で個別にゼロからPSIRTを組むには重すぎる」</strong>という場面で向きます。</p>
+
+                    <h3>内製最小体制が向くケース</h3>
+                    <p>件数が少ない、またはまだ立ち上げ期で、まず最低限の窓口と判断線だけ整えたい場合です。</p>
+                    <p>この場合も、CISA が求める tracking, remediation coordination, prioritization, timelines を最低限回せるだけの体制は必要です。つまり<strong>「人数が少ない」ことと「ルールが要らない」ことは別</strong>です。最小でも、窓口、技術判断、承認の3点は必ず社内で切り分ける必要があります。</p>
+
+                    <!-- 途中CTA（主CTA：デモ） -->
+                    <div class="bg-gradient-to-br from-navy-800 to-pink-900/20 p-6 md:p-8 rounded-2xl border border-pink-500/30 text-center my-12 shadow-[0_0_30px_rgba(236,72,153,0.1)] relative overflow-hidden group">
+                        <div class="absolute inset-0 bg-pink-500/5 group-hover:bg-pink-500/10 transition-colors"></div>
+                        <p class="text-white mb-6 font-medium text-lg relative z-10">共同PSIRTセンターのような標準化された運用フローを、システム上でどう実現するか見てみませんか？</p>
+                        <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold !text-white bg-brand hover:bg-brand-dark transition-all duration-300 shadow-lg shadow-brand/20 w-full sm:w-auto hover:-translate-y-1 relative z-10">
+                            <i data-lucide="monitor-play" class="w-5 h-5 !text-white"></i> 共同PSIRT運用のイメージをデモで確認する
+                        </a>
+                    </div>
+
+                    <h2><i data-lucide="scissors" class="w-6 h-6 text-pink-500"></i> 何を外に出して、何を残すか</h2>
+                    <p>ここを曖昧にすると、外部委託でも共同センターでも失敗します。</p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 my-6">
+                        <div class="bg-navy-800/50 p-5 rounded-xl border border-white/5">
+                            <strong class="text-pink-400 block mb-3 flex items-center gap-2"><i data-lucide="arrow-up-right" class="w-5 h-5"></i> 外に出しやすいもの</strong>
+                            <ul class="text-sm text-slate-300 m-0 pl-4 space-y-2">
+                                <li>受付チャネルの運用</li>
+                                <li>案件ID採番</li>
+                                <li>期限（SLA）監視</li>
+                                <li>テンプレ文面作成</li>
+                                <li>OEM様式ごとの転記・マッピング</li>
+                                <li>メトリクス集計</li>
+                                <li>会議体のファシリテーション</li>
+                            </ul>
+                        </div>
+                        <div class="bg-navy-800/50 p-5 rounded-xl border border-white/5">
+                            <strong class="text-emerald-400 block mb-3 flex items-center gap-2"><i data-lucide="shield-check" class="w-5 h-5"></i> 社内に残すべきもの</strong>
+                            <ul class="text-sm text-slate-300 m-0 pl-4 space-y-2">
+                                <li>製品版数・構成の確定</li>
+                                <li>影響あり/なしの最終判断</li>
+                                <li>回避策/暫定対策/恒久対策の意思決定</li>
+                                <li>リスク受容や期限交渉の承認</li>
+                                <li>顧客との関係性に関わる最終回答</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <p>FIRST が強調する internal stakeholder engagement と、CISA が求める internal remediation coordination を考えると、<strong>製品責任が伴う判断は社内に残す</strong> のが原則です。</p>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2><i data-lucide="list-ordered" class="w-6 h-6 text-pink-500"></i> 手順：兼務でも破綻しない導入ステップ</h2>
+
+                    <div class="space-y-4 my-8">
+                        <div class="step-card">
+                            <h4 class="mt-0 text-white flex items-center text-lg"><span class="step-number">1</span>まず「社内最小体制」を決める</h4>
+                            <p class="text-slate-300 m-0">外部委託や共同センターを使う前に、社内で少なくとも「窓口」「技術判断者」「承認者」を決めます。これがないと外部とボールのパスができません。</p>
+                        </div>
+                        
+                        <!-- 内部リンク②：最小体制チェックリストへの導線 -->
+                        <div class="ml-6 pl-4 border-l-2 border-pink-500/30 my-4 py-2">
+                            <div class="text-sm font-bold text-pink-400 mb-1 flex items-center gap-1.5"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> 関連資料</div>
+                            <ul class="text-base m-0 list-none pl-0">
+                                <!-- CSVから ID:83 のURLを設定 -->
+                                <li><a href="/psirt/minimum-team-checklist/" class="!text-pink-400 hover:!text-pink-300">PSIRT最小体制チェックリスト</a></li>
+                            </ul>
+                        </div>
+
+                        <div class="step-card">
+                            <h4 class="mt-0 text-white flex items-center text-lg"><span class="step-number">2</span>業務を3分類する</h4>
+                            <p class="text-slate-300 m-0">「標準化できる業務」「製品固有の業務」「経営判断が要る業務」に分類します。この分類が無いと、委託範囲がブレて後で揉める原因になります。</p>
+                        </div>
+
+                        <div class="step-card">
+                            <h4 class="mt-0 text-white flex items-center text-lg"><span class="step-number">3</span>SLAと成果物を決める</h4>
+                            <p class="text-slate-300 m-0">外部委託でも共同センターでも、成果物が曖昧だと機能しません。最低限、「受領確認期限」「一次回答期限」「次回更新日のルール」「回答書ドラフトの粒度」「台帳更新ルール」を決めます。</p>
+                        </div>
+
+                        <div class="step-card">
+                            <h4 class="mt-0 text-white flex items-center text-lg"><span class="step-number">4</span>証跡の帰属を決める</h4>
+                            <p class="text-slate-300 m-0">監査に強くするには、「誰が保管し、誰が出せるか」を明確にします。共有フォルダ、案件台帳、文面テンプレ、承認履歴の保存先は、外部に依頼する前に自社のルールとして決めてください。</p>
+                        </div>
+
+                        <div class="step-card">
+                            <h4 class="mt-0 text-white flex items-center text-lg"><span class="step-number">5</span>1製品群・1OEMで小さく始める</h4>
+                            <p class="text-slate-300 m-0">最初から全製品・全OEMで始めないことです。小さく回してから横展開した方が、役割分界点のズレも修正しやすくなります。</p>
+                        </div>
+                    </div>
+
+                    <h2><i data-lucide="alert-triangle" class="w-6 h-6 text-red-400"></i> よくある失敗</h2>
+                    <ul class="space-y-4 my-6 list-none pl-0 font-medium">
+                        <li class="flex items-start gap-3 bg-navy-800/50 p-4 rounded-lg border border-red-500/10">
+                            <i data-lucide="x-circle" class="w-6 h-6 text-red-400 shrink-0 mt-0.5"></i> 
+                            <div>
+                                <strong class="text-white text-lg">1. “外に出す”が“丸投げ”になる</strong><br>
+                                <span class="text-sm text-slate-400 font-normal">外部委託や共同センターは、判断の責任を代替するものではありません。製品版数や影響有無の確定まで丸投げすると、ベンダー側で判断できず後で必ず詰まります。</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3 bg-navy-800/50 p-4 rounded-lg border border-red-500/10">
+                            <i data-lucide="x-circle" class="w-6 h-6 text-red-400 shrink-0 mt-0.5"></i> 
+                            <div>
+                                <strong class="text-white text-lg">2. 共同センターなのに、各社ルールが全部違う</strong><br>
+                                <span class="text-sm text-slate-400 font-normal">受付や台帳、テンプレが標準化されていないと、ただの「個社別BPOの寄せ集め」になり、共同化のコストメリットやスピード感が薄れます。</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3 bg-navy-800/50 p-4 rounded-lg border border-red-500/10">
+                            <i data-lucide="x-circle" class="w-6 h-6 text-red-400 shrink-0 mt-0.5"></i> 
+                            <div>
+                                <strong class="text-white text-lg">3. KPIだけ外に出して、証跡の帰属が曖昧</strong><br>
+                                <span class="text-sm text-slate-400 font-normal">SLA（対応期限）は守れているが、「誰が何をどこに保存しているか」が決まっていないと、OEM監査の際に自社で根拠を説明できなくなります。</span>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2><i data-lucide="help-circle" class="w-6 h-6 text-pink-500"></i> FAQ：人材不足と体制構築</h2>
+                    <div class="space-y-6 mt-6">
+                        <div class="bg-navy-800 p-5 rounded-xl border border-white/5">
+                            <strong class="text-pink-400 flex items-center gap-2 mb-2"><span class="bg-pink-500/20 px-2 py-0.5 rounded text-sm">Q</span> 人が少ない場合、まず何から整えるべきですか？</strong>
+                            <p class="m-0 text-slate-300"><span class="font-bold text-white pr-2">A.</span> まずは社内最小体制です。窓口、技術判断、承認の3つを社内で切り分けるだけでも、外部委託や共同センターをどこに差し込めば良いか（使い所）が見えやすくなります。</p>
+                        </div>
+                        <div class="bg-navy-800 p-5 rounded-xl border border-white/5">
+                            <strong class="text-pink-400 flex items-center gap-2 mb-2"><span class="bg-pink-500/20 px-2 py-0.5 rounded text-sm">Q</span> 共同センターはどんな会社に向いていますか？</strong>
+                            <p class="m-0 text-slate-300"><span class="font-bold text-white pr-2">A.</span> 標準化できる受付・一次トリアージ・期限管理を複数社で共有したい会社に向きます。件数はそこまで多くないが、各社でゼロからPSIRTを持つには重いケースで有効です。これは、FIRST が示す clear communication channels や stakeholder matrices のような共通運用部品があるためです。</p>
+                        </div>
+                        <div class="bg-navy-800 p-5 rounded-xl border border-white/5">
+                            <strong class="text-pink-400 flex items-center gap-2 mb-2"><span class="bg-pink-500/20 px-2 py-0.5 rounded text-sm">Q</span> QAや設計との関係はどうすべきですか？</strong>
+                            <p class="m-0 text-slate-300"><span class="font-bold text-white pr-2">A.</span> 外部委託や共同センターを使っても、開発/設計と QA は内部関係者として残ります。FIRST は remediation に QA の signoff が必要で、開発との連携が重要だとしています。つまり、人が足りないからといって QAや設計部門を対応プロセスから完全に外せるわけではありません。</p>
+                        </div>
+                    </div>
+
+                    <!-- 内部リンク③：次に読む -->
+                    <div class="mt-12 p-6 bg-navy-800/80 rounded-xl border border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                        <div>
+                            <div class="text-sm font-bold text-slate-400 mb-1">次に読む</div>
+                            <!-- CSVから ID:57 のURLを設定 -->
+                            <a href="/psirt/what-is-psirt/" class="text-lg font-bold !text-white hover:!text-pink-400 transition-colors">PSIRTとは（自動車サプライヤー版：役割） <i data-lucide="arrow-right" class="w-4 h-4 inline"></i></a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- CTA Section (副CTA：相談) -->
+            <div class="glass-card rounded-3xl p-8 md:p-12 text-center border-t-4 border-t-pink-500 bg-navy-800/80 shadow-[0_0_40px_-10px_rgba(236,72,153,0.2)]">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">自社に最適なPSIRT運用体制を相談しませんか？</h2>
+                <p class="text-slate-300 mb-8 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+                    社内のリソース状況に合わせて、どの業務を標準化してシステムや外部に任せ、どの判断を社内に残すべきか。共同PSIRTセンターやBPOの活用可否を含め、兼務でも回る運用フローの構築をサポートします。
+                </p>
+                <div class="flex justify-center">
+                    <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold !text-white bg-brand hover:bg-brand-dark transition-all duration-300 shadow-lg shadow-brand/20 w-full sm:w-auto hover:-translate-y-1">
+                        <i data-lucide="message-square" class="w-5 h-5 !text-white"></i>
+                        【無料】オンライン相談を予約する
+                    </a>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/5 text-center text-sm text-slate-500 mt-auto bg-navy-900/80">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span class="font-bold text-slate-400">Auto PSIRT Cloud</span>
+            </div>
+            <p>&copy; 2026 Unimobilities株式会社. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
