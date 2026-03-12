@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEOメタタグ -->
+    <title>SBOMツール比較：無料/有償を“中小サプライヤー視点”で見る | Auto PSIRT Cloud</title>
+    <meta name="description" content="SBOMツールを無料/有償で比較し、中小サプライヤー視点で選定基準を整理。提出先要求、運用負荷、機密、ツール連携の4軸で、Syft/Trivy/Dependency-TrackとAnchore Enterprise/Black Duck/Mendを比較し、現実的な始め方まで解説します。">
+    <meta name="keywords" content="SBOMツール比較：無料/有償を“中小サプライヤー視点”で見る, SBOM, ツール比較, Syft, Trivy, Dependency-Track, 脆弱性管理">
+    <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/psirt/tools-comparison-sme-suppliers/">
+    
+    <!-- OGPタグ (SNSシェア用) -->
+    <meta property="og:title" content="SBOMツール比較：無料/有償を“中小サプライヤー視点”で見る">
+    <meta property="og:description" content="SBOMツールを無料/有償で比較。提出先要求、運用負荷など4軸で、Syft/Trivyから商用製品まで現実的な始め方を解説します。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/psirt/tools-comparison-sme-suppliers/">
+    <meta property="og:site_name" content="Auto PSIRT Cloud">
+
+    <!-- ファビコン -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%2310b981%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z%22/><path d=%22m9 12 2 2 4-4%22/></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0a0f1c',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        brand: {
+                            light: '#60a5fa',
+                            DEFAULT: '#3b82f6', /* サイト基本の青色 */
+                            dark: '#2563eb',
+                        },
+                        accent: {
+                            DEFAULT: '#10b981', /* Emerald 500 */
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #10b981, #0ea5e9); /* Emerald to Sky Blue */
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* 記事用カスタムスタイル */
+        .prose h2 {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-top: 4rem;
+            color: #f8fafc;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .prose h3 {
+            color: #e2e8f0;
+            margin-top: 2.5rem;
+            border-left: 3px solid #10b981; /* Emerald系アクセント */
+            padding-left: 0.75rem;
+            font-size: 1.25rem;
+        }
+        .prose a {
+            color: #34d399; /* emerald-400 */
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .prose a:hover {
+            border-bottom-color: #34d399;
+        }
+        .prose strong {
+            color: #f8fafc;
+            background: linear-gradient(transparent 60%, rgba(16, 185, 129, 0.25) 40%);
+        }
+        .related-box {
+            background: rgba(30, 41, 59, 0.6);
+            border-left: 4px solid #10b981;
+            padding: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 2rem 0;
+        }
+        .citation {
+            font-size: 0.75rem;
+            font-family: ui-monospace, monospace;
+            color: #94a3b8;
+            background: rgba(255,255,255,0.05);
+            padding: 0.15rem 0.4rem;
+            border-radius: 0.25rem;
+            margin-left: 0.25rem;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-emerald-500 selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-brand/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-emerald-500/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-brand-dark flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="/news.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        ニュース一覧へ戻る
+                    </a>
+                    <a href="/demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                        相談 or デモ予約
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <article class="max-w-4xl mx-auto">
+            
+            <!-- パンくずリスト -->
+            <nav class="flex text-sm text-slate-400 mb-8" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/index.html" class="hover:text-white transition-colors">ホーム</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <a href="/news.html" class="hover:text-white transition-colors">ニュース・インサイト</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <span class="text-slate-500 truncate max-w-[200px] sm:max-w-none">SBOMツール比較</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- 記事ヘッダー -->
+            <header class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1.5">
+                        <i data-lucide="git-compare" class="w-3.5 h-3.5"></i> 実務ノウハウ
+                    </span>
+                    <time class="text-slate-400 text-sm flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> 2026.03.13
+                    </time>
+                </div>
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
+                    SBOMツール比較：無料/有償を<br class="hidden sm:block"/>
+                    <span class="text-2xl md:text-3xl text-emerald-300 font-medium">“中小サプライヤー視点”で見る</span>
+                </h1>
+                
+                <!-- 導入文 -->
+                <div class="text-lg text-slate-300 leading-relaxed p-6 md:p-8 bg-navy-800/50 rounded-2xl border border-white/5 space-y-4 shadow-lg shadow-black/20">
+                    <p>SBOMツール選定で最初に迷うのは、<strong>「無料でどこまでいけるか」</strong> と <strong>「どこから有償に寄せるべきか」</strong> です。</p>
+                    
+                    <p>中小サプライヤーの現実では、いきなり高機能な有償製品を入れても運用が回らないことがあります。逆に、無料/OSSだけで始めても、OEM提出や継続的な脆弱性管理の段階で限界が来ることがあります。</p>
+                    
+                    <p>まず前提として、無料/OSS側にもかなり強い選択肢があります。Anchore OSS は SBOM generation / vulnerability scanning / license scanning のオープンソーススイートで、Syft や Grype を含みます。Trivy も、image、fs、vm などを対象に SPDX / CycloneDX の SBOM を生成できます。さらに Dependency-Track は Apache 2.0 ライセンスの OSS で、CycloneDX SBOM の取り込み・分析、NVD など複数ソースの脆弱性集約、EPSS、監査用ワークフロー、API 連携を備えています。<span class="citation">anchore.com, trivy.dev, dependencytrack.org</span></p>
+
+                    <p>一方、有償側は「生成」よりその先、つまり <strong>蓄積・継続監視・ポリシー・共有・統合運用</strong> に強みがあります。<br>
+                    Anchore Enterprise は、source から runtime まで SBOM を自動生成・保存し、SPDX / CycloneDX を扱い、ポリシーで運用できると案内しています。Black Duck は公式サイト上で、SBOM generation/export/sharing、ingestion/analysis、policy management を強みとして示しています。Mend SCA も、SBOM の自動生成、SPDX/CycloneDX での出力、第三者 SBOM の取り込み、VEX 活用、EPSS や reachability を使った優先順位付け、広いCI/CD連携を訴求しています。<span class="citation">anchore.com, blackduck.com, mend.io</span></p>
+                </div>
+            </header>
+
+            <!-- 記事本文 -->
+            <div class="glass-card p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl bg-navy-900/80 mb-16">
+                <div class="prose prose-invert prose-slate prose-lg max-w-none">
+                    
+                    <!-- 内部リンク①：全体像の設計へ -->
+                    <div class="related-box mt-0 border-l-brand">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="map" class="w-4 h-4"></i> 導入（SBOM運用全体のフロー）</div>
+                        <p class="text-sm text-slate-300 mb-2">ツールを選ぶ前に、そもそもSBOMを「どう集めてどう提出するか」の実務要件（機密保護など）についてはこちらをご覧ください。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <!-- CSVから ID:02 のURLを設定 -->
+                            <li><a href="/psirt/sbom-complete-guide/" class="!text-brand-light hover:!text-brand flex items-center gap-1.5"><i data-lucide="file-text" class="w-4 h-4"></i> 自動車サプライヤー向け：SBOM完全ガイド</a></li>
+                        </ul>
+                    </div>
+
+                    <h2><i data-lucide="sliders" class="w-6 h-6 text-emerald-500"></i> 比較の軸は4つで十分</h2>
+                    <p>中小サプライヤー視点で見ると、ツール比較の軸は次の「4つ」に絞ると判断しやすくなります。</p>
+
+                    <div class="space-y-6 my-8">
+                        <!-- 1. 提出先要求 -->
+                        <div class="bg-navy-800/50 p-5 rounded-xl border border-white/5 border-l-4 border-l-emerald-400">
+                            <h4 class="text-emerald-400 font-bold mt-0 mb-2 flex items-center gap-2"><span class="bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded text-sm">軸1</span> 提出先要求</h4>
+                            <p class="text-sm text-slate-300 m-0">「とにかくSBOMを出せればよい」のか、「継続的に再提出・更新・共有が必要」なのかで必要な道具が変わります。<br>
+                            Trivy は SPDX/CycloneDX 生成に強く、Syft も SBOM 生成の核になりますが、提出履歴や共有ポータルまで含めると Dependency-Track や商用製品が有利になります。Mend は SBOM の export/import と VEX、Anchore Enterprise は SBOM の自動生成・保存、Black Duck は generation/export/share と ingestion/analysis を前面に出しています。<span class="citation">trivy.dev, anchore.com, dependencytrack.org, mend.io, blackduck.com</span></p>
+                        </div>
+
+                        <!-- 2. 運用負荷 -->
+                        <div class="bg-navy-800/50 p-5 rounded-xl border border-white/5 border-l-4 border-l-emerald-400">
+                            <h4 class="text-emerald-400 font-bold mt-0 mb-2 flex items-center gap-2"><span class="bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded text-sm">軸2</span> 運用負荷</h4>
+                            <p class="text-sm text-slate-300 m-0">無料/OSSは導入コストを抑えやすい反面、<strong>自分で組み合わせて運用を設計する負荷</strong> が残ります。<br>
+                            Syft や Trivy は生成には強いですが、案件台帳、提出管理、証跡連携までは自前で組む前提です。Dependency-Track は OSS でも分析や監査ワークフローまでカバーしますが、自前のサーバー運用が必要です。商用製品はその先の管理・統合を楽にしやすい一方、導入設計の密度が求められます。<span class="citation">anchore.com, trivy.dev, dependencytrack.org</span></p>
+                        </div>
+
+                        <!-- 3. 機密 -->
+                        <div class="bg-navy-800/50 p-5 rounded-xl border border-white/5 border-l-4 border-l-emerald-400">
+                            <h4 class="text-emerald-400 font-bold mt-0 mb-2 flex items-center gap-2"><span class="bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded text-sm">軸3</span> 機密（提出版のコントロール）</h4>
+                            <p class="text-sm text-slate-300 m-0">提出用SBOMと社内正本を分けたい場合、単に生成できるだけでは足りません。<br>
+                            外部共有や配布の観点では、FOSSA の SBOM Portal のように 公開/非公開の配布やトークン制御 に強い製品もありますが、まず中小サプライヤーは「正本を1つにして提出版を切る（マスキング等）」運用が先です。したがって、ツール比較でも「生成できるか」より<strong>「提出版をどう作るか」</strong>を先に考える方が失敗しにくいです。<span class="citation">docs.fossa.com</span></p>
+                        </div>
+
+                        <!-- 4. ツール連携 -->
+                        <div class="bg-navy-800/50 p-5 rounded-xl border border-white/5 border-l-4 border-l-emerald-400">
+                            <h4 class="text-emerald-400 font-bold mt-0 mb-2 flex items-center gap-2"><span class="bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded text-sm">軸4</span> ツール連携</h4>
+                            <p class="text-sm text-slate-300 m-0">自動化の成熟度が上がるほど、CI/CDやレジストリ、ポータル、開発環境との連携が重要になります。<br>
+                            Trivy はイメージ/ファイルシステム/VM を直接扱え、Mend は IDE・レポジトリ・レジストリ・CI/CD と広く連携すると説明しています。Dependency-Track も API-first 設計を強みとし、外部通知や多数の統合先を持っています。<span class="citation">trivy.dev, mend.io, dependencytrack.org</span></p>
+                        </div>
+                    </div>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2><i data-lucide="blocks" class="w-6 h-6 text-emerald-500"></i> 中小サプライヤーの現実解：3パターン</h2>
+                    <p>ここまでを踏まえると、中小サプライヤーが取りやすい現実解は次の3パターンに分かれます。</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 my-8">
+                        <!-- パターンA -->
+                        <div class="bg-navy-800/80 p-6 rounded-2xl border-t-4 border-t-blue-400 shadow-lg flex flex-col h-full">
+                            <h4 class="text-blue-400 font-bold mt-0 mb-2">パターンA：<br>まず提出に答えたい</h4>
+                            <div class="text-sm font-bold text-slate-200 bg-navy-900/50 p-3 rounded mb-4 text-center">
+                                Excel正本 ＋ Syft / Trivy
+                            </div>
+                            <p class="text-sm text-slate-300 m-0 flex-grow">まだ案件数が少なく、まずOEMへの提出や照会回答を乗り切りたい段階なら、この組み合わせが現実的です。生成したSBOMをそのまま提出せず、社内正本へ取り込み、必要に応じて提出版へ加工する流れにすると運用が崩れません。<br>Syft/Trivy は生成に強く、最初の自動化足場として向いています。<span class="citation block mt-2">anchore.com, trivy.dev</span></p>
+                        </div>
+
+                        <!-- パターンB -->
+                        <div class="bg-navy-800/80 p-6 rounded-2xl border-t-4 border-t-emerald-400 shadow-lg flex flex-col h-full">
+                            <h4 class="text-emerald-400 font-bold mt-0 mb-2">パターンB：<br>提出＋継続分析したい</h4>
+                            <div class="text-sm font-bold text-slate-200 bg-navy-900/50 p-3 rounded mb-4 text-center">
+                                生成ツール ＋ Dependency-Track
+                            </div>
+                            <p class="text-sm text-slate-300 m-0 flex-grow">複数製品を持ち始め、NVDやEPSS、VEX、監査ログまで一貫して見たいならこの構成です。Dependency-Track は CycloneDX SBOM を取り込み、NVD等との照合、EPSS、監査トレイルまで備えるため、無料/OSSの範囲でかなり先まで行けます。<span class="citation block mt-2">dependencytrack.org</span></p>
+                        </div>
+
+                        <!-- パターンC -->
+                        <div class="bg-navy-800/80 p-6 rounded-2xl border-t-4 border-t-purple-400 shadow-lg flex flex-col h-full">
+                            <h4 class="text-purple-400 font-bold mt-0 mb-2">パターンC：<br>ポリシー/統合運用まで欲しい</h4>
+                            <div class="text-sm font-bold text-slate-200 bg-navy-900/50 p-3 rounded mb-4 text-center">
+                                商用製品（Anchore / Black Duck / Mend等）
+                            </div>
+                            <p class="text-sm text-slate-300 m-0 flex-grow">SBOMの継続生成、保存、ポリシー管理、外部共有、CI/CD連携までまとめて欲しいなら、これらを比較候補に入れるのが自然です。各社、source-to-runtimeの自動生成、export/import、VEX、優先順位付け機能などを強みとして案内しています。<span class="citation block mt-2">anchore.com, blackduck.com, mend.io</span></p>
+                        </div>
+                    </div>
+
+                    <!-- 途中CTA（主CTA：デモ） -->
+                    <div class="bg-gradient-to-br from-navy-800 to-emerald-900/20 p-6 md:p-8 rounded-2xl border border-emerald-500/30 text-center my-12 shadow-[0_0_30px_rgba(16,185,129,0.1)] relative overflow-hidden group">
+                        <div class="absolute inset-0 bg-emerald-500/5 group-hover:bg-emerald-500/10 transition-colors"></div>
+                        <p class="text-white mb-6 font-medium text-lg relative z-10">Syft等で生成したSBOMと連携し、脆弱性管理と回答書作成に特化したクラウド運用の流れを見てみませんか？</p>
+                        <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold !text-white bg-brand hover:bg-brand-dark transition-all duration-300 shadow-lg shadow-brand/20 w-full sm:w-auto hover:-translate-y-1 relative z-10">
+                            <i data-lucide="monitor-play" class="w-5 h-5 !text-white"></i> Auto PSIRT Cloudの機能差分をデモで確認する
+                        </a>
+                    </div>
+
+                    <h2><i data-lucide="git-branch" class="w-6 h-6 text-emerald-500"></i> 判断フロー：迷った時の選び方</h2>
+                    <p>ツール選定で迷ったら、次の順番で自社への問いかけをすると整理しやすいです。</p>
+
+                    <ul class="space-y-4 my-6 list-none pl-0">
+                        <li class="bg-navy-800/50 p-4 rounded-xl border border-white/5">
+                            <strong class="text-emerald-300 block mb-1">1. 今すぐ必要なのは「提出」か、「継続運用」か</strong>
+                            <p class="text-sm text-slate-300 m-0">まずはOEMへの提出だけなら「生成系（Syft/Trivy）」、日々見つかる脆弱性との突合など継続運用が必要なら「分析系（Dependency-Track等）」が必要です。</p>
+                        </div>
+                        <li class="bg-navy-800/50 p-4 rounded-xl border border-white/5">
+                            <strong class="text-emerald-300 block mb-1">2. 社内で「正本」を持てるか</strong>
+                            <p class="text-sm text-slate-300 m-0">システムで出力したものをそのまま出すのではなく、どのバージョン向けのSBOMかを管理する「正本台帳」の仕組みがないと、どのツールを入れても運用が崩れます。</p>
+                        </div>
+                        <li class="bg-navy-800/50 p-4 rounded-xl border border-white/5">
+                            <strong class="text-emerald-300 block mb-1">3. CI/CDやレジストリとつなぐ必要があるか</strong>
+                            <p class="text-sm text-slate-300 m-0">ビルドパイプラインへの組み込みが必須なら、Trivyや商用製品が有利になります。</p>
+                        </div>
+                        <li class="bg-navy-800/50 p-4 rounded-xl border border-white/5">
+                            <strong class="text-emerald-300 block mb-1">4. 機密を守って共有（配布）したいか</strong>
+                            <p class="text-sm text-slate-300 m-0">社外へのセキュアな共有・配布・ポータル機能まで必要なら、商用製品の価値が一気に上がります。</p>
+                        </div>
+                    </ul>
+
+                    <!-- 内部リンク②：Excelテンプレへの導線 -->
+                    <div class="related-box my-8">
+                        <div class="text-sm font-bold text-emerald-400 mb-2 flex items-center gap-2"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> 関連資料</div>
+                        <p class="text-sm text-slate-300 mb-2">高価なツールを入れる前に、まずは社内で「正本」の管理項目を小さく定義するための台帳です。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <!-- CSVから ID:93 のURLを設定 (過去の推定名) -->
+                            <li><a href="/psirt/sbom-excel-template/" class="!text-emerald-400 hover:!text-emerald-300">すぐ使えるSBOM Excel台帳テンプレ</a></li>
+                        </ul>
+                    </div>
+
+                    <h2><i data-lucide="alert-octagon" class="w-6 h-6 text-red-400"></i> よくあるNG（ツール選びの失敗）</h2>
+                    <ul class="space-y-4 my-6 list-none pl-0 font-medium">
+                        <li class="flex items-start gap-3 bg-navy-800/50 p-4 rounded-lg border border-red-500/10">
+                            <i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> 
+                            <span class="text-slate-300">最初から高機能製品に寄せて、社内に「正本」の概念が無い</span>
+                        </li>
+                        <li class="flex items-start gap-3 bg-navy-800/50 p-4 rounded-lg border border-red-500/10">
+                            <i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> 
+                            <span class="text-slate-300">生成ツールだけ入れて、OEMへの提出運用や監査証跡の残し方を考えていない</span>
+                        </li>
+                        <li class="flex items-start gap-3 bg-navy-800/50 p-4 rounded-lg border border-red-500/10">
+                            <i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> 
+                            <span class="text-slate-300">“無料か有償か”だけで比較し、OEMからの実際の「提出要件」を見ていない</span>
+                        </li>
+                        <li class="flex items-start gap-3 bg-navy-800/50 p-4 rounded-lg border border-red-500/10">
+                            <i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> 
+                            <span class="text-slate-300">ベンダー比較を始める前に、自社の「対象製品・対象版数」の管理ルールすら決まっていない</span>
+                        </li>
+                    </ul>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2><i data-lucide="help-circle" class="w-6 h-6 text-emerald-500"></i> FAQ：ツールの比較・選定</h2>
+                    <div class="space-y-6 mt-6">
+                        <div>
+                            <strong class="text-emerald-400 block mb-2">Q1. 無料/OSSだけでどこまでできますか？</strong>
+                            <p class="m-0 text-slate-300">SBOM生成まではかなり進められます。SyftやTrivyは生成に強く、Dependency-Trackは取り込み・分析・監査トレイルまでカバーできます。ただし、最終的な「提出運用」や「証跡設計」は社内で独自のルールと手作業を組む必要があります。<span class="citation">anchore.com, trivy.dev, dependencytrack.org</span></p>
+                        </div>
+                        <div>
+                            <strong class="text-emerald-400 block mb-2">Q2. 商用製品は何が強いですか？</strong>
+                            <p class="m-0 text-slate-300">単なる生成だけでなく、保存、ポリシー適用、継続監視、セキュアな共有、CI/CD統合まで含めた「運用面」が強いです。Anchore Enterprise、Black Duck、Mend はそれぞれその方向の統合機能を公式に案内しています。<span class="citation">anchore.com, blackduck.com, mend.io</span></p>
+                        </div>
+                        <div>
+                            <strong class="text-emerald-400 block mb-2">Q3. 中小サプライヤーにとって最初の現実解は何ですか？</strong>
+                            <p class="m-0 text-slate-300">まずは Excelで正本を作り、Syft または Trivy で生成を半自動化し、件数が増えてきたら Dependency-Track（またはそれに相当するクラウドツール）を足す、という順番が現実的です。これは、生成・分析・運用の機能差から見ても自然な導入順です。<span class="citation">anchore.com, trivy.dev, dependencytrack.org</span></p>
+                        </div>
+                    </div>
+
+                    <!-- 内部リンク③：次に読む -->
+                    <div class="mt-12 p-6 bg-navy-800/80 rounded-xl border border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                        <div>
+                            <div class="text-sm font-bold text-slate-400 mb-1">次に読む</div>
+                            <!-- CSVから ID:59 のURLを設定 -->
+                            <a href="/psirt/what-is-sbom/" class="text-lg font-bold !text-white hover:!text-emerald-400 transition-colors">SBOMとは（提出物ではなく運用資産） <i data-lucide="arrow-right" class="w-4 h-4 inline"></i></a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- CTA Section (副CTA：相談) -->
+            <div class="glass-card rounded-3xl p-8 md:p-12 text-center border-t-4 border-t-emerald-500 bg-navy-800/80 shadow-[0_0_40px_-10px_rgba(16,185,129,0.2)]">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">自社に合ったSBOM運用を相談しませんか？</h2>
+                <p class="text-slate-300 mb-8 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+                    いきなり高価な統合ツールを入れる前に、まずは「どの製品のSBOMを」「どうやって集め」「どう提出・管理するか」という実務のベースを整える必要があります。SBOM整備とOEMへの提出運用をどこから始めるべきか整理したい方はご相談ください。
+                </p>
+                <div class="flex justify-center">
+                    <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold !text-white bg-brand hover:bg-brand-dark transition-all duration-300 shadow-lg shadow-brand/20 w-full sm:w-auto hover:-translate-y-1">
+                        <i data-lucide="message-square" class="w-5 h-5 !text-white"></i>
+                        【無料】オンライン相談を予約する
+                    </a>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/5 text-center text-sm text-slate-500 mt-auto bg-navy-900/80">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span class="font-bold text-slate-400">Auto PSIRT Cloud</span>
+            </div>
+            <p>&copy; 2026 Unimobilities株式会社. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
