@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEOメタタグ -->
+    <title>UN-R155/ISO21434でPSIRT相当として見られるポイント｜監査で止まらない最小設計 | Auto PSIRT Cloud</title>
+    <meta name="description" content="UN-R155とISO/SAE 21434の公開要件から逆算すると、サプライヤーに求められやすい“PSIRT相当”の機能は、受付、影響評価、期限管理、継続監視、サプライヤ連携、証跡管理です。監査で見られやすい観点を、兼務でも回る手順と成果物で整理します。">
+    <meta name="keywords" content="UN-R155/ISO21434でPSIRT相当として見られるポイント, UN-R155, ISO21434, PSIRT, 監査対応, 脆弱性管理, 自動車セキュリティ">
+    <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/psirt/un-r155-iso21434-psirt-points/">
+    
+    <!-- OGPタグ (SNSシェア用) -->
+    <meta property="og:title" content="UN-R155/ISO21434でPSIRT相当として見られるポイント｜監査で止まらない最小設計">
+    <meta property="og:description" content="UN-R155とISO 21434の公開要件から逆算し、サプライヤーに求められる“PSIRT相当”の機能と最小設計を解説します。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/psirt/un-r155-iso21434-psirt-points/">
+    <meta property="og:site_name" content="Auto PSIRT Cloud">
+
+    <!-- ファビコン -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%236366f1%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z%22/><path d=%22m9 12 2 2 4-4%22/></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0a0f1c',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        brand: {
+                            light: '#60a5fa',
+                            DEFAULT: '#3b82f6', /* サイト基本の青色 */
+                            dark: '#2563eb',
+                        },
+                        accent: {
+                            DEFAULT: '#6366f1', /* Indigo 500 */
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #6366f1, #3b82f6); /* Indigo to Blue */
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* 記事用カスタムスタイル */
+        .prose h2 {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-top: 4rem;
+            color: #f8fafc;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .prose h3 {
+            color: #e2e8f0;
+            margin-top: 2.5rem;
+            border-left: 3px solid #6366f1; /* Indigo系アクセント */
+            padding-left: 0.75rem;
+            font-size: 1.25rem;
+        }
+        .prose a {
+            color: #818cf8; /* indigo-400 */
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .prose a:hover {
+            border-bottom-color: #818cf8;
+        }
+        .prose strong {
+            color: #f8fafc;
+            background: linear-gradient(transparent 60%, rgba(99, 102, 241, 0.3) 40%);
+        }
+        .related-box {
+            background: rgba(30, 41, 59, 0.6);
+            border-left: 4px solid #6366f1;
+            padding: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 2rem 0;
+        }
+        .step-card {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        .step-card:hover {
+            border-color: rgba(99, 102, 241, 0.3);
+            background: rgba(30, 41, 59, 0.8);
+        }
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2rem;
+            height: 2rem;
+            background: #6366f1;
+            color: white;
+            border-radius: 0.5rem;
+            font-weight: bold;
+            font-size: 1rem;
+            margin-right: 0.75rem;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-indigo-500 selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-brand/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-indigo-500/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-brand-dark flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="/news.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        ニュース一覧へ戻る
+                    </a>
+                    <a href="/demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                        相談 or デモ予約
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <article class="max-w-4xl mx-auto">
+            
+            <!-- パンくずリスト -->
+            <nav class="flex text-sm text-slate-400 mb-8" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/index.html" class="hover:text-white transition-colors">ホーム</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <a href="/news.html" class="hover:text-white transition-colors">ニュース・インサイト</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <span class="text-slate-500 truncate max-w-[200px] sm:max-w-none">PSIRT相当として見られるポイント</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- 記事ヘッダー -->
+            <header class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-indigo-500/20 border border-indigo-500/30 text-indigo-400 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1.5">
+                        <i data-lucide="scale" class="w-3.5 h-3.5"></i> 実務ノウハウ
+                    </span>
+                    <time class="text-slate-400 text-sm flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> 2026.03.12
+                    </time>
+                </div>
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
+                    UN-R155/ISO21434で<br class="hidden sm:block"/>PSIRT相当として見られるポイント<br/>
+                    <span class="text-2xl md:text-3xl text-slate-300 font-medium">（監査で止まらない最小設計）</span>
+                </h1>
+                
+                <!-- 導入文 -->
+                <div class="text-lg text-slate-300 leading-relaxed p-6 md:p-8 bg-navy-800/50 rounded-2xl border border-white/5 space-y-4 shadow-lg shadow-black/20 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-bl-full -z-10"></div>
+                    <p>UN-R155やISO/SAE 21434の公開説明を見ると、法規・規格の文面の中に<strong>「PSIRT」という名称そのものが必ずしも前面に出てくるわけではありません。</strong></p>
+                    
+                    <p>ただし、UN-R155のCSMS要求は、開発・生産・生産後を通じて、組織レベルの管理、リスクの特定/評価/対処、検証・試験、リスク評価の継続更新、車両上のサイバー攻撃・脅威・脆弱性の監視/検知/対応、有効性評価、分析用データの提供、継続的なフィールド監視、サプライヤ依存管理、合理的期間内の緩和までを求めています。</p>
+                    
+                    <p>ISO/SAE 21434 も、車両のE/Eシステムに対するサイバーセキュリティ工学をコンセプトから廃棄までのライフサイクル全体に適用し、サプライチェーン整合を促す標準だと公式に説明しています。</p>
+
+                    <div class="bg-navy-900/60 p-4 rounded-xl border-l-4 border-l-indigo-500 mt-4">
+                        <p class="m-0 text-white font-bold">つまり公開要件から逆算すると、<br>
+                        <span class="text-indigo-400">「サプライヤー側にもPSIRT相当の運用機能が求められやすい」</span><br>
+                        というのが実務的な読み方になります。</p>
+                    </div>
+                </div>
+            </header>
+
+            <!-- 記事本文 -->
+            <div class="glass-card p-6 sm:p-10 md:p-12 rounded-3xl border border-white/10 shadow-2xl bg-navy-900/80 mb-16 relative">
+                
+                <div class="prose prose-invert prose-slate prose-lg max-w-none">
+                    
+                    <!-- 内部リンク①：全体像の設計へ -->
+                    <div class="related-box mt-0 border-l-brand">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="map" class="w-4 h-4"></i> 前提の確認</div>
+                        <p class="text-sm text-slate-300 mb-2">法規対応のためにPSIRTを立ち上げる際、兼務体制でも回る全体像の設計（組織・プロセス）についてはこちらをご確認ください。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <!-- CSVから ID:01 のURLを設定 -->
+                            <li><a href="/psirt/automotive-supplier-guide/" class="!text-brand-light hover:!text-brand flex items-center gap-1.5"><i data-lucide="file-text" class="w-4 h-4"></i> 自動車サプライヤーのPSIRT完全ガイド</a></li>
+                        </ul>
+                    </div>
+
+                    <h2><i data-lucide="check-square" class="w-6 h-6 text-indigo-400"></i> 先に結論：監査で見られやすい“PSIRT相当”は6点</h2>
+                    <p>UN-R155やISO 21434 の公開要件を、サプライヤーが担うべき日々の実務へ落とすと、まず次の6点が見られやすくなります。</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-8">
+                        <div class="bg-navy-800/80 p-4 rounded-xl border border-white/5">
+                            <h4 class="text-indigo-400 font-bold mt-0 mb-1">1. 受付窓口</h4>
+                            <p class="text-sm text-slate-300 m-0">脆弱性情報やOEMからの照会を受ける入口があるか。</p>
+                        </div>
+                        <div class="bg-navy-800/80 p-4 rounded-xl border border-white/5">
+                            <h4 class="text-indigo-400 font-bold mt-0 mb-1">2. 影響評価</h4>
+                            <p class="text-sm text-slate-300 m-0">対象版数や構成を切り、影響あり/なし/調査中を判断できるか。</p>
+                        </div>
+                        <div class="bg-navy-800/80 p-4 rounded-xl border border-white/5">
+                            <h4 class="text-indigo-400 font-bold mt-0 mb-1">3. 期限管理（SLA）</h4>
+                            <p class="text-sm text-slate-300 m-0">合理的な期間内（SLA内）に評価・緩和・回答できるか。</p>
+                        </div>
+                        <div class="bg-navy-800/80 p-4 rounded-xl border border-white/5">
+                            <h4 class="text-indigo-400 font-bold mt-0 mb-1">4. 継続監視</h4>
+                            <p class="text-sm text-slate-300 m-0">新しい脅威や脆弱性、フィールド上の兆候を継続的に見ているか。</p>
+                        </div>
+                        <div class="bg-navy-800/80 p-4 rounded-xl border border-white/5">
+                            <h4 class="text-indigo-400 font-bold mt-0 mb-1">5. サプライヤ連携</h4>
+                            <p class="text-sm text-slate-300 m-0">自社より上流のベンダや外部依存を管理できているか。</p>
+                        </div>
+                        <div class="bg-navy-800/80 p-4 rounded-xl border border-white/5">
+                            <h4 class="text-indigo-400 font-bold mt-0 mb-1">6. 証跡管理</h4>
+                            <p class="text-sm text-slate-300 m-0">一連の対応結果や根拠を、後から監査で再現できるか。</p>
+                        </div>
+                    </div>
+                    <p>これらはUN-R155の公開要件で列挙される機能群と、ISO/SAE 21434 のライフサイクル/サプライチェーン前提から、実務上もっとも自然に導かれる観点です。</p>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2><i data-lucide="book-open" class="w-6 h-6 text-indigo-400"></i> なぜ“PSIRT相当”として見られるのか</h2>
+                    
+                    <h3>UN-R155の観点</h3>
+                    <p>UN-R155の公開実装文書では、CSMS（サイバーセキュリティ管理システム）に求められるプロセスとして、<strong>監視・検知・対応、継続的なリスク評価更新、フィールドデータやログの分析、サプライヤ依存管理、合理的な期間内の緩和</strong> が明示されています。</p>
+                    <p>これは、「部署の名前をどう付けるか」は別として、実態として「受付 → 評価 → 対応 → 更新 → 記録」の一連の運用プロセス（つまりPSIRT機能）が必要だということです。<br>
+                    UNECE自身の説明でも、規則は必要なプロセスとして「サイバー攻撃の監視と効果的な対応」「成功・未遂攻撃の分析支援」「新しい脅威や脆弱性を踏まえた有効性評価」を挙げています。</p>
+
+                    <h3>ISO/SAE 21434の観点</h3>
+                    <p>ISO/SAE 21434 の公式ページも、この標準が車両のE/Eシステム全体に適用され、ライフサイクル全体を通じてサイバーセキュリティ工学を扱い、規制対応やサプライチェーン整合を支えると説明しています。</p>
+                    <p>さらに、<strong>ISO/PAS 5112</strong> は 21434 に基づく CSMS 監査のガイドとして、監査プログラム管理、組織監査、監査証拠の提示 を扱っています。<br>
+                    ここから見ると、サプライヤー側に「PSIRTという名の専任部署」があるかよりも、<strong>「PSIRT相当の運用能力（プロセス）と、それが機能している証拠（エビデンス）」があるか</strong> が問われやすいと言えます。</p>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2><i data-lucide="list-ordered" class="w-6 h-6 text-indigo-400"></i> 兼務でも破綻しない：最小の準備ステップ</h2>
+                    <p>これらの要求に対し、現場が兼務体制であっても監査で止まらないようにする「最小の準備」を5ステップで整理します。</p>
+
+                    <div class="space-y-4 my-8">
+                        <div class="step-card">
+                            <h4 class="mt-0 text-white flex items-center text-lg"><span class="step-number">1</span>役割を4つだけ決める</h4>
+                            <p class="text-slate-300 m-0">最初に必要なのは大きな組織図を作ることではなく、役割の切り分けです。<br>
+                            最低限 <strong>「受付窓口」「技術評価」「対外回答」「承認」</strong> の4つが決まっていれば、UN-R155の「組織レベル管理」や、21434/監査側の「責任の明確化」にかなり対応しやすくなります。</p>
+                        </div>
+                        
+                        <!-- 内部リンク②：最小体制チェックリストへの導線 -->
+                        <div class="ml-6 pl-4 border-l-2 border-indigo-500/30 my-4 py-2">
+                            <div class="text-sm font-bold text-indigo-400 mb-1 flex items-center gap-1.5"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> 関連資料</div>
+                            <ul class="text-base m-0 list-none pl-0">
+                                <!-- CSVから ID:83 のURLを設定 -->
+                                <li><a href="/psirt/minimum-team-checklist/" class="!text-indigo-400 hover:!text-indigo-300">PSIRT最小体制チェックリスト</a></li>
+                            </ul>
+                        </div>
+
+                        <div class="step-card">
+                            <h4 class="mt-0 text-white flex items-center text-lg"><span class="step-number">2</span>SLAを3つだけ置く</h4>
+                            <p class="text-slate-300 m-0">最小で必要な期限管理（SLA）は、<strong>「受領確認」「一次回答」「最終回答」</strong>の3つです。<br>
+                            UN-R155の公開文書では、対応が必要な脅威や脆弱性は合理的な期間内に緩和されるべきとされており、これを現場に落とすと、SLAの基準が無いと運用を証明できません。</p>
+                        </div>
+
+                        <div class="step-card">
+                            <h4 class="mt-0 text-white flex items-center text-lg"><span class="step-number">3</span>対象版数と証跡をつなぐ</h4>
+                            <p class="text-slate-300 m-0">監査で止まりやすいのは「どの版に対する判断か」が弱い時です。<br>
+                            <strong>「対象製品」「対象版数」「SBOM/構成表」「判断理由」「提出履歴」を『案件ID』で束ねる</strong>だけでも、監査の再現性が大きく上がります。ISO/PAS 5112 が “providing evidence during CSMS audits” を明示している点から見ても、証跡と版管理の連携は後回しにしない方が安全です。</p>
+                        </div>
+
+                        <div class="step-card">
+                            <h4 class="mt-0 text-white flex items-center text-lg"><span class="step-number">4</span>継続監視の“入力源”を決める</h4>
+                            <p class="text-slate-300 m-0">UN-R155は、車両フィールドからの継続的監視と、車両データ・ログからの分析能力を求めています。<br>
+                            サプライヤーが高度なVSOC（Vehicle SOC）を持たないとしても、少なくとも<strong>「OEM/上流からの通知」「JVN/NVD/ベンダ公告」「フィールド不具合やログ」</strong>のどこを監視の入力源とするかを明確に決める必要があります。</p>
+                        </div>
+
+                        <div class="step-card">
+                            <h4 class="mt-0 text-white flex items-center text-lg"><span class="step-number">5</span>サプライヤ依存の連絡線を決める</h4>
+                            <p class="text-slate-300 m-0">UN-R155の公開要件には、契約サプライヤやサービスプロバイダとの依存管理が含まれます。<br>
+                            つまり、自社に脆弱性が見つかった時に「上流の問い合わせ先」が不明だと、PSIRT相当の能力としてかなり弱く見えます。<strong>問い合わせ窓口、回答期限の取り決め、エスカレーション先</strong>を最低限決めておくのが現実的です。</p>
+                        </div>
+                    </div>
+
+                    <!-- 途中CTA（主CTA：相談） -->
+                    <div class="bg-gradient-to-br from-navy-800 to-indigo-900/20 p-6 md:p-8 rounded-2xl border border-indigo-500/30 text-center my-12 shadow-[0_0_30px_rgba(99,102,241,0.1)] relative overflow-hidden group">
+                        <div class="absolute inset-0 bg-indigo-500/5 group-hover:bg-indigo-500/10 transition-colors"></div>
+                        <p class="text-white mb-6 font-medium text-lg relative z-10">自社でのPSIRT立ち上げや、法規監査に耐えうる運用設計を整理したい方はご相談ください。</p>
+                        <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold !text-white bg-brand hover:bg-brand-dark transition-all duration-300 shadow-lg shadow-brand/20 w-full sm:w-auto hover:-translate-y-1 relative z-10">
+                            <i data-lucide="message-square" class="w-5 h-5 !text-white"></i> 【無料】オンライン相談を予約する
+                        </a>
+                    </div>
+
+                    <h2><i data-lucide="alert-octagon" class="w-6 h-6 text-red-400"></i> 差し戻されやすいポイント</h2>
+                    <p>実務やプレ監査などで差し戻されやすいのは、次のようなケースです。</p>
+                    
+                    <ul class="space-y-4 my-6 list-none pl-0 font-medium">
+                        <li class="flex items-start gap-3 bg-navy-800/50 p-4 rounded-lg border border-red-500/10">
+                            <i data-lucide="x-circle" class="w-6 h-6 text-red-400 shrink-0 mt-0.5"></i> 
+                            <div>
+                                <strong class="text-white text-lg">窓口はあるが、SLAが無い</strong><br>
+                                <span class="text-sm text-slate-400 font-normal">いつまでに回答するかの基準がないため「合理的な期間内の緩和」を証明できない。</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3 bg-navy-800/50 p-4 rounded-lg border border-red-500/10">
+                            <i data-lucide="x-circle" class="w-6 h-6 text-red-400 shrink-0 mt-0.5"></i> 
+                            <div>
+                                <strong class="text-white text-lg">監視していると言うが、入力源や頻度が曖昧</strong><br>
+                                <span class="text-sm text-slate-400 font-normal">「気づいたら対応する」という属人的な状態になっており、プロセスの再現性がない。</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3 bg-navy-800/50 p-4 rounded-lg border border-red-500/10">
+                            <i data-lucide="x-circle" class="w-6 h-6 text-red-400 shrink-0 mt-0.5"></i> 
+                            <div>
+                                <strong class="text-white text-lg">影響なしと言うが、対象版数が無い</strong><br>
+                                <span class="text-sm text-slate-400 font-normal">どのバージョンに対する評価なのかが抜け落ちており、構成管理と紐付いていない。</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3 bg-navy-800/50 p-4 rounded-lg border border-red-500/10">
+                            <i data-lucide="x-circle" class="w-6 h-6 text-red-400 shrink-0 mt-0.5"></i> 
+                            <div>
+                                <strong class="text-white text-lg">上流依存があるのに、問い合わせ先や責任分界が曖昧</strong><br>
+                                <span class="text-sm text-slate-400 font-normal">OSやミドルウェアの脆弱性について、ベンダへ確認するフローが定義されていない。</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3 bg-navy-800/50 p-4 rounded-lg border border-red-500/10">
+                            <i data-lucide="x-circle" class="w-6 h-6 text-red-400 shrink-0 mt-0.5"></i> 
+                            <div>
+                                <strong class="text-white text-lg">証跡がファイルで散らばり、案件IDで辿れない</strong><br>
+                                <span class="text-sm text-slate-400 font-normal">「あの時のメール」「あの担当者のPC」に依存しており、監査員へエビデンスを提示できない。</span>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <p class="font-bold text-indigo-400 text-center mt-6">
+                        これらは高度なセキュリティ技術論ではなく、<strong class="text-white">「運用設計の不足」</strong>が原因です。<br>
+                        だからこそ、最初に「最小の型」を作っておく方が監査には圧倒的に強くなります。
+                    </p>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2><i data-lucide="help-circle" class="w-6 h-6 text-indigo-400"></i> FAQ：監査・法規とPSIRT</h2>
+                    <div class="space-y-6 mt-6">
+                        <div class="bg-navy-800 p-5 rounded-xl border border-white/5">
+                            <strong class="text-indigo-400 flex items-center gap-2 mb-2"><span class="bg-indigo-500/20 px-2 py-0.5 rounded text-sm">Q</span> UN-R155やISO/SAE 21434はPSIRTを明記していますか？</strong>
+                            <p class="m-0 text-slate-300"><span class="font-bold text-white pr-2">A.</span> 公開要約レベルでは、必ずしも “PSIRT” という名称を要求しているわけではありません。ただし、UN-R155 が求める監視・検知・対応・サプライヤ依存管理・合理的期間内の緩和と、21434 のライフサイクル/サプライチェーン整合要件を実務へ落とすと、自ずとPSIRT相当の運用能力が必要になります。</p>
+                        </div>
+                        <div class="bg-navy-800 p-5 rounded-xl border border-white/5">
+                            <strong class="text-indigo-400 flex items-center gap-2 mb-2"><span class="bg-indigo-500/20 px-2 py-0.5 rounded text-sm">Q</span> サプライヤーでもすべて（高度な分析等）を持たないといけませんか？</strong>
+                            <p class="m-0 text-slate-300"><span class="font-bold text-white pr-2">A.</span> フル機能をいきなり持つ必要はありません。まずは「窓口、技術評価、対外回答、承認」の最小体制と、「SLA、証跡、上流連絡線」を整えるのが現実的です。これは公開されている監査・実装文書の趣旨とも整合します。</p>
+                        </div>
+                        <div class="bg-navy-800 p-5 rounded-xl border border-white/5">
+                            <strong class="text-indigo-400 flex items-center gap-2 mb-2"><span class="bg-indigo-500/20 px-2 py-0.5 rounded text-sm">Q</span> 監査で一番効く証拠（エビデンス）は何ですか？</strong>
+                            <p class="m-0 text-slate-300"><span class="font-bold text-white pr-2">A.</span> 「窓口、SLA、対象版数、判断根拠、提出履歴」が『案件ID』で一気通貫につながっていることです。ISO/PAS 5112 が“evidence during CSMS audits”を強調していることからも、単発の資料より「再現性のある証跡の束」が重要です。</p>
+                        </div>
+                    </div>
+
+                    <!-- 内部リンク③：次に読む -->
+                    <div class="mt-12 p-6 bg-navy-800/80 rounded-xl border border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                        <div>
+                            <div class="text-sm font-bold text-slate-400 mb-1">次に読む</div>
+                            <!-- CSVから ID:53 のURLを取得 (過去の推定名) -->
+                            <a href="/psirt/what-is-un-r155/" class="text-lg font-bold !text-white hover:!text-indigo-400 transition-colors">UN-R155とは（自動車サイバーセキュリティ法規） <i data-lucide="arrow-right" class="w-4 h-4 inline"></i></a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- CTA Section (副CTA：デモ) -->
+            <div class="glass-card rounded-3xl p-8 md:p-12 text-center border-t-4 border-t-indigo-500 bg-navy-800/80 shadow-[0_0_40px_-10px_rgba(99,102,241,0.2)]">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">監査に耐える証跡管理を、システムで自動化しませんか？</h2>
+                <p class="text-slate-300 mb-8 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+                    案件IDを軸とした対象版数の管理、SLAに基づく期限のトラッキング、影響判断の根拠となるSBOMや構成表の紐付け。これら監査で求められる「PSIRTの運用プロセス」を標準実装した <strong>Auto PSIRT Cloud</strong> の運用イメージをデモでご案内します。
+                </p>
+                <div class="flex justify-center">
+                    <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold !text-white bg-brand hover:bg-brand-dark transition-all duration-300 shadow-lg shadow-brand/20 w-full sm:w-auto hover:-translate-y-1">
+                        <i data-lucide="monitor-play" class="w-5 h-5 !text-white"></i>
+                        Auto PSIRT CloudでのPSIRT運用イメージをデモで確認する
+                    </a>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/5 text-center text-sm text-slate-500 mt-auto bg-navy-900/80">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span class="font-bold text-slate-400">Auto PSIRT Cloud</span>
+            </div>
+            <p>&copy; 2026 Unimobilities株式会社. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
