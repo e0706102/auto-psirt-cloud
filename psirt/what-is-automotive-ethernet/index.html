@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEOメタタグ -->
+    <title>Automotive Ethernetとは？外部接続の増加と論点をやさしく解説 | Auto PSIRT Cloud</title>
+    <meta name="description" content="Automotive Ethernetとは何かをサプライヤー向けに解説。100BASE-T1/1000BASE-T1などの車載向けEthernetの基本、なぜ帯域拡大とともに外部接続や境界設計の論点が増えるのか、トリアージや影響評価で意識すべき点を短く整理します。">
+    <meta name="keywords" content="Automotive Ethernetとは, Automotive Ethernet, 車載Ethernet, 100BASE-T1, CVE, トリアージ, 自動車セキュリティ">
+    <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/psirt/what-is-automotive-ethernet/">
+    
+    <!-- OGPタグ (SNSシェア用) -->
+    <meta property="og:title" content="Automotive Ethernetとは？外部接続の増加と論点をやさしく解説">
+    <meta property="og:description" content="車載向けEthernetの基本、なぜ帯域拡大とともに外部接続や境界設計の論点が増えるのかを解説します。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/psirt/what-is-automotive-ethernet/">
+    <meta property="og:site_name" content="Auto PSIRT Cloud">
+
+    <!-- ファビコン -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%230ea5e9%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z%22/><path d=%22m9 12 2 2 4-4%22/></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0a0f1c',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        brand: {
+                            light: '#60a5fa',
+                            DEFAULT: '#3b82f6', /* サイト基本の青色 */
+                            dark: '#2563eb',
+                        },
+                        accent: {
+                            DEFAULT: '#0ea5e9', /* Sky 500 */
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #0ea5e9, #3b82f6); /* Sky to Blue */
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* 記事用カスタムスタイル */
+        .prose h2 {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-top: 4rem;
+            color: #f8fafc;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .prose h3 {
+            color: #e2e8f0;
+            margin-top: 2.5rem;
+            border-left: 3px solid #0ea5e9; /* Sky系アクセント */
+            padding-left: 0.75rem;
+            font-size: 1.25rem;
+        }
+        .prose a {
+            color: #38bdf8; /* sky-400 */
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .prose a:hover {
+            border-bottom-color: #38bdf8;
+        }
+        .prose strong {
+            color: #f8fafc;
+            background: linear-gradient(transparent 60%, rgba(14, 165, 233, 0.3) 40%);
+        }
+        .related-box {
+            background: rgba(30, 41, 59, 0.6);
+            border-left: 4px solid #0ea5e9;
+            padding: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-sky-500 selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-brand/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-sky-500/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-brand-dark flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="/news.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        ニュース一覧へ戻る
+                    </a>
+                    <a href="/demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                        相談 or デモ予約
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <article class="max-w-4xl mx-auto">
+            
+            <!-- パンくずリスト -->
+            <nav class="flex text-sm text-slate-400 mb-8" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/index.html" class="hover:text-white transition-colors">ホーム</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <a href="/news.html" class="hover:text-white transition-colors">ニュース・インサイト</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <span class="text-slate-500 truncate max-w-[200px] sm:max-w-none">Automotive Ethernetとは</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- 記事ヘッダー -->
+            <header class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-sky-500/20 border border-sky-500/30 text-sky-400 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1.5">
+                        <i data-lucide="route" class="w-3.5 h-3.5"></i> 入門解説
+                    </span>
+                    <time class="text-slate-400 text-sm flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> 2026.03.13
+                    </time>
+                </div>
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
+                    Automotive Ethernetとは<br/>
+                    <span class="text-2xl md:text-3xl text-slate-300 font-medium">（外部接続の増加と論点）</span>
+                </h1>
+                
+                <!-- 導入文 -->
+                <div class="text-lg text-slate-300 leading-relaxed p-6 bg-navy-800/50 rounded-2xl border border-white/5 space-y-4 shadow-lg shadow-black/20">
+                    <p>Automotive Ethernetとは、<strong>車載用途に合わせて使われるEthernet系通信技術の総称</strong>です。</p>
+                    
+                    <p>OPEN Alliance は Ethernet-based communications の自動車向け仕様を 10Mbit/s から 1000Mbit/s 以上まで整備しており、車内ネットワーク向けのオープン仕様群を公開しています。NXP も車載Ethernet向け PHY やスイッチ製品で、100BASE-T1 や 1000BASE-T1 などの車載向けEthernetを説明しています。</p>
+                    
+                    <div class="bg-navy-900/60 p-4 rounded-xl border-l-4 border-l-sky-500 mt-4">
+                        <p class="m-0 text-white">つまり Automotive Ethernet は、一般ITのLANケーブルをそのまま車に持ち込むというより、<br>
+                        <strong class="text-sky-400">「車両内の高帯域・低遅延・拡張性に対応するための、新しい車載ネットワーク基盤」</strong><br>
+                        と捉えると分かりやすいです。</p>
+                    </div>
+                </div>
+            </header>
+
+            <!-- 記事本文 -->
+            <div class="glass-card p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl bg-navy-900/80 mb-16">
+                <div class="prose prose-invert prose-slate prose-lg max-w-none">
+                    
+                    <!-- 内部リンク①：全体像の設計へ -->
+                    <div class="related-box mt-0 border-l-brand">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="map" class="w-4 h-4"></i> 導入（トリアージの全体フロー）</div>
+                        <p class="text-sm text-slate-300 mb-2">新しいネットワーク技術の導入によって「外部から攻撃が到達できるか」の判断はどう変わるか。トリアージの全体フローはこちらをご覧ください。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <!-- CSVから ID:03 のURLを設定 -->
+                            <li><a href="/psirt/cve-triage-vex-guide/" class="!text-brand-light hover:!text-brand flex items-center gap-1.5"><i data-lucide="file-text" class="w-4 h-4"></i> CVEトリアージ＆VEX実務 完全ガイド</a></li>
+                        </ul>
+                    </div>
+
+                    <h2><i data-lucide="git-merge" class="w-6 h-6 text-sky-500"></i> 何が従来の車載ネットワークと違うのか</h2>
+                    <p>OPEN Alliance は、Automotive Ethernet が 自動運転（Autonomous Driving）や Connected Car 向けの Ethernet-based communications を支える前提で仕様拡張を続けていると説明しています。</p>
+                    <p>NXP も、高帯域な車内バックボーン、ADAS（先進運転支援システム）、インフォテインメント、さらに<strong>ゾーン化/ドメイン化された次世代の車両アーキテクチャ</strong>での活用を前提に、EthernetスイッチやPHY、AVB/TSN（音声・映像の同期やタイムセンシティブネットワーク）対応などを案内しています。</p>
+                    
+                    <p>つまり実務上は、従来のCANやLINを単純に置き換えるというより、<strong>「カメラ映像やLiDARデータ、大容量OTAなど、高帯域データを扱うための中核（バックボーン）ネットワーク」</strong>として意識するのが実態に近いです。</p>
+
+                    <h2><i data-lucide="wifi" class="w-6 h-6 text-sky-500"></i> 「外部接続の増加」と言われる理由</h2>
+                    <p>Automotive Ethernet そのものは車内ネットワーク技術であって、それ自体が直接外部のインターネット空間に露出しているという意味ではありません。<br>
+                    しかし、セキュリティの観点からは別の理由で論点になります。</p>
+
+                    <div class="bg-navy-800/80 p-5 rounded-xl border border-white/5 my-6">
+                        <p class="text-sm text-slate-200 m-0">
+                            NHTSA の 2022 best practices は、<strong>wireless interfaces into vehicle systems create new attack vectors</strong>（車両システムへの無線インターフェースは新しい攻撃ベクトルを生む）と述べ、無線接続をもつECUと安全クリティカル機能の間には segmentation と isolation を使うべきだとしています。<br><br>
+                            さらに NHTSA は、車両リスク評価では internal vehicle networks、external wireless networks、そして <strong>ECU が外部へ見せる任意の interface を最小限カバーすべき</strong>だとしています。
+                        </p>
+                    </div>
+
+                    <p>高帯域な Ethernet ベースの車内アーキテクチャは、<strong>大容量通信を必要とする「ゲートウェイ」「OTA」「バックエンド通信（クラウド連携）」「インフォテインメント」</strong>と極めて結びつきやすい性質を持っています。<br>
+                    そのため、「境界設計（どのECUが外と繋がり、どう遮断するか）」を誤ると、外部からの攻撃経路（到達性）の論点が一気に増える、というのが実務的な見方です。</p>
+
+                    <h2><i data-lucide="split-square-horizontal" class="w-6 h-6 text-sky-500"></i> サプライヤー実務で意識すべきポイント</h2>
+                    <p>脆弱性対応やOEM照会の実務では、「Automotive Ethernet が使われているか」という技術的スペックだけでなく、<strong>次の3点</strong>を見るとリスク評価が整理しやすくなります。</p>
+
+                    <div class="space-y-4 my-6">
+                        <div class="bg-navy-800/50 p-4 rounded-xl border-l-4 border-l-sky-400">
+                            <strong class="text-sky-300 block mb-1">1. どのECU/機能が Ethernet に乗っているか</strong>
+                            <p class="text-sm text-slate-300 m-0">その脆弱性を持つコンポーネントが、Ethernetで高速通信するドメイン（ADASやIVIなど）に属しているかを特定します。</p>
+                        </div>
+                        <div class="bg-navy-800/50 p-4 rounded-xl border-l-4 border-l-sky-400">
+                            <strong class="text-sky-300 block mb-1">2. 外部接点があるか</strong>
+                            <p class="text-sm text-slate-300 m-0">そのネットワークの先に、OTA、Wi‑Fi、Bluetooth、診断ポート、バックエンド接続（クラウド）などの「外部からの入口」が存在するかを確認します。</p>
+                        </div>
+                        <div class="bg-navy-800/50 p-4 rounded-xl border-l-4 border-l-sky-400">
+                            <strong class="text-sky-300 block mb-1">3. 境界がどう切られているか</strong>
+                            <p class="text-sm text-slate-300 m-0">NHTSA は、外部接続された経路から safety critical な車両制御系（走る・止まる等）へ直接つながらないよう、<strong>segmentation（分割）と boundary controls（境界制御）</strong>を重視しています。</p>
+                        </div>
+                    </div>
+
+                    <p>つまり、トリアージや影響評価において<strong>「Ethernetだから危険」でも「車内ネットワークだから安全」でもなく、あくまで【対象版数・到達経路・境界制御】の3点ファクトで見る</strong>のが基本原則となります。</p>
+
+                    <h2><i data-lucide="alert-octagon" class="w-6 h-6 text-red-400"></i> よくある誤解</h2>
+                    
+                    <ul class="space-y-6 my-8 list-none pl-0">
+                        <li class="bg-navy-800/50 p-5 rounded-xl border border-white/5">
+                            <strong class="text-slate-200 block mb-2 flex items-center gap-2"><i data-lucide="x" class="w-5 h-5 text-red-400"></i> 誤解1：Automotive Ethernet ＝ 外部公開ネットワークである</strong>
+                            <p class="text-sm text-slate-300 m-0"><strong class="text-red-300">違います。</strong> 基本は車内ネットワークです。ただし、通信容量が大きいため、ゲートウェイや無線接続（テレマティクス）、バックエンド連携と必然的に組み合わさることが多く、結果的に外部からの経路が問題になりやすいという構造です。</p>
+                        </li>
+                        <li class="bg-navy-800/50 p-5 rounded-xl border border-white/5">
+                            <strong class="text-slate-200 block mb-2 flex items-center gap-2"><i data-lucide="x" class="w-5 h-5 text-red-400"></i> 誤解2：Ethernet化したら全部危険になる</strong>
+                            <p class="text-sm text-slate-300 m-0"><strong class="text-red-300">違います。</strong> 問題は「帯域（スピード）」そのものよりも、「どの境界で外部と繋がり、その通信がどのECU/機能まで届くか」です。そのためNHTSA も、ネットワークの segmentation（分割）と isolation（隔離）の設計を強く求めています。</p>
+                        </li>
+                        <li class="bg-navy-800/50 p-5 rounded-xl border border-white/5">
+                            <strong class="text-slate-200 block mb-2 flex items-center gap-2"><i data-lucide="x" class="w-5 h-5 text-red-400"></i> 誤解3：仕様（規格）を知れば脆弱性対応できる</strong>
+                            <p class="text-sm text-slate-300 m-0"><strong class="text-red-300">違います。</strong> OPEN Alliance の仕様や 100BASE-T1/1000BASE-T1 のハードウェア的な知識は大事ですが、脆弱性のトリアージ実務では「対象版数」「ソフトウェア構成」「到達性」「境界制御の設定」まで見ないと、影響あり/なしの判断はできません。</p>
+                        </li>
+                    </ul>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2><i data-lucide="help-circle" class="w-6 h-6 text-sky-500"></i> FAQ：Automotive Ethernetとは</h2>
+                    <div class="space-y-6 mt-6">
+                        <div>
+                            <strong class="text-sky-400 block mb-2">Q1. Automotive Ethernetとは何ですか？</strong>
+                            <p class="m-0 text-slate-300">車載用途に合わせて使われるEthernet系通信技術の総称です。OPEN Alliance は 10Mbit/s から 1000Mbit/s 以上までの車載Ethernet仕様を整備し、標準化を進めています。</p>
+                        </div>
+                        <div>
+                            <strong class="text-sky-400 block mb-2">Q2. 100BASE-T1や1000BASE-T1とは何ですか？</strong>
+                            <p class="m-0 text-slate-300">車載向けEthernet PHY（物理層）で使われる代表的な通信仕様です。ツイストペアケーブル1対で高速・軽量な通信を実現します。</p>
+                        </div>
+                        <div>
+                            <strong class="text-sky-400 block mb-2">Q3. なぜセキュリティの論点になるのですか？</strong>
+                            <p class="m-0 text-slate-300">高帯域な車内ネットワークが、ゲートウェイや無線接続、OTA、バックエンド通信といった「外部接続」と結びつきやすく、外部からの攻撃経路（到達性）や境界設計が重要になるためです。NHTSAも wireless paths、segmentation、internal vehicle networks の多層防御を重視しています。</p>
+                        </div>
+                    </div>
+
+                    <!-- 内部リンク領域 -->
+                    <div class="mt-12 space-y-6">
+                        <!-- 内部リンク②：テンプレを活用する -->
+                        <div class="related-box border-l-emerald-500 my-0">
+                            <div class="text-sm font-bold text-emerald-400 mb-2 flex items-center gap-2"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> 次に読む</div>
+                            <p class="text-sm text-slate-300 mb-2">「車内ネットワークに繋がっているが、境界制御により外部からは到達できない」といった判断結果を記録に残すためのシートはこちら。</p>
+                            <ul class="text-base m-0 list-none pl-0">
+                                <!-- CSVから ID:86 のURLを設定 -->
+                                <li><a href="/psirt/triage-decision-sheet-template/" class="!text-emerald-400 hover:!text-emerald-300">トリアージ判定シート（決定理由）テンプレ</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- CTA Section (記事末副CTA：相談のみ) -->
+            <div class="glass-card rounded-3xl p-8 md:p-12 text-center border-t-4 border-t-sky-500 bg-navy-800/80 shadow-[0_0_40px_-10px_rgba(14,165,233,0.2)]">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">自社製品の「影響境界」を整理しませんか？</h2>
+                <p class="text-slate-300 mb-8 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+                    自社の部品が車両内のどのネットワークに属し、外部からどのような経路で到達され得るのか。次世代アーキテクチャを見据えた製品への影響範囲と、OEMに対する対応方針を整理したい方はご相談ください。
+                </p>
+                <div class="flex justify-center">
+                    <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold !text-white bg-brand hover:bg-brand-dark transition-all duration-300 shadow-lg shadow-brand/20 w-full sm:w-auto hover:-translate-y-1">
+                        <i data-lucide="message-square" class="w-5 h-5 !text-white"></i>
+                        【無料】オンライン相談を予約する
+                    </a>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/5 text-center text-sm text-slate-500 mt-auto bg-navy-900/80">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span class="font-bold text-slate-400">Auto PSIRT Cloud</span>
+            </div>
+            <p>&copy; 2026 Unimobilities株式会社. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
