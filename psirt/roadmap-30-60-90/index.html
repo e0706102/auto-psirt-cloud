@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEOメタタグ -->
+    <title>SBOM導入ロードマップ（30日・60日・90日プラン）｜兼務でも破綻しない始め方 | Auto PSIRT Cloud</title>
+    <meta name="description" content="SBOM導入を30日・60日・90日の3段階で進める実務ロードマップ。最初の30日で対象製品・版数・正本を決め、60日で運用ルールと提出導線を整え、90日で脆弱性管理と自動化へつなぐ方法を解説します。">
+    <meta name="keywords" content="SBOM導入ロードマップ, SBOM, 導入手順, 脆弱性管理, PSIRT, 自動車セキュリティ">
+    <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/psirt/roadmap-30-60-90/">
+    
+    <!-- OGPタグ (SNSシェア用) -->
+    <meta property="og:title" content="SBOM導入ロードマップ（30日・60日・90日プラン）｜兼務でも破綻しない始め方">
+    <meta property="og:description" content="SBOM導入を3段階で進める実務ロードマップ。正本の決定から運用ルールの整備、脆弱性管理と自動化へつなぐ方法を解説します。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/psirt/roadmap-30-60-90/">
+    <meta property="og:site_name" content="Auto PSIRT Cloud">
+
+    <!-- ファビコン -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%2322c55e%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z%22/><path d=%22m9 12 2 2 4-4%22/></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0a0f1c',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        brand: {
+                            light: '#60a5fa',
+                            DEFAULT: '#3b82f6', /* サイト基本の青色 */
+                            dark: '#2563eb',
+                        },
+                        accent: {
+                            DEFAULT: '#22c55e', /* Green 500 */
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #22c55e, #3b82f6); /* Green to Blue */
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* 記事用カスタムスタイル */
+        .prose h2 {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-top: 4rem;
+            color: #f8fafc;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .prose h3 {
+            color: #e2e8f0;
+            margin-top: 2.5rem;
+            border-left: 3px solid #22c55e; /* Green系アクセント */
+            padding-left: 0.75rem;
+            font-size: 1.25rem;
+        }
+        .prose a {
+            color: #4ade80; /* green-400 */
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .prose a:hover {
+            border-bottom-color: #4ade80;
+        }
+        .prose strong {
+            color: #f8fafc;
+            background: linear-gradient(transparent 60%, rgba(34, 197, 94, 0.25) 40%);
+        }
+        .related-box {
+            background: rgba(30, 41, 59, 0.6);
+            border-left: 4px solid #22c55e;
+            padding: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 2rem 0;
+        }
+        /* テーブルスタイル */
+        .custom-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            font-size: 0.95rem;
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 0.5rem;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .custom-table th {
+            background: rgba(34, 197, 94, 0.2);
+            color: #bbf7d0; /* green-200 */
+            font-weight: bold;
+            text-align: left;
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .custom-table td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: #cbd5e1;
+        }
+        .custom-table tr:last-child td {
+            border-bottom: none;
+        }
+        .custom-table tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-green-500 selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-brand/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-green-500/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-brand-dark flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="/news.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        ニュース一覧へ戻る
+                    </a>
+                    <a href="/demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                        相談 or デモ予約
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <article class="max-w-4xl mx-auto">
+            
+            <!-- パンくずリスト -->
+            <nav class="flex text-sm text-slate-400 mb-8" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/index.html" class="hover:text-white transition-colors">ホーム</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <a href="/news.html" class="hover:text-white transition-colors">ニュース・インサイト</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <span class="text-slate-500 truncate max-w-[200px] sm:max-w-none">SBOM導入ロードマップ</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- 記事ヘッダー -->
+            <header class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-green-500/20 border border-green-500/30 text-green-400 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1.5">
+                        <i data-lucide="map" class="w-3.5 h-3.5"></i> 実務ノウハウ
+                    </span>
+                    <time class="text-slate-400 text-sm flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> 2026.03.13
+                    </time>
+                </div>
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
+                    SBOM導入ロードマップ<br/>
+                    <span class="text-2xl md:text-3xl text-slate-300 font-medium">（30日・60日・90日プラン）</span>
+                </h1>
+                
+                <!-- 導入文 -->
+                <div class="text-lg text-slate-300 leading-relaxed p-6 md:p-8 bg-navy-800/50 rounded-2xl border border-white/5 space-y-4 shadow-lg shadow-black/20 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-green-500/5 rounded-bl-full -z-10"></div>
+                    <p>SBOMは「作ること」が目的ではありません。<br>
+                    CISAはSBOMをソフトウェアの“ingredients list（成分表）”と位置づけ、ソフトウェア構成を把握し、脆弱性やリスク判断へつなぐ基盤だと説明しています。NTIAもSBOMを、ソフトウェアを構成する各部品とサプライチェーン関係を記録する formal record と整理しています。<br>
+                    つまりSBOM導入は、単なる一覧表作成ではなく、<strong>「構成把握・提出・脆弱性対応を回すための運用設計」</strong>です。</p>
+
+                    <p>SBOM導入で失敗しやすいのは、最初から全部をやろうとすることです。<br>
+                    NTIAの minimum elements は、SBOMに必要な要素を「データ項目」「automation support」「practices and processes」の3領域で整理しています。さらに CISA の 2025 draft minimum elements は、SBOM は単なる構造化データではなく、頻度、アクセス、契約や運用ルールまで含めて扱うべきだとしています。</p>
+
+                    <p class="font-bold text-green-400">
+                        だからこそ、導入は一気通貫ではなく、段階を切って進める方が現実的です。
+                    </p>
+                </div>
+            </header>
+
+            <!-- 記事本文 -->
+            <div class="glass-card p-6 sm:p-10 md:p-12 rounded-3xl border border-white/10 shadow-2xl bg-navy-900/80 mb-16 relative">
+                
+                <div class="prose prose-invert prose-slate prose-lg max-w-none">
+                    
+                    <!-- 内部リンク①：全体像の設計へ -->
+                    <div class="related-box mt-0 border-l-brand">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="book-open" class="w-4 h-4"></i> 導入（SBOM運用全体のフロー）</div>
+                        <p class="text-sm text-slate-300 mb-2">導入スケジュールを引く前に、そもそもSBOMをどう集めてどう提出するか（機密保護など）の全体像はこちらをご確認ください。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <!-- CSVから ID:02 のURLを設定 -->
+                            <li><a href="/psirt/sbom-complete-guide/" class="!text-brand-light hover:!text-brand flex items-center gap-1.5"><i data-lucide="file-text" class="w-4 h-4"></i> 自動車サプライヤー向け：SBOM完全ガイド</a></li>
+                        </ul>
+                    </div>
+
+                    <h2><i data-lucide="calendar-days" class="w-6 h-6 text-green-500"></i> 先に結論：30日・60日・90日で分ける</h2>
+                    <p>兼務体制で無理なく進めるなら、SBOM導入は次の3段階のタイムラインで十分です。</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-8">
+                        <div class="bg-navy-800/80 p-5 rounded-xl border-t-4 border-t-slate-400 text-center">
+                            <h4 class="text-slate-300 font-bold mt-0 mb-2">最初の30日</h4>
+                            <p class="text-sm text-slate-300 m-0">対象製品と正本項目を決める</p>
+                        </div>
+                        <div class="bg-navy-800/80 p-5 rounded-xl border-t-4 border-t-green-400 text-center">
+                            <h4 class="text-green-400 font-bold mt-0 mb-2">次の60日</h4>
+                            <p class="text-sm text-slate-300 m-0">更新ルール・提出導線・運用台帳を整える</p>
+                        </div>
+                        <div class="bg-navy-800/80 p-5 rounded-xl border-t-4 border-t-blue-500 text-center">
+                            <h4 class="text-blue-400 font-bold mt-0 mb-2">90日まで</h4>
+                            <p class="text-sm text-slate-300 m-0">脆弱性管理や自動生成と結びつける</p>
+                        </div>
+                    </div>
+
+                    <p>この順番にすると、「表は作ったが運用できない」「自動化ツールは入れたが正本が無い」といった失敗を避けやすくなります。これは、NTIA が示した <strong>“データ → 自動化 → 運用”</strong> の流れとも整合的です。</p>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2><i data-lucide="flag" class="w-6 h-6 text-slate-400"></i> Day 1–30：まずは“正本”を作る</h2>
+                    <p>最初の30日でやることは、高価なツールの選定ではなく <strong>正本の設計（データの型決め）</strong> です。<br>
+                    最小で決めるべきものは次の4つです。</p>
+
+                    <div class="space-y-6 my-6">
+                        <div>
+                            <h4 class="text-white font-bold mb-2 flex items-center gap-2"><span class="bg-slate-700 text-white w-5 h-5 rounded-full flex items-center justify-center text-xs">1</span> 対象製品を絞る</h4>
+                            <p class="text-sm text-slate-300 m-0">最初から全製品を対象にしないことが重要です。OEM照会が多い製品、更新頻度が高い製品、外部接点（通信機能など）が多い製品から始めると運用しやすくなります。</p>
+                        </div>
+                        <div>
+                            <h4 class="text-white font-bold mb-2 flex items-center gap-2"><span class="bg-slate-700 text-white w-5 h-5 rounded-full flex items-center justify-center text-xs">2</span> 正本項目を固定する</h4>
+                            <p class="text-sm text-slate-300 m-0">最低限、「製品名」「製品版数」「コンポーネント名」「コンポーネント版数」「種別（OSS/商用/自社）」「搭載箇所」「更新日/更新者」があれば始められます。NTIA minimum elements でも、部品を識別し、供給関係や基本属性を記録できることが出発点になっています。</p>
+                        </div>
+                        <div>
+                            <h4 class="text-white font-bold mb-2 flex items-center gap-2"><span class="bg-slate-700 text-white w-5 h-5 rounded-full flex items-center justify-center text-xs">3</span> 正本の置き場を1つに決める</h4>
+                            <p class="text-sm text-slate-300 m-0">最初は Excel やスプレッドシート等の共有台帳で十分です。大事なのは、<strong>「どれが正本か分かること」</strong>です。複数人が別ファイルを持ち始めると、導入初期から運用が崩れます。</p>
+                        </div>
+                        <div>
+                            <h4 class="text-white font-bold mb-2 flex items-center gap-2"><span class="bg-slate-700 text-white w-5 h-5 rounded-full flex items-center justify-center text-xs">4</span> 版数の切り方を決める</h4>
+                            <p class="text-sm text-slate-300 m-0">「製品の版数」と「内部コンポーネントの版数」を分けて持つことが重要です。CVE照会でOEMから一番聞かれるのは、結局「どの製品版まで影響するか」だからです。</p>
+                        </div>
+                    </div>
+
+                    <!-- 内部リンク②：Excelテンプレへの導線 -->
+                    <div class="related-box my-6">
+                        <div class="text-sm font-bold text-green-400 mb-2 flex items-center gap-2"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> 関連資料</div>
+                        <p class="text-sm text-slate-300 mb-2">最初の30日で「正本」として整えるための、項目が定義済みの台帳フォーマットはこちら。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <!-- CSVから ID:93 のURLを設定 -->
+                            <li><a href="/psirt/sbom-excel-template/" class="!text-green-400 hover:!text-green-300">すぐ使えるSBOM Excel台帳テンプレ</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-navy-900/80 p-4 rounded-lg border border-slate-600 inline-block">
+                        <strong class="text-slate-300 block mb-1 text-sm">💡 この30日での成果物</strong>
+                        <ul class="text-sm m-0 pl-4 list-disc text-slate-400">
+                            <li>対象製品一覧</li>
+                            <li>正本項目の定義</li>
+                            <li>Excel/スプレッドシートの正本</li>
+                            <li>版数ルール</li>
+                        </ul>
+                    </div>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2><i data-lucide="flag" class="w-6 h-6 text-green-500"></i> Day 31–60：提出と更新の運用を作る</h2>
+                    <p>次の30日でやることは、<strong>更新と提出のルール化</strong> です。<br>
+                    CISAの 2025 draft minimum elements でも、SBOMは machine-processable（機械処理可能）であるだけでなく、frequency（更新頻度）や access（アクセス権）、提供条件を明示的に扱うべきとされています。</p>
+
+                    <div class="space-y-6 my-6">
+                        <div>
+                            <h4 class="text-white font-bold mb-2 flex items-center gap-2"><span class="bg-green-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-xs">1</span> 更新トリガーを決める</h4>
+                            <p class="text-sm text-slate-300 m-0">最低限、次の3つを更新トリガーにします。<br>①製品リリース　②修正/パッチ適用　③部品変更（OSS/商用/自社）</p>
+                        </div>
+                        <div>
+                            <h4 class="text-white font-bold mb-2 flex items-center gap-2"><span class="bg-green-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-xs">2</span> 提出版と社内版を分ける</h4>
+                            <p class="text-sm text-slate-300 m-0">この段階で、機密を含む「社内正本」とOEM/顧客に出す「提出版」を分けます。最初は「何を出す/出さない」のマスキング基準を簡単に決めるだけで十分です。</p>
+                        </div>
+                        <div>
+                            <h4 class="text-white font-bold mb-2 flex items-center gap-2"><span class="bg-green-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-xs">3</span> 提出履歴を残す</h4>
+                            <p class="text-sm text-slate-300 m-0">提出先、提出日、対象版数、提出版ID を記録します。後で監査や照会があった際に「どの版を出したか」を説明できるようにしておくことが重要です。</p>
+                        </div>
+                        <div>
+                            <h4 class="text-white font-bold mb-2 flex items-center gap-2"><span class="bg-green-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-xs">4</span> 案件台帳へつなぐ</h4>
+                            <p class="text-sm text-slate-300 m-0">SBOMは単独では価値が出ません。OEM照会や監査案件の「脆弱性管理台帳」と結びつけ、対象版数と判断根拠（証跡）として連携させます。</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-navy-900/80 p-4 rounded-lg border border-green-600 inline-block">
+                        <strong class="text-green-400 block mb-1 text-sm">💡 この60日での成果物</strong>
+                        <ul class="text-sm m-0 pl-4 list-disc text-slate-300">
+                            <li>更新ルール</li>
+                            <li>提出版/社内版の切り分け基準</li>
+                            <li>提出履歴の管理表</li>
+                            <li>案件台帳との紐付けルール</li>
+                        </ul>
+                    </div>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2><i data-lucide="flag" class="w-6 h-6 text-blue-500"></i> Day 61–90：脆弱性管理と自動化へつなぐ</h2>
+                    <p>最後の30日で、SBOMを「使う状態」にします。<br>
+                    CISA と国際共同の “Shared Vision of SBOM” は、SBOMは単に採用するだけでなく、<strong>セキュリティワークフロー（脆弱性対応プロセス）へ統合することが重要</strong>だとしています。</p>
+
+                    <div class="space-y-6 my-6">
+                        <div>
+                            <h4 class="text-white font-bold mb-2 flex items-center gap-2"><span class="bg-blue-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-xs">1</span> 脆弱性突合の入口を決める</h4>
+                            <p class="text-sm text-slate-300 m-0">NVD、JVN、ベンダからのセキュリティ通知など、何を見て自社のSBOMと突合するかを決めます。全部を見る必要はなく、最初は主要な情報ソースに絞れば十分です。</p>
+                        </div>
+                        <div>
+                            <h4 class="text-white font-bold mb-2 flex items-center gap-2"><span class="bg-blue-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-xs">2</span> 生成を半自動化する</h4>
+                            <p class="text-sm text-slate-300 m-0">CISA 2025 draft は、広く使われている machine-processable formats として SPDX と CycloneDX を挙げています。いきなり完璧に自動化する必要はありませんが、ビルド環境やパッケージマネージャの依存情報から取れる部分は自動生成へ寄せると、更新負荷が一気に下がります。</p>
+                        </div>
+                        <div>
+                            <h4 class="text-white font-bold mb-2 flex items-center gap-2"><span class="bg-blue-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-xs">3</span> 週次/月次レビューへ組み込む</h4>
+                            <p class="text-sm text-slate-300 m-0">生成・更新されたSBOMを、定期的な脆弱性レビュー会議や案件台帳と結びつけます。ここまで来ると、SBOMは単なる“提出物”ではなく、自社を守るための生きた <strong>運用データ</strong> になります。</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-navy-900/80 p-4 rounded-lg border border-blue-600 inline-block">
+                        <strong class="text-blue-400 block mb-1 text-sm">💡 この90日での成果物</strong>
+                        <ul class="text-sm m-0 pl-4 list-disc text-slate-300">
+                            <li>脆弱性突合の運用ルール</li>
+                            <li>SPDX/CycloneDX など機械処理可能な出力の試行</li>
+                            <li>月次レビューへの組み込み</li>
+                            <li>主要製品群の継続更新体制</li>
+                        </ul>
+                    </div>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2><i data-lucide="table-2" class="w-6 h-6 text-green-500"></i> 比較表：30日・60日・90日の違い</h2>
+                    <p>各フェーズの目的と成果物を整理すると以下のようになります。</p>
+
+                    <div class="overflow-x-auto">
+                        <table class="custom-table min-w-[600px]">
+                            <thead>
+                                <tr>
+                                    <th>期間</th>
+                                    <th>主目的</th>
+                                    <th>主な作業</th>
+                                    <th>成果物</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong class="text-slate-300">30日</strong></td>
+                                    <td>正本作成</td>
+                                    <td>対象製品決定、項目固定、版数ルール</td>
+                                    <td>正本台帳（Excel等）</td>
+                                </tr>
+                                <tr>
+                                    <td><strong class="text-green-400">60日</strong></td>
+                                    <td>運用設計</td>
+                                    <td>更新ルール、提出版分離、履歴管理</td>
+                                    <td>提出運用一式</td>
+                                </tr>
+                                <tr>
+                                    <td><strong class="text-blue-400">90日</strong></td>
+                                    <td>活用開始</td>
+                                    <td>脆弱性突合、半自動化、レビュー会議接続</td>
+                                    <td>運用サイクル</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- 途中CTA（主CTA：相談） -->
+                    <div class="bg-gradient-to-br from-navy-800 to-green-900/20 p-6 md:p-8 rounded-2xl border border-green-500/30 text-center my-12 shadow-[0_0_30px_rgba(34,197,94,0.1)] relative overflow-hidden group">
+                        <div class="absolute inset-0 bg-green-500/5 group-hover:bg-green-500/10 transition-colors"></div>
+                        <p class="text-white mb-6 font-medium text-lg relative z-10">自社に最適なペースで、SBOM整備と提出運用をどこから始めるか整理したい方はご相談ください。</p>
+                        <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold !text-white bg-brand hover:bg-brand-dark transition-all duration-300 shadow-lg shadow-brand/20 w-full sm:w-auto hover:-translate-y-1 relative z-10">
+                            <i data-lucide="message-square" class="w-5 h-5 !text-white"></i> 【無料】オンライン相談を予約する
+                        </a>
+                    </div>
+
+                    <h2><i data-lucide="alert-octagon" class="w-6 h-6 text-red-400"></i> よくある失敗（プロジェクトが頓挫するパターン）</h2>
+                    <ul class="space-y-4 my-6 list-none pl-0 font-medium">
+                        <li class="flex items-start gap-3 bg-navy-800/50 p-4 rounded-lg border border-red-500/10">
+                            <i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> 
+                            <div>
+                                <strong class="text-white text-lg">1. 最初から全社展開しようとする</strong><br>
+                                <span class="text-sm text-slate-400 font-normal">対象が広すぎると、各部門の調整だけで時間が過ぎ、運用開始前にプロジェクトが止まります。</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3 bg-navy-800/50 p-4 rounded-lg border border-red-500/10">
+                            <i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> 
+                            <div>
+                                <strong class="text-white text-lg">2. 生成だけして終わる</strong><br>
+                                <span class="text-sm text-slate-400 font-normal">ツールの導入でSBOMファイルができても、それが案件台帳やOEMへの提出運用につながらなければ、ビジネス上の価値が出ません。</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3 bg-navy-800/50 p-4 rounded-lg border border-red-500/10">
+                            <i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> 
+                            <div>
+                                <strong class="text-white text-lg">3. 提出版と正本を混ぜる</strong><br>
+                                <span class="text-sm text-slate-400 font-normal">マスキングした提出用ファイルを正本として更新してしまうと、後からどれが社内の正式な最新版か分からなくなります。</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3 bg-navy-800/50 p-4 rounded-lg border border-red-500/10">
+                            <i data-lucide="x-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i> 
+                            <div>
+                                <strong class="text-white text-lg">4. 90日目に初めて脆弱性運用へつなぐ</strong><br>
+                                <span class="text-sm text-slate-400 font-normal">最初から“使う先（トリアージ等）”を見据えて項目を設計しないと、せっかく作ったSBOMが棚に置かれたまま使われなくなります。</span>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2><i data-lucide="help-circle" class="w-6 h-6 text-green-500"></i> FAQ：SBOM導入の進め方</h2>
+                    <div class="space-y-6 mt-6">
+                        <div>
+                            <strong class="text-green-400 block mb-2">Q1. 最初の30日で「完成」させるべきなのは何ですか？</strong>
+                            <p class="m-0 text-slate-300">完成させるのはSBOMそのものではなく<strong>「正本の型（ルール）」</strong>です。対象製品、製品版数、コンポーネント版数の管理ルールと、正本の置き場が決まれば最初のステップとしては十分です。</p>
+                        </div>
+                        <div>
+                            <strong class="text-green-400 block mb-2">Q2. 最初から SPDX や CycloneDX のフォーマットにすべきですか？</strong>
+                            <p class="m-0 text-slate-300">必須ではありません。CISA 2025 draft は SPDX と CycloneDX を広く使われる machine-processable formats としていますが、まずはExcel等で「自社の製品に何が入っているか」の正本運用を固めてからツール生成へ移行しても遅くありません。</p>
+                        </div>
+                        <div>
+                            <strong class="text-green-400 block mb-2">Q3. 90日経過時点で「完全自動化」できますか？</strong>
+                            <p class="m-0 text-slate-300">多くの中小サプライヤーでは、90日で目指すべきは「完全自動化」ではなく<strong>「半自動 ＋ 運用（脆弱性管理）への接続」</strong>です。そこまで行けば、実務上の負担軽減と監査への対応力としてかなり前進したと言えます。</p>
+                        </div>
+                    </div>
+
+                    <!-- 内部リンク③：次に読む -->
+                    <div class="mt-12 p-6 bg-navy-800/80 rounded-xl border border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                        <div>
+                            <div class="text-sm font-bold text-slate-400 mb-1">次に読む</div>
+                            <!-- CSVから ID:59 のURLを設定 -->
+                            <a href="/psirt/what-is-sbom/" class="text-lg font-bold !text-white hover:!text-green-400 transition-colors">SBOMとは（提出物ではなく運用資産） <i data-lucide="arrow-right" class="w-4 h-4 inline"></i></a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- CTA Section (記事末副CTA：デモ) -->
+            <div class="glass-card rounded-3xl p-8 md:p-12 text-center border-t-4 border-t-green-500 bg-navy-800/80 shadow-[0_0_40px_-10px_rgba(34,197,94,0.2)]">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">SBOMを「運用データ」に変える仕組みを見てみませんか？</h2>
+                <p class="text-slate-300 mb-8 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+                    Excelで作ったSBOMや、ツールで生成したCycloneDX/SPDXデータをシステムに取り込み、日々発表される脆弱性情報と自動で突合。<strong>Auto PSIRT Cloud</strong> を使った、SBOM管理から脆弱性の影響判定（トリアージ）までのスムーズな流れをデモでご案内します。
+                </p>
+                <div class="flex justify-center">
+                    <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold !text-white bg-brand hover:bg-brand-dark transition-all duration-300 shadow-lg shadow-brand/20 w-full sm:w-auto hover:-translate-y-1">
+                        <i data-lucide="monitor-play" class="w-5 h-5 !text-white"></i>
+                        SBOM登録から突合までの流れをデモで確認する
+                    </a>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/5 text-center text-sm text-slate-500 mt-auto bg-navy-900/80">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span class="font-bold text-slate-400">Auto PSIRT Cloud</span>
+            </div>
+            <p>&copy; 2026 Unimobilities株式会社. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
