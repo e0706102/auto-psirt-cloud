@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEOメタタグ -->
+    <title>ECUとは？部品メーカーが意識すべき境界をやさしく解説 | Auto PSIRT Cloud</title>
+    <meta name="description" content="ECUとは何かを、部品メーカー向けに解説。車載サイバー対応でなぜ「車両全体」ではなく「どのECUか」が重要なのか、ゲートウェイやゾーンECUとの違い、OEM照会で意識すべき境界の切り方を短く整理します。">
+    <meta name="keywords" content="ECUとは, ECU, ゲートウェイ, ゾーンECU, OEM調査依頼, 自動車セキュリティ">
+    <link rel="canonical" href="https://auto-psirt-cloud.unimobilities.jp/psirt/what-is-ecu/">
+    
+    <!-- OGPタグ (SNSシェア用) -->
+    <meta property="og:title" content="ECUとは？部品メーカーが意識すべき境界をやさしく解説">
+    <meta property="og:description" content="車載サイバー対応でなぜ「車両全体」ではなく「どのECUか」が重要なのか。OEM照会で意識すべき境界を解説します。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://auto-psirt-cloud.unimobilities.jp/psirt/what-is-ecu/">
+    <meta property="og:site_name" content="Auto PSIRT Cloud">
+
+    <!-- ファビコン -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%2364748b%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z%22/><path d=%22m9 12 2 2 4-4%22/></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0a0f1c',
+                            800: '#111827',
+                            700: '#1e293b',
+                        },
+                        brand: {
+                            light: '#60a5fa',
+                            DEFAULT: '#3b82f6', /* サイト基本の青色 */
+                            dark: '#2563eb',
+                        },
+                        accent: {
+                            DEFAULT: '#64748b', /* Slate 500 */
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #64748b, #94a3b8); /* Slate to Slate-light */
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* 記事用カスタムスタイル */
+        .prose h2 {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-top: 3.5rem;
+            color: #f8fafc;
+        }
+        .prose h3 {
+            color: #e2e8f0;
+            margin-top: 2.5rem;
+            border-left: 3px solid #64748b; /* Slate系アクセント */
+            padding-left: 0.75rem;
+            font-size: 1.25rem;
+        }
+        .prose a {
+            color: #94a3b8; /* slate-400 */
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .prose a:hover {
+            border-bottom-color: #94a3b8;
+        }
+        .prose strong {
+            color: #f8fafc;
+            background: linear-gradient(transparent 60%, rgba(100, 116, 139, 0.3) 40%);
+        }
+        .related-box {
+            background: rgba(30, 41, 59, 0.6);
+            border-left: 4px solid #64748b;
+            padding: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-slate-500 selection:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-brand/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-slate-500/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="w-full z-50 glass-card border-b border-white/5 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/index.html" class="flex-shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-brand-dark flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Auto PSIRT Cloud</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="/news.html" class="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        ニュース一覧へ戻る
+                    </a>
+                    <a href="/demo_form.html" class="bg-white text-navy-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] whitespace-nowrap hidden sm:block">
+                        相談 or デモ予約
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <article class="max-w-4xl mx-auto">
+            
+            <!-- パンくずリスト -->
+            <nav class="flex text-sm text-slate-400 mb-8" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/index.html" class="hover:text-white transition-colors">ホーム</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <a href="/news.html" class="hover:text-white transition-colors">ニュース・インサイト</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4 mx-1"></i>
+                            <span class="text-slate-500 truncate max-w-[200px] sm:max-w-none">ECUとは</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- 記事ヘッダー -->
+            <header class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-slate-500/20 border border-slate-500/30 text-slate-400 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1.5">
+                        <i data-lucide="cpu" class="w-3.5 h-3.5"></i> 入門解説
+                    </span>
+                    <time class="text-slate-400 text-sm flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> 2026.03.13
+                    </time>
+                </div>
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
+                    ECUとは<br/>
+                    <span class="text-2xl md:text-3xl text-slate-300 font-medium">（部品メーカーが意識すべき境界）</span>
+                </h1>
+                
+                <!-- 導入文 -->
+                <div class="text-lg text-slate-300 leading-relaxed p-6 bg-navy-800/50 rounded-2xl border border-white/5 space-y-4 shadow-lg shadow-black/20">
+                    <p>ECUとは <strong>Electronic Control Unit</strong> の略で、NHTSAの車両サイバーセキュリティ・ベストプラクティスでは、<strong>「デジタル計算ハードウェアと関連ソフトウェアによって、車両の電気系統またはそのサブシステムに制御機能を提供する組み込みシステム」</strong> と定義されています。</p>
+                    
+                    <div class="bg-navy-900/60 p-4 rounded-xl border-l-4 border-l-slate-500 mt-4">
+                        <p class="m-0 text-white font-bold">つまりECUは、エンジン、ブレーキ、ボディ、通信、診断など、<br>
+                        車内の特定機能を担う<span class="text-slate-400">“制御の単位（ハード＋ソフトの塊）”</span>です。</p>
+                    </div>
+                </div>
+            </header>
+
+            <!-- 記事本文 -->
+            <div class="glass-card p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl bg-navy-900/80 mb-16">
+                <div class="prose prose-invert prose-slate prose-lg max-w-none">
+                    
+                    <!-- 内部リンク①：全体像の設計へ -->
+                    <div class="related-box mt-0 border-l-brand">
+                        <div class="text-sm font-bold text-brand-light mb-2 flex items-center gap-2"><i data-lucide="map" class="w-4 h-4"></i> 導入（対応の全体フロー）</div>
+                        <p class="text-sm text-slate-300 mb-2">ECU単位で対象範囲を切り出し、OEMからの脆弱性調査依頼にどう回答していくか。実務の全体像についてはこちらをご覧ください。</p>
+                        <ul class="text-base m-0 list-none pl-0">
+                            <!-- CSVから ID:04 のURLを設定 -->
+                            <li><a href="/psirt/audit-investigation-response-guide/" class="!text-brand-light hover:!text-brand flex items-center gap-1.5"><i data-lucide="file-text" class="w-4 h-4"></i> OEM調査依頼・監査対応 完全ガイド</a></li>
+                        </ul>
+                    </div>
+
+                    <h2>なぜ部品メーカーが「ECU境界」を意識すべきなのか</h2>
+                    <p>OEM（自動車メーカー）や顧客が知りたいのは、「車両全体が危ないか」ではありません。<br>
+                    <strong>「どのECUの・どの機能の・どの版数が対象か」</strong> です。</p>
+
+                    <p>NHTSAのガイダンスでも、車両サイバーセキュリティは車両電子システムとソフトウェアを設計・製造するすべてのサプライヤーとメーカーに関係し、サプライチェーン全体で明確な期待値を持つべきだとされています。</p>
+                    
+                    <p>したがってサプライヤーの実務では、まず<strong>「自社の提供する部品やソフトウェアが、最終的にどのECUの境界に入るのか」</strong>を切れないと、正確な影響評価もできず、OEMへの回答も弱くなります。</p>
+
+                    <h2>ECUと“車両全体”は同じではない</h2>
+                    <p>実務で重要なのは、<strong>ECU単位で「入口（アタックサーフェス）」と「影響範囲」が変わること</strong>です。</p>
+                    <p>たとえばBoschの中央ゲートウェイの説明では、ゲートウェイは車内の各バス（通信線）と外界をつなぐ中央通信ノードであり、診断の中央アクセスポイントにもなるとされています。<br>
+                    つまり、同じ車両に載っていても、外部と直接通信する「ゲートウェイECU」と、車内ネットワークの奥底にある「単機能ECU」とでは、外部からの到達性（Reachability）が全く違います。</p>
+
+                    <div class="bg-navy-800/80 p-5 rounded-xl border border-white/5 my-6 border-l-4 border-l-slate-400">
+                        <p class="m-0 text-slate-200">
+                            部品メーカーが「この脆弱性は閉域ネットワークだから大丈夫です」と回答する時も、漠然と車両全体で語るのではなく、<strong>「どのECUに、どの外部入口（IF）があるか」</strong>という境界線で語らないと、OEMからの監査や照会で差し戻されやすくなります。
+                        </p>
+                    </div>
+
+                    <h2>最近のE/Eアーキテクチャでは“境界”が変わりつつある</h2>
+                    <p>Boschの「ゾーンECU」の説明などにあるように、将来のE/Eアーキテクチャ（電気・電子アーキテクチャ）は、機能ごとに分散した多数の小さなECUから、<strong>少数の強力な「車両コンピュータ（Vehicle Computer）」＋中継を担う「ゾーンECU」</strong> へと統合される流れが示されています。</p>
+                    
+                    <p>つまり、かつてのように「1機能 ＝ 1つの専用ECU」と単純に言えない構成が増えています。部品メーカーの実務では、だからこそ、単なるハードウェアの「ECU名」だけでなく、<strong>対象機能・対象ソフトウェア・それがどのアーキテクチャ層に載るか</strong> をセットで整理する構成管理が求められます。</p>
+
+                    <h2>よくある誤解</h2>
+                    
+                    <ul class="space-y-6 my-8 list-none pl-0">
+                        <li class="bg-navy-800/50 p-5 rounded-xl border border-white/5">
+                            <strong class="text-slate-200 block mb-2 flex items-center gap-2"><i data-lucide="x" class="w-5 h-5 text-red-400"></i> 誤解1：ECU ＝ 車載部品そのものだ</strong>
+                            <p class="text-sm text-slate-300 m-0"><strong class="text-red-300">違います。</strong> ECUはあくまで「制御の単位」です。1つの物理的な部品（筐体）の中に複数のECU機能が同居することもあれば、逆に1つの機能がより上位の大きな車両コンピュータ側へ統合・吸収されることもあります。</p>
+                        </li>
+                        <li class="bg-navy-800/50 p-5 rounded-xl border border-white/5">
+                            <strong class="text-slate-200 block mb-2 flex items-center gap-2"><i data-lucide="x" class="w-5 h-5 text-red-400"></i> 誤解2：ECUが特定できれば、影響範囲も自動で分かる</strong>
+                            <p class="text-sm text-slate-300 m-0"><strong class="text-red-300">違います。</strong> 実務では「ECU名」が分かっただけでは不十分です。それに加えて、対象版数、外部IFの有無、診断機能やOTA（無線更新）経路の有無、設定条件まで見ないと到達性は評価できません。中央ゲートウェイやゾーンECUのように、複数の境界をまたぐ役割を持つECUもあるためです。</p>
+                        </li>
+                    </ul>
+
+                    <hr class="border-white/10 my-10">
+
+                    <h2>FAQ：ECUとは</h2>
+                    <div class="space-y-6 mt-6">
+                        <div>
+                            <strong class="text-slate-400 block mb-2">Q1. ECUとは何ですか？</strong>
+                            <p class="m-0 text-slate-300">車両の電気系統やサブシステムに制御機能を提供する組み込みシステムのことです。NHTSAは、デジタル計算ハードウェアと関連ソフトウェアからなるものと定義しています。</p>
+                        </div>
+                        <div>
+                            <strong class="text-slate-400 block mb-2">Q2. ECUとゲートウェイは同じですか？</strong>
+                            <p class="m-0 text-slate-300">同じではありません。ゲートウェイは数あるECUの一種ですが、車内バス（ネットワーク）と外界をつなぐ「中央通信ノード」であり、診断や外部接続の境界（入り口）になりやすい特別な役割を持つECUです。</p>
+                        </div>
+                        <div>
+                            <strong class="text-slate-400 block mb-2">Q3. 脆弱性対応の実務で、ECUをどう使い分けて考えるべきですか？</strong>
+                            <p class="m-0 text-slate-300">サプライヤー実務では、単に「〇〇ECUです」と名前を挙げるだけでなく、<strong>対象機能、対象版数、外部IFの有無、診断/OTA経路の有無</strong>をセットで境界として見ると、影響評価のブレが減り、OEMへの回答が安定します。</p>
+                        </div>
+                    </div>
+
+                    <!-- 内部リンク領域 -->
+                    <div class="mt-12 space-y-6">
+                        <!-- 内部リンク②：テンプレを活用する -->
+                        <div class="related-box border-l-emerald-500 my-0">
+                            <div class="text-sm font-bold text-emerald-400 mb-2 flex items-center gap-2"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> 次に読む</div>
+                            <p class="text-sm text-slate-300 mb-2">「ECUの仕様上、外部から到達できない」などの理由で脆弱性対応を不要とする場合の、OEMへの回答書の書き方はこちら。</p>
+                            <ul class="text-base m-0 list-none pl-0">
+                                <!-- CSVから ID:88 のURLを設定 -->
+                                <li><a href="/psirt/not-affected-response-template-ja/" class="!text-emerald-400 hover:!text-emerald-300">“影響なし”OEM回答文テンプレ（対応不要の書き方）</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- CTA Section (相談のみ) -->
+            <div class="glass-card rounded-3xl p-8 md:p-12 text-center border-t-4 border-t-slate-500 bg-navy-800/80 shadow-[0_0_40px_-10px_rgba(100,116,139,0.2)]">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">自社製品の「影響境界」を整理しませんか？</h2>
+                <p class="text-slate-300 mb-8 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+                    自社の部品やソフトウェアが、車両全体のどのECUに搭載され、外部からどう到達されるのか。OEMからの調査依頼に対して、製品のアーキテクチャに基づいた「影響あり/なし」の対応方針と境界線を整理したい方はご相談ください。
+                </p>
+                <div class="flex justify-center">
+                    <a href="/demo_form.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold !text-white bg-brand hover:bg-brand-dark transition-all duration-300 shadow-lg shadow-brand/20 w-full sm:w-auto hover:-translate-y-1">
+                        <i data-lucide="message-square" class="w-5 h-5 !text-white"></i>
+                        【無料】オンライン相談を予約する
+                    </a>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/5 text-center text-sm text-slate-500 mt-auto bg-navy-900/80">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span class="font-bold text-slate-400">Auto PSIRT Cloud</span>
+            </div>
+            <p>&copy; 2026 Unimobilities株式会社. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
